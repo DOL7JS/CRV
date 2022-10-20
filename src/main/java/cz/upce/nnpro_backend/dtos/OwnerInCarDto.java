@@ -2,7 +2,7 @@ package cz.upce.nnpro_backend.dtos;
 
 import java.time.LocalDate;
 
-public class OwnerDto {
+public class OwnerInCarDto {
     Long id;
     String firstName;
     String lastName;
@@ -11,8 +11,26 @@ public class OwnerDto {
     String street;
     int zipCode;
     int numberOfHouse;
+    LocalDate startOfSignUp;
+    LocalDate endOfSignUp;
 
-    public OwnerDto() {
+    public LocalDate getStartOfSignUp() {
+        return startOfSignUp;
+    }
+
+    public void setStartOfSignUp(LocalDate startOfSignUp) {
+        this.startOfSignUp = startOfSignUp;
+    }
+
+    public LocalDate getEndOfSignUp() {
+        return endOfSignUp;
+    }
+
+    public void setEndOfSignUp(LocalDate endOfSignUp) {
+        this.endOfSignUp = endOfSignUp;
+    }
+
+    public OwnerInCarDto() {
 
     }
 

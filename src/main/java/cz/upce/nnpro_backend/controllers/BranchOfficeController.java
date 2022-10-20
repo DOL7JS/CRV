@@ -41,4 +41,15 @@ public class BranchOfficeController {
     public ResponseEntity<?> editOffice(@PathVariable Long officeId, @RequestBody BranchOfficeDto officeDto) {
         return ResponseEntity.ok(branchOfficeService.editOffice(officeId, officeDto));
     }
+
+    @GetMapping("/exportData")
+    public ResponseEntity<?> exportDataToJson() {
+        return ResponseEntity.ok(branchOfficeService.getOffices());
+    }
+
+    @PutMapping("/importData")
+    public ResponseEntity<?> importDataToJson() {
+        return ResponseEntity.ok("");
+    }
+
 }

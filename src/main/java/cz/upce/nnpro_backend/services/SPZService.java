@@ -41,7 +41,7 @@ public class SPZService {
 
     private String addValueOfSPZ(String spz) throws Exception {
         if (validateSPZ(spz)) {
-            throw new Exception();
+            throw new Exception("Error in validating spz.");
         }
         String number = spz.substring(4, 8);
         if (!number.equals("9999")) {

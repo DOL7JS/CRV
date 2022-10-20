@@ -11,12 +11,21 @@ public class BranchOffice {
     private Long id;
     private String district;
     private String region;
+    private String city;
 
     @OneToMany(mappedBy = "branchOffice", cascade = CascadeType.REMOVE)
     private Set<User> users;
 
     @OneToMany(mappedBy = "branchOffice", cascade = CascadeType.REMOVE)
     private Set<Car> cars;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 
     public Set<User> getUsers() {
         return users;

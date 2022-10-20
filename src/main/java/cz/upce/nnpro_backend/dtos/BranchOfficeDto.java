@@ -4,6 +4,15 @@ public class BranchOfficeDto {
     private Long id;
     private String region;
     private String district;
+    private String city;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 
     public Long getId() {
         return id;

@@ -1,9 +1,7 @@
 package cz.upce.nnpro_backend.dtos;
 
-import cz.upce.nnpro_backend.Entities.BranchOffice;
-import cz.upce.nnpro_backend.Entities.Owner;
-
 import java.time.LocalDate;
+import java.util.List;
 
 public class CarDetailOutDto {
     private Long id;
@@ -11,12 +9,13 @@ public class CarDetailOutDto {
     private String type;
     private String SPZ;
     private String color;
-    private String fuel;
+    private double enginePower;
+    private double emissionStandard;
+    private double torque;
     private boolean isInDeposit = false;
-    private double weight;
     private LocalDate yearOfCreation;
     private String vin;
-    private OwnerDto owner;
+    private List<OwnerInCarDto> owners;
     private BranchOfficeDto branchOffice;
 
     public Long getId() {
@@ -59,13 +58,6 @@ public class CarDetailOutDto {
         this.color = color;
     }
 
-    public String getFuel() {
-        return fuel;
-    }
-
-    public void setFuel(String fuel) {
-        this.fuel = fuel;
-    }
 
     public boolean isInDeposit() {
         return isInDeposit;
@@ -75,16 +67,33 @@ public class CarDetailOutDto {
         isInDeposit = inDeposit;
     }
 
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
 
     public LocalDate getYearOfCreation() {
         return yearOfCreation;
+    }
+
+    public double getEnginePower() {
+        return enginePower;
+    }
+
+    public void setEnginePower(double enginePower) {
+        this.enginePower = enginePower;
+    }
+
+    public double getEmissionStandard() {
+        return emissionStandard;
+    }
+
+    public void setEmissionStandard(double emissionStandard) {
+        this.emissionStandard = emissionStandard;
+    }
+
+    public double getTorque() {
+        return torque;
+    }
+
+    public void setTorque(double torque) {
+        this.torque = torque;
     }
 
     public void setYearOfCreation(LocalDate yearOfCreation) {
@@ -99,12 +108,12 @@ public class CarDetailOutDto {
         this.vin = vin;
     }
 
-    public OwnerDto getOwner() {
-        return owner;
+    public List<OwnerInCarDto> getOwners() {
+        return owners;
     }
 
-    public void setOwner(OwnerDto owner) {
-        this.owner = owner;
+    public void setOwners(List<OwnerInCarDto> owners) {
+        this.owners = owners;
     }
 
     public BranchOfficeDto getBranchOffice() {

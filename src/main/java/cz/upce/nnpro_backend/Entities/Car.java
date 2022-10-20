@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 public class Car {
@@ -14,6 +15,22 @@ public class Car {
     private String type;
     private String SPZ;
     private String color;
+    private double enginePower;
+    private double emissionStandard;
+    private double torque;
+
+    private boolean isInDeposit = false;
+
+
+    private LocalDate yearOfCreation;
+    private String vin;
+    @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE)
+    private Set<CarOwner> carOwners;
+
+    @ManyToOne
+    @JoinColumn(name = "branchOffice_id")
+    @JsonIgnore
+    private BranchOffice branchOffice;
 
     public String getVin() {
         return vin;
@@ -23,11 +40,17 @@ public class Car {
         this.vin = vin;
     }
 
-    private String fuel;
-    private boolean isInDeposit = false;
-    private double weight;
-    private LocalDate yearOfCreation;
-    private String vin;
+    public double getTorque() {
+        return torque;
+    }
+
+    public void setTorque(double torque) {
+        this.torque = torque;
+    }
+
+    public Set<CarOwner> getCarOwners() {
+        return carOwners;
+    }
 
     public BranchOffice getBranchOffice() {
         return branchOffice;
@@ -37,24 +60,23 @@ public class Car {
         this.branchOffice = branchOffice;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    @JsonIgnore
-    private Owner owner;
-
-    @ManyToOne
-    @JoinColumn(name = "branchOffice_id")
-    @JsonIgnore
-    private BranchOffice branchOffice;
+//    @ManyToOne
+//    @JoinColumn(name = "owner_id")
+//    @JsonIgnore
+//    private Owner owner;
 
 
-    public Owner getOwner() {
-        return owner;
+    public void setCarOwners(Set<CarOwner> carOwners) {
+        this.carOwners = carOwners;
     }
 
-    public void setOwner(Owner owner) {
-        this.owner = owner;
-    }
+//    public Owner getOwner() {
+//        return owner;
+//    }
+//
+//    public void setOwner(Owner owner) {
+//        this.owner = owner;
+//    }
 
     public Long getId() {
         return id;
@@ -96,12 +118,12 @@ public class Car {
         this.color = color;
     }
 
-    public String getFuel() {
-        return fuel;
+    public double getEnginePower() {
+        return enginePower;
     }
 
-    public void setFuel(String fuel) {
-        this.fuel = fuel;
+    public void setEnginePower(double fuel) {
+        this.enginePower = fuel;
     }
 
     public boolean isInDeposit() {
@@ -112,12 +134,12 @@ public class Car {
         isInDeposit = inDeposit;
     }
 
-    public double getWeight() {
-        return weight;
+    public double getEmissionStandard() {
+        return emissionStandard;
     }
 
-    public void setWeight(double weight) {
-        this.weight = weight;
+    public void setEmissionStandard(double weight) {
+        this.emissionStandard = weight;
     }
 
     public LocalDate getYearOfCreation() {

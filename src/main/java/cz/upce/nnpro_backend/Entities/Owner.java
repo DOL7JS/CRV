@@ -1,5 +1,7 @@
 package cz.upce.nnpro_backend.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -16,17 +18,12 @@ public class Owner {
     private String city;
     private String street;
     private int numberOfHouse;
+    @JsonIgnore
     private int zipCode;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
-    private Set<Car> cars;
+    private Set<CarOwner> carOwners;
 
-    public void addCar(Car newCar) {
-        if (cars == null) {
-            cars = new HashSet<>();
-        }
-        cars.add(newCar);
-    }
 
     public Long getId() {
         return id;
@@ -88,12 +85,12 @@ public class Owner {
         this.zipCode = zipCode;
     }
 
-    public Set<Car> getCars() {
-        return cars;
+    public Set<CarOwner> getCarOwners() {
+        return carOwners;
     }
 
-    public void setCars(Set<Car> cars) {
-        this.cars = cars;
+    public void setCarOwners(Set<CarOwner> cars) {
+        this.carOwners = cars;
     }
 
     public void setId(Long id) {

@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.services;
 
 import cz.upce.nnpro_backend.Entities.Owner;
+import cz.upce.nnpro_backend.dtos.OwnerDetailOutDto;
 import cz.upce.nnpro_backend.dtos.OwnerDto;
 import cz.upce.nnpro_backend.repositories.OwnerRepository;
 import org.springframework.stereotype.Service;
@@ -36,8 +37,9 @@ public class OwnerService {
     }
 
 
-    public Owner getOwner(Long idOwner) {
+    public OwnerDetailOutDto getOwner(Long idOwner) {
         Owner owner = ownerRepository.findById(idOwner).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
-        return owner;
+        OwnerDetailOutDto ownerDetailOutDto = ConversionService.convertToOwnerDetailOutDto(owner);
+        return ownerDetailOutDto;
     }
 }

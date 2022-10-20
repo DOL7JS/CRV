@@ -9,6 +9,15 @@ public class Role {
     @Column(name = "id", nullable = false)
     private Long id;
     private String description;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getDescription() {
         return description;

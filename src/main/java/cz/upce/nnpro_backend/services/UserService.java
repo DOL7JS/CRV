@@ -25,6 +25,9 @@ public class UserService {
     }
 
     public User addUser(UserDto userDto) {
+        if (userRepository.existsByUsername(userDto.getUsername())) {
+            throw new IllegalArgumentException("The username already exists.");
+        }
         Optional<Role> role = roleRepository.findById(userDto.getRole() == null ? 0 : userDto.getRole());
         User user = ConversionService.convertToUser(userDto, role);
         User save = userRepository.save(user);
@@ -38,6 +41,9 @@ public class UserService {
     }
 
     public User editUser(Long userId, UserDto userDto) {
+        if (userRepository.existsByUsernameAndIdIsNot(userDto.getUsername(), userId)) {
+            throw new IllegalArgumentException("The username already exists.");
+        }
         Optional<Role> role = roleRepository.findById(userDto.getRole() == null ? 0 : userDto.getRole());
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
         User editedUser = ConversionService.convertToUser(userDto, user, role);

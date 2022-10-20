@@ -1,8 +1,11 @@
 package cz.upce.nnpro_backend.dtos;
 
-import java.time.LocalDate;
+import cz.upce.nnpro_backend.Entities.Car;
 
-public class OwnerDto {
+import java.time.LocalDate;
+import java.util.List;
+
+public class OwnerDetailOutDto {
     Long id;
     String firstName;
     String lastName;
@@ -11,8 +14,17 @@ public class OwnerDto {
     String street;
     int zipCode;
     int numberOfHouse;
+    List<Car> cars;
 
-    public OwnerDto() {
+    public List<Car> getCars() {
+        return cars;
+    }
+
+    public void setCars(List<Car> cars) {
+        this.cars = cars;
+    }
+
+    public OwnerDetailOutDto() {
 
     }
 

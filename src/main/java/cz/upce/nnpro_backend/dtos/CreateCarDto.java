@@ -8,25 +8,14 @@ public class CreateCarDto {
     String vin;
     String spz;
     String color;
-    String fuel;
     String manufacturer;
     String type;
     LocalDate yearOfCreation;
     boolean isInDeposit;
-    double weight;
+    private double enginePower;
+    private double emissionStandard;
+    private double torque;
 
-    public CreateCarDto(String vin, String spz, String color, String fuel, String manufacturer, String type, LocalDate yearOfCreation, boolean isInDeposit, double weight) {
-
-        this.vin = vin;
-        this.spz = spz;
-        this.color = color;
-        this.fuel = fuel;
-        this.manufacturer = manufacturer;
-        this.type = type;
-        this.yearOfCreation = yearOfCreation;
-        this.isInDeposit = isInDeposit;
-        this.weight = weight;
-    }
 
     public String getVin() {
         return vin;
@@ -52,13 +41,6 @@ public class CreateCarDto {
         this.color = color;
     }
 
-    public String getFuel() {
-        return fuel;
-    }
-
-    public void setFuel(String fuel) {
-        this.fuel = fuel;
-    }
 
     public String getManufacturer() {
         return manufacturer;
@@ -92,13 +74,27 @@ public class CreateCarDto {
         isInDeposit = inDeposit;
     }
 
-    public double getWeight() {
-        return weight;
+    public double getEnginePower() {
+        return enginePower;
     }
 
-    public void setWeight(double weight) {
-        this.weight = weight;
+    public void setEnginePower(double enginePower) {
+        this.enginePower = enginePower;
     }
 
+    public double getEmissionStandard() {
+        return emissionStandard;
+    }
 
+    public void setEmissionStandard(double emissionStandard) {
+        this.emissionStandard = emissionStandard;
+    }
+
+    public double getTorque() {
+        return torque;
+    }
+
+    public void setTorque(double torque) {
+        this.torque = torque;
+    }
 }

@@ -32,13 +32,18 @@ public class CarController {
     }
 
     @PostMapping("/addCar")
-    public ResponseEntity<?> addCar(@RequestBody CreateCarDto createCarDto) {
+    public ResponseEntity<?> addCar(@RequestBody CreateCarDto createCarDto) throws Exception {
         return ResponseEntity.ok(carService.addCar(createCarDto));
     }
 
     @PostMapping("/signInCar/{ownerId}")
-    public ResponseEntity<?> signInCar(@RequestBody CreateCarDto createCarDto, @PathVariable Long ownerId) {
+    public ResponseEntity<?> signInCar(@RequestBody CreateCarDto createCarDto, @PathVariable Long ownerId) throws Exception {
         return ResponseEntity.ok(carService.signInCar(createCarDto, ownerId));
+    }
+
+    @PostMapping("/signInCar/")
+    public ResponseEntity<?> signInExistingCar(@RequestBody CarIdOwnerIdDto createCarDto) throws Exception {
+        return ResponseEntity.ok(carService.signInExistingCar(createCarDto));
     }
 
     @PutMapping("/changeOwner")
@@ -46,9 +51,9 @@ public class CarController {
         return ResponseEntity.ok(carService.changeOwner(carIdOwnerIdDto.getCarId(), carIdOwnerIdDto.getOwnerId()));
     }
 
-    @DeleteMapping("/signOutCar/{carId}")
-    public ResponseEntity<?> deleteCar(@PathVariable Long carId) {
-        return ResponseEntity.ok(carService.signOutCar(carId));
+    @DeleteMapping("/signOutCar")
+    public void deleteCar(@RequestBody CarIdOwnerIdDto carIdOwnerIdDto) {
+        carService.signOutCar(carIdOwnerIdDto);
     }
 
     @PutMapping("/putToDeposit/{carId}")
@@ -56,9 +61,14 @@ public class CarController {
         return ResponseEntity.ok(carService.putCarInDeposit(carId));
     }
 
-    @PutMapping("/addCarToOffice")
+    @PutMapping({"/addCarToOffice", "editCarInOffice"})
     public ResponseEntity<?> addCarToOffice(@RequestBody CarOfficeDto officeDto) {
         return ResponseEntity.ok(carService.addCarToOffice(officeDto));
+    }
+
+    @PutMapping("/removeCarFromOffice/{carId}")
+    public ResponseEntity<?> removeCarFromOffice(@PathVariable Long carId) {
+        return ResponseEntity.ok(carService.removeCarFromOffice(carId));
     }
 
     @PutMapping("/editCar/{carId}")
@@ -66,14 +76,5 @@ public class CarController {
         return ResponseEntity.ok(carService.editCar(carId, editCar));
     }
 
-    @GetMapping("/exportData")
-    public ResponseEntity<?> exportDataToJson() {
-        return ResponseEntity.ok("");
-    }
-
-    @GetMapping("/importData")
-    public ResponseEntity<?> importDataToJson() {
-        return ResponseEntity.ok("");
-    }
 
 }
