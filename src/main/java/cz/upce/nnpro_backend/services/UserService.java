@@ -2,6 +2,7 @@ package cz.upce.nnpro_backend.services;
 
 import cz.upce.nnpro_backend.Entities.Role;
 import cz.upce.nnpro_backend.Entities.User;
+import cz.upce.nnpro_backend.config.WebSecurityConfig;
 import cz.upce.nnpro_backend.dtos.ChangePasswordDto;
 import cz.upce.nnpro_backend.dtos.UserDetailOutDto;
 import cz.upce.nnpro_backend.dtos.UserDto;
@@ -18,10 +19,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final WebSecurityConfig webSecurityConfig;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, WebSecurityConfig webSecurityConfig) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.webSecurityConfig = webSecurityConfig;
     }
 
     public User addUser(UserDto userDto) {
@@ -30,6 +33,7 @@ public class UserService {
         }
         Optional<Role> role = roleRepository.findById(userDto.getRole() == null ? 0 : userDto.getRole());
         User user = ConversionService.convertToUser(userDto, role);
+        user.setPassword(webSecurityConfig.passwordEncoder().encode(user.getPassword()));
         User save = userRepository.save(user);
         return save;
     }

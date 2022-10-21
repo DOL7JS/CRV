@@ -2,6 +2,9 @@ package cz.upce.nnpro_backend.services;
 
 import cz.upce.nnpro_backend.Entities.*;
 import cz.upce.nnpro_backend.dtos.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +18,14 @@ public class ConversionService {
         userDto.setEmail(user.getEmail());
         userDto.setJobPosition(user.getJobPosition());
         userDto.setRole(user.getRole());
-        BranchOfficeDto branchOfficeDto = new BranchOfficeDto();
-        branchOfficeDto.setId(user.getBranchOffice().getId());
-        branchOfficeDto.setRegion(user.getBranchOffice().getRegion());
-        branchOfficeDto.setDistrict(user.getBranchOffice().getDistrict());
-        userDto.setBranchOfficeDto(branchOfficeDto);
+        if (user.getBranchOffice() != null) {
+            BranchOfficeDto branchOfficeDto = new BranchOfficeDto();
+            branchOfficeDto.setId(user.getBranchOffice().getId());
+            branchOfficeDto.setRegion(user.getBranchOffice().getRegion());
+            branchOfficeDto.setDistrict(user.getBranchOffice().getDistrict());
+            userDto.setBranchOfficeDto(branchOfficeDto);
+        }
+
         return userDto;
     }
 
@@ -52,7 +58,6 @@ public class ConversionService {
 
     public static CarDetailOutDto convertToCarDetailOutDto(Car car) {
         CarDetailOutDto carDetailOutDto = new CarDetailOutDto();
-
         carDetailOutDto.setId(car.getId());
         carDetailOutDto.setVin(car.getVin());
         carDetailOutDto.setSPZ(car.getSPZ());
@@ -80,7 +85,7 @@ public class ConversionService {
             owners.add(ownerDto);
         }
         carDetailOutDto.setOwners(owners);
-        if (car.getBranchOffice().getId() != null) {
+        if (car.getBranchOffice() != null) {
             BranchOfficeDto branchOfficeDto = new BranchOfficeDto();
             branchOfficeDto.setId(car.getBranchOffice().getId());
             branchOfficeDto.setDistrict(car.getBranchOffice().getDistrict());
@@ -133,7 +138,7 @@ public class ConversionService {
         return user;
     }
 
-    public static OwnerDetailOutDto convertToOwnerDetailOutDto(Owner owner) {
+    public static OwnerDetailOutDto convertToOwnerDetailOutDto(Owner owner, Page<Car> carPage) {
         OwnerDetailOutDto ownerDetailOutDto = new OwnerDetailOutDto();
         ownerDetailOutDto.setId(owner.getId());
         ownerDetailOutDto.setFirstName(owner.getFirstName());
@@ -143,23 +148,7 @@ public class ConversionService {
         ownerDetailOutDto.setStreet(owner.getStreet());
         ownerDetailOutDto.setZipCode(owner.getZipCode());
         ownerDetailOutDto.setNumberOfHouse(owner.getNumberOfHouse());
-        List<Car> cars = new ArrayList<>();
-        for (CarOwner carOWner : owner.getCarOwners().stream().toList()) {
-            Car car = new Car();
-            car.setId(carOWner.getCar().getId());
-            car.setVin(carOWner.getCar().getVin());
-            car.setSPZ(carOWner.getCar().getSPZ());
-            car.setColor(carOWner.getCar().getColor());
-            car.setEnginePower(carOWner.getCar().getEnginePower());
-            car.setInDeposit(carOWner.getCar().isInDeposit());
-            car.setManufacturer(carOWner.getCar().getManufacturer());
-            car.setType(carOWner.getCar().getType());
-            car.setEmissionStandard(carOWner.getCar().getEmissionStandard());
-            car.setYearOfCreation(carOWner.getCar().getYearOfCreation());
-            cars.add(car);
-
-        }
-        ownerDetailOutDto.setCars(cars);
+        ownerDetailOutDto.setCars(carPage);
         return ownerDetailOutDto;
     }
 }

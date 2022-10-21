@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CarRepository extends JpaRepository<Car, Long> {
@@ -34,4 +35,8 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     @Modifying
     @Query("update Car c set c.SPZ = null where c = ?1")
     void setSPZNullByCar(Car car);
+
+    Optional<Car> findByVin(String vin);
+
+    Optional<Car> findBySPZ(String spz);
 }

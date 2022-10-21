@@ -4,6 +4,7 @@ import cz.upce.nnpro_backend.Entities.*;
 import cz.upce.nnpro_backend.dtos.*;
 import cz.upce.nnpro_backend.repositories.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.NoSuchElementException;
@@ -17,14 +18,16 @@ public class CarService {
     private final CarOwnerRepository carOwnerRepository;
     private final SPZService spzService;
     private final SPZRepository spzRepository;
+    private final UserRepository userRepository;
 
-    public CarService(CarRepository carRepository, OwnerRepository ownerRepository, BranchOfficeRepository branchOfficeRepository, CarOwnerRepository carOwnerRepository, SPZService spzService, SPZRepository spzRepository) {
+    public CarService(CarRepository carRepository, OwnerRepository ownerRepository, BranchOfficeRepository branchOfficeRepository, CarOwnerRepository carOwnerRepository, SPZService spzService, SPZRepository spzRepository, UserRepository userRepository) {
         this.carRepository = carRepository;
         this.ownerRepository = ownerRepository;
         this.branchOfficeRepository = branchOfficeRepository;
         this.carOwnerRepository = carOwnerRepository;
         this.spzService = spzService;
         this.spzRepository = spzRepository;
+        this.userRepository = userRepository;
     }
 
     public Car addCar(CreateCarDto createCarDto) throws Exception {
@@ -122,10 +125,36 @@ public class CarService {
     }
 
     public CarDetailOutDto getCar(Long carId) {
+        User user = userRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("User not found!"));
+
         Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         CarDetailOutDto carDetailOutDto = ConversionService.convertToCarDetailOutDto(car);
         return carDetailOutDto;
     }
 
 
+    public CarDetailOutDto getCarByVin(String vin) {
+        Car car = carRepository.findByVin(vin).orElseThrow(() -> new NoSuchElementException("Car not found!"));
+        CarDetailOutDto carDetailOutDto = ConversionService.convertToCarDetailOutDto(car);
+        return carDetailOutDto;
+    }
+
+    public CarDetailOutDto getCarBySPZ(String spz) {
+        Car car = carRepository.findBySPZ(spz).orElseThrow(() -> new NoSuchElementException("Car not found!"));
+        CarDetailOutDto carDetailOutDto = ConversionService.convertToCarDetailOutDto(car);
+        return carDetailOutDto;
+    }
+
+    public boolean isCarStolenByVin(String vin) {
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject("http://localhost:8081/getCarByVin/" + vin, String.class);
+        return result != null;
+
+    }
+
+    public boolean isCarStolenBySpz(String spz) {
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject("http://localhost:8081/getCarBySpz/" + spz, String.class);
+        return result != null;
+    }
 }
