@@ -4,6 +4,7 @@ import cz.upce.nnpro_backend.dtos.CreateCarDto;
 import cz.upce.nnpro_backend.dtos.OwnerDto;
 import cz.upce.nnpro_backend.services.CarService;
 import cz.upce.nnpro_backend.services.OwnerService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/owner")
 @CrossOrigin
+@SecurityRequirement(name = "NNPRO_API")
 public class OwnerController {
 
     private final OwnerService ownerService;

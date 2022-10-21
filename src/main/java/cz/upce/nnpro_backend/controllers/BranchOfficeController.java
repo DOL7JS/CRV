@@ -4,6 +4,7 @@ package cz.upce.nnpro_backend.controllers;
 import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeIdUserIdDto;
 import cz.upce.nnpro_backend.services.BranchOfficeService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/branchOffice")
 @CrossOrigin
+@SecurityRequirement(name = "NNPRO_API")
 public class BranchOfficeController {
     private final BranchOfficeService branchOfficeService;
 

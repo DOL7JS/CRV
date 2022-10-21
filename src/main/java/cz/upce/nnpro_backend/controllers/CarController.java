@@ -6,6 +6,7 @@ import cz.upce.nnpro_backend.dtos.CarOfficeDto;
 import cz.upce.nnpro_backend.dtos.CreateCarDto;
 import cz.upce.nnpro_backend.services.CarService;
 import cz.upce.nnpro_backend.services.SPZService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/car")
 @CrossOrigin
+@SecurityRequirement(name = "NNPRO_API")
 public class CarController {
     private final CarService carService;
 

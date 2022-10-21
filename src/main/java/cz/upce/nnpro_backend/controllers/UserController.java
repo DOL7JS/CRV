@@ -9,6 +9,7 @@ import cz.upce.nnpro_backend.dtos.ChangePasswordDto;
 import cz.upce.nnpro_backend.dtos.UserDto;
 import cz.upce.nnpro_backend.repositories.UserRepository;
 import cz.upce.nnpro_backend.services.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +26,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/user")
 @CrossOrigin
+@SecurityRequirement(name = "NNPRO_API")
 public class UserController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
