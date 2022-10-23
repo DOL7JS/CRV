@@ -1,28 +1,28 @@
 package cz.upce.nnpro_backend.dtos;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 public class OwnerDto {
-    Long id;
+    @NotBlank(message = "First name is mandatory.")
     String firstName;
+    @NotBlank(message = "Last name is mandatory.")
     String lastName;
+    @NotBlank(message = "Birth date is mandatory.")
     LocalDate birthDate;
+    @NotBlank(message = "City is mandatory.")
     String city;
+    @NotBlank(message = "Street is mandatory.")
     String street;
+    @NotBlank(message = "Zip code is mandatory.")
     int zipCode;
+    @NotBlank(message = "Number of house is mandatory.")
     int numberOfHouse;
 
     public OwnerDto() {
 
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;

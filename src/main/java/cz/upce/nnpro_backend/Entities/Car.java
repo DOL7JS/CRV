@@ -1,8 +1,11 @@
 package cz.upce.nnpro_backend.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -11,18 +14,27 @@ public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "Manufacturer is mandatory")
     private String manufacturer;
+    @NotBlank(message = "Type is mandatory")
     private String type;
+    @NotBlank(message = "SPZ is mandatory.")
+    @Length(min = 8, max = 8, message = "SPZ has to have 8 symbols XXX XXXX")
     private String SPZ;
+    @NotBlank(message = "Color is mandatory.")
     private String color;
+    @NotBlank(message = "Engine power is mandatory.")
     private double enginePower;
+    @NotBlank(message = "Emission standard is mandatory.")
     private double emissionStandard;
+    @NotBlank(message = "Torque is mandatory.")
     private double torque;
 
     private boolean isInDeposit = false;
 
-
+    @NotBlank(message = "Year of creation is mandatory.")
     private LocalDate yearOfCreation;
+    @NotBlank(message = "Vin is mandatory.")
     private String vin;
     @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE)
     private Set<CarOwner> carOwners;

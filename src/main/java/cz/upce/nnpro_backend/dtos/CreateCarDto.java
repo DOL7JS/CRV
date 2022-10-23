@@ -1,19 +1,26 @@
 package cz.upce.nnpro_backend.dtos;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.Date;
 
 public class CreateCarDto {
-
+    @NotBlank(message = "Vin is mandatory.")
     String vin;
-    String spz;
+    @NotBlank(message = "Color is mandatory.")
     String color;
+    @NotBlank(message = "Manufacturer is mandatory.")
     String manufacturer;
+    @NotBlank(message = "Type is mandatory.")
     String type;
+    @NotBlank(message = "Year of creation is mandatory.")
     LocalDate yearOfCreation;
-    boolean isInDeposit;
+    boolean isInDeposit = false;
+    @NotBlank(message = "Engine power is mandatory.")
     private double enginePower;
+    @NotBlank(message = "Emission standard is mandatory.")
     private double emissionStandard;
+    @NotBlank(message = "Torque is mandatory.")
     private double torque;
 
 
@@ -25,13 +32,6 @@ public class CreateCarDto {
         this.vin = vin;
     }
 
-    public String getSpz() {
-        return spz;
-    }
-
-    public void setSpz(String spz) {
-        this.spz = spz;
-    }
 
     public String getColor() {
         return color;

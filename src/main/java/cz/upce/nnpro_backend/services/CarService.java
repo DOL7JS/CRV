@@ -34,8 +34,7 @@ public class CarService {
         if (carRepository.existsByVin(createCarDto.getVin())) {
             throw new IllegalArgumentException("The car's vin already exists.");
         }
-        createCarDto.setSpz(spzService.generateSPZ().getSPZ());
-        Car car = ConversionService.convertToCar(createCarDto);
+        Car car = ConversionService.convertToCar(createCarDto, spzService.generateSPZ().getSPZ());
         Car save = carRepository.save(car);
         return save;
 
@@ -44,7 +43,7 @@ public class CarService {
     public Owner changeOwner(Long carId, Long idOwner) {
         Owner owner = ownerRepository.findById(idOwner).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
         Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
-        CarOwner carOwnerOld = carOwnerRepository.findByCarIdAndOwnerId(carId, idOwner);
+        CarOwner carOwnerOld = carOwnerRepository.findByCarIdAndEndOfSignUpIsNull(carId);
         carOwnerOld.setEndOfSignUp(LocalDate.now());
         carOwnerRepository.save(carOwnerOld);
         CarOwner carOwnerNew = new CarOwner();
@@ -98,7 +97,7 @@ public class CarService {
     public Owner signInExistingCar(CarIdOwnerIdDto carIdOwnerIdDto) {
         Car car = carRepository.findById(carIdOwnerIdDto.getCarId()).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         if (carOwnerRepository.existsByCarAndEndOfSignUpIsNull(car)) {//je prihlasene?
-            throw new IllegalArgumentException("The car's is still sign up.");
+            throw new IllegalArgumentException("The car is still sign up.");
         }
         Owner owner = ownerRepository.findById(carIdOwnerIdDto.getOwnerId()).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
         CarOwner carOwner = new CarOwner();
@@ -125,8 +124,6 @@ public class CarService {
     }
 
     public CarDetailOutDto getCar(Long carId) {
-        User user = userRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("User not found!"));
-
         Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         CarDetailOutDto carDetailOutDto = ConversionService.convertToCarDetailOutDto(car);
         return carDetailOutDto;

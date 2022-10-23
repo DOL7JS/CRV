@@ -23,7 +23,11 @@ public class SPZService {
             spzRepository.delete(spz);
         } else {
             Car car = carRepository.findFirstByOrderBySPZAsc();
-            spz = new SPZ(addValueOfSPZ(car.getSPZ()));
+            if(car.getSPZ()==null){
+                spz = new SPZ("1E1 1111");
+            }else{
+                spz = new SPZ(addValueOfSPZ(car.getSPZ()));
+            }
         }
         if (!spzRepository.existsBySPZ(addValueOfSPZ(spz.getSPZ()))) {
             spzRepository.save(new SPZ(addValueOfSPZ(spz.getSPZ())));

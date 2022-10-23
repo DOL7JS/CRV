@@ -29,10 +29,10 @@ public class ConversionService {
         return userDto;
     }
 
-    public static Car convertToCar(CreateCarDto createCarDto) {
+    public static Car convertToCar(CreateCarDto createCarDto,String spz) {
         Car newCar = new Car();
         newCar.setVin(createCarDto.getVin());
-        newCar.setSPZ(createCarDto.getSpz());
+        newCar.setSPZ(spz);
         newCar.setColor(createCarDto.getColor());
         newCar.setEnginePower(createCarDto.getEnginePower());
         newCar.setInDeposit(createCarDto.isInDeposit());
@@ -45,7 +45,6 @@ public class ConversionService {
 
     public static Car convertToCar(CreateCarDto createCarDto, Car newCar) {
         newCar.setVin(createCarDto.getVin());
-        newCar.setSPZ(createCarDto.getSpz());
         newCar.setColor(createCarDto.getColor());
         newCar.setEnginePower(createCarDto.getEnginePower());
         newCar.setInDeposit(createCarDto.isInDeposit());

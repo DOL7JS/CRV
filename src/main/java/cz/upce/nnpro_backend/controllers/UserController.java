@@ -1,15 +1,23 @@
 package cz.upce.nnpro_backend.controllers;
 
 
+import cz.upce.nnpro_backend.Entities.Role;
 import cz.upce.nnpro_backend.Entities.User;
 import cz.upce.nnpro_backend.config.JwtRequest;
 import cz.upce.nnpro_backend.config.JwtResponse;
 import cz.upce.nnpro_backend.config.JwtTokenUtil;
 import cz.upce.nnpro_backend.dtos.ChangePasswordDto;
+import cz.upce.nnpro_backend.dtos.UserDetailOutDto;
 import cz.upce.nnpro_backend.dtos.UserDto;
 import cz.upce.nnpro_backend.repositories.UserRepository;
 import cz.upce.nnpro_backend.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,12 +29,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
 @RequestMapping("/user")
 @CrossOrigin
-@SecurityRequirement(name = "NNPRO_API")
+@Tag(name = "User controller")
 public class UserController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
@@ -41,39 +50,111 @@ public class UserController {
         this.jwtTokenUtil = jwtTokenUtil;
         this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
     }
+
+    @Operation(summary = "Get user info")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User returned",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDetailOutDto.class))}),
+            @ApiResponse(responseCode = "401", description = "unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "User not found",
+                    content = @Content),})
+    @SecurityRequirement(name = "NNPRO_API")
     @GetMapping("/getUser/{userId}")
     public ResponseEntity<?> getUser(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getUser(userId));
     }
+
+    @Operation(summary = "Get all roles")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Roles returned (List<Role>)",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Role.class))}),
+            @ApiResponse(responseCode = "401", description = "unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "User not found",
+                    content = @Content),})
+    @SecurityRequirement(name = "NNPRO_API")
     @GetMapping("/getAllRoles")
     public ResponseEntity<?> getAllRoles() {
         return ResponseEntity.ok(userService.getAllRoles());
     }
 
+
+    @Operation(summary = "Add user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User returned",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class))}),
+            @ApiResponse(responseCode = "401", description = "unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "User not found",
+                    content = @Content),})
+    @SecurityRequirement(name = "NNPRO_API")
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PostMapping("/addUser")
     public ResponseEntity<?> addUser(@RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.addUser(userDto));
     }
 
+
+    @Operation(summary = "Remove user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User deleted and returned",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class))}),
+            @ApiResponse(responseCode = "401", description = "unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "User not found",
+                    content = @Content),})
+    @SecurityRequirement(name = "NNPRO_API")
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @DeleteMapping("/removeUser/{userId}")
     public ResponseEntity<?> removeOwner(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.removeUser(userId));
     }
 
+    @Operation(summary = "Edit user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User edited and returned",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class))}),
+            @ApiResponse(responseCode = "401", description = "unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "User not found",
+                    content = @Content),})
+    @SecurityRequirement(name = "NNPRO_API")
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/editUser/{userId}")
     public ResponseEntity<?> editUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.editUser(userId, userDto));
     }
 
+    @Operation(summary = "Change user password ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password changed and user returned",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class))}),
+            @ApiResponse(responseCode = "401", description = "unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "User not found",
+                    content = @Content),})
+    @SecurityRequirement(name = "NNPRO_API")
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/changeUserPassword/{userId}")
     public ResponseEntity<?> changeUserPassword(@PathVariable Long userId, @RequestBody ChangePasswordDto changePasswordDto) {
         return ResponseEntity.ok(userService.changePassword(userId, changePasswordDto));
     }
 
+    @Operation(summary = "Login user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User logged in and jwt token returned",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = JwtResponse.class))}),
+
+            @ApiResponse(responseCode = "500", description = "User not found",
+                    content = @Content),})
     @PostMapping(value = "/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
             throws Exception {

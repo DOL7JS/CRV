@@ -8,6 +8,7 @@ import cz.upce.nnpro_backend.dtos.UserDetailOutDto;
 import cz.upce.nnpro_backend.dtos.UserDto;
 import cz.upce.nnpro_backend.repositories.RoleRepository;
 import cz.upce.nnpro_backend.repositories.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +21,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final WebSecurityConfig webSecurityConfig;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, WebSecurityConfig webSecurityConfig) {
+    public UserService(UserRepository userRepository,
+                       RoleRepository roleRepository,
+                       WebSecurityConfig webSecurityConfig
+    ) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.webSecurityConfig = webSecurityConfig;
@@ -57,12 +62,13 @@ public class UserService {
 
     public User changePassword(Long userId, ChangePasswordDto changePasswordDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
-        if (user.getPassword().equals(changePasswordDto.getOldPassword())) {
-            user.setPassword(changePasswordDto.getNewPassword());
+        if (bCryptPasswordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
+            user.setPassword(bCryptPasswordEncoder.encode(changePasswordDto.getNewPassword()));
             User save = userRepository.save(user);
             return save;
         }
-        return user;
+        throw new IllegalArgumentException("Old password doen't match!");
+
     }
 
     public UserDetailOutDto getUser(Long userId) {

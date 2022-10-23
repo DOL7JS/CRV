@@ -3,6 +3,7 @@ package cz.upce.nnpro_backend.Entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class User {
@@ -10,9 +11,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    @NotBlank(message = "Username is mandatory.")
     private String username;
     private String email;
+    @NotBlank(message = "Password is mandatory.")
     private String password;
     private String jobPosition;
     @ManyToOne

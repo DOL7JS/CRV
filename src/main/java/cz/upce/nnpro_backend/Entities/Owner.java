@@ -3,6 +3,7 @@ package cz.upce.nnpro_backend.Entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,13 +13,19 @@ public class Owner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "First name is mandatory.")
     private String firstName;
+    @NotBlank(message = "Last name is mandatory.")
     private String lastName;
+    @NotBlank(message = "Birth date is mandatory.")
     private LocalDate birthDate;
+    @NotBlank(message = "City is mandatory.")
     private String city;
+    @NotBlank(message = "Street is mandatory.")
     private String street;
+    @NotBlank(message = "Number of house is mandatory.")
     private int numberOfHouse;
-    @JsonIgnore
+    @NotBlank(message = "Zip code is mandatory.")
     private int zipCode;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)

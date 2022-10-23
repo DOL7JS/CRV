@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.Entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class Role {
@@ -9,6 +10,7 @@ public class Role {
     @Column(name = "id", nullable = false)
     private Long id;
     private String description;
+    @NotBlank(message = "Role name is mandatory.")
     private String name;
 
     public String getName() {

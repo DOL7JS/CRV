@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.Entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Entity
@@ -9,8 +10,11 @@ public class BranchOffice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    @NotBlank(message = "District is mandatory")
     private String district;
+    @NotBlank(message = "Region is mandatory")
     private String region;
+    @NotBlank(message = "City is mandatory")
     private String city;
 
     @OneToMany(mappedBy = "branchOffice", cascade = CascadeType.REMOVE)

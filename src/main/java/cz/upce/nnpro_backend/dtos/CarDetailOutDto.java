@@ -1,8 +1,6 @@
 package cz.upce.nnpro_backend.dtos;
 
-import cz.upce.nnpro_backend.Entities.Owner;
-import org.springframework.data.domain.Page;
-
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.List;
 

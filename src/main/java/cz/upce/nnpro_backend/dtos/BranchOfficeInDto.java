@@ -2,8 +2,7 @@ package cz.upce.nnpro_backend.dtos;
 
 import javax.validation.constraints.NotBlank;
 
-public class BranchOfficeDto {
-    private Long id;
+public class BranchOfficeInDto {
     @NotBlank(message = "Region is mandatory.")
     private String region;
     @NotBlank(message = "District is mandatory.")
@@ -17,14 +16,6 @@ public class BranchOfficeDto {
 
     public void setCity(String city) {
         this.city = city;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getRegion() {

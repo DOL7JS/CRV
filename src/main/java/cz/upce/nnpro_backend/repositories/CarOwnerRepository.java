@@ -15,6 +15,8 @@ public interface CarOwnerRepository extends JpaRepository<CarOwner, Long> {
 
     CarOwner findByCarIdAndOwnerId(Long carId, Long ownerId);
 
+    CarOwner findByCarIdAndEndOfSignUpIsNull(Long carId);
+
     boolean existsByCarAndEndOfSignUpIsNull(Car car);
 
     @Query("select co.car from CarOwner co, Car c where co.car = c AND co.owner = ?1")

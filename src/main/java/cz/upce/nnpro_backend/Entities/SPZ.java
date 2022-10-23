@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.Entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class SPZ {
@@ -8,6 +9,7 @@ public class SPZ {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    @NotBlank(message = "Spz is mandatory.")
     private String SPZ;
 
     public SPZ(String SPZ) {
