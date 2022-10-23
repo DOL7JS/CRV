@@ -5,5 +5,4 @@ Swagger documentation: http://localhost:8080/swagger-ui/index.html
 
 ### TODO
 - Import/export not ready.
-- Change password not ready.
 - Comments to swagger will be added
