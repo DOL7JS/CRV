@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.repositories;
 
 import cz.upce.nnpro_backend.Entities.BranchOffice;
+import cz.upce.nnpro_backend.Entities.Role;
 import cz.upce.nnpro_backend.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,4 +22,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByUsername(String username);
 
+    boolean existsByRoleName(String name);
 }

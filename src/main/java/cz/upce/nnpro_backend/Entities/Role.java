@@ -13,6 +13,14 @@ public class Role {
     @NotBlank(message = "Role name is mandatory.")
     private String name;
 
+    public Role() {
+    }
+
+    public Role(String name, String description) {
+        this.description = description;
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
