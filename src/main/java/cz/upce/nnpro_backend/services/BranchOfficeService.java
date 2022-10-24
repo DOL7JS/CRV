@@ -5,6 +5,7 @@ import cz.upce.nnpro_backend.Entities.BranchOffice;
 import cz.upce.nnpro_backend.Entities.Car;
 import cz.upce.nnpro_backend.Entities.Owner;
 import cz.upce.nnpro_backend.Entities.User;
+import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeIdUserIdDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeInDto;
 import cz.upce.nnpro_backend.dtos.UserDetailOutDto;
@@ -95,5 +96,10 @@ public class BranchOfficeService {
         owners.forEach(owner -> owner.setId(null));
         carRepository.saveAll(cars);
         ownerRepository.saveAll(owners);
+    }
+
+    public List<BranchOffice> getAllOffices() {
+        List<BranchOffice> branchOffices = branchOfficeRepository.findAll();
+        return branchOffices;
     }
 }

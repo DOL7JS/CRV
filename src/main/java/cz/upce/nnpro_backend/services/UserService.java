@@ -11,6 +11,7 @@ import cz.upce.nnpro_backend.repositories.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -80,5 +81,36 @@ public class UserService {
     public List<Role> getAllRoles() {
         List<Role> all = roleRepository.findAll();
         return all;
+    }
+
+    public List<User> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users;
+    }
+
+    @PostConstruct
+    public void init() {
+        if (roleRepository.count() != 3) {
+            roleRepository.deleteAll();
+            roleRepository.save(new Role("ROLE_Kraj", "Krajský pracovník CRV"));
+            roleRepository.save(new Role("ROLE_Okres", "Okresní pracovník CRV"));
+            roleRepository.save(new Role("ROLE_Admin", "Administrátor"));
+        }
+        if (!userRepository.existsByRoleName("ROLE_Admin")) {
+            User userAdmin = new User();
+            String username = "Admin";
+            String usernameNew = username;
+            int i = 1;
+            while (userRepository.existsByUsername(usernameNew)) {
+                usernameNew = username + i++;
+            }
+            userAdmin.setUsername(usernameNew);
+            userAdmin.setPassword("$2a$10$MQuBpeE5CbgERbKN7ecd1ea/Y3XwpfWVOqKFErLjbhT382.Rgviy.");
+            Role role_admin = roleRepository.findByName("ROLE_Admin");
+            userAdmin.setRole(role_admin);
+            userRepository.save(userAdmin);
+
+        }
+        System.out.println("TESST");
     }
 }

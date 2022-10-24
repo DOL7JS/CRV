@@ -1,7 +1,6 @@
 package cz.upce.nnpro_backend.services;
 
 import cz.upce.nnpro_backend.Entities.Car;
-import cz.upce.nnpro_backend.Entities.CarOwner;
 import cz.upce.nnpro_backend.Entities.Owner;
 import cz.upce.nnpro_backend.dtos.OwnerDetailOutDto;
 import cz.upce.nnpro_backend.dtos.OwnerDto;
@@ -12,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -51,5 +51,10 @@ public class OwnerService {
         Page<Car> carPage = carOwnerRepository.findCarOwnerByOwner(owner, pr);
         OwnerDetailOutDto ownerDetailOutDto = ConversionService.convertToOwnerDetailOutDto(owner, carPage);
         return ownerDetailOutDto;
+    }
+
+    public List<Owner> getAllOwners() {
+        List<Owner> ownerList = ownerRepository.findAll();
+        return ownerList;
     }
 }

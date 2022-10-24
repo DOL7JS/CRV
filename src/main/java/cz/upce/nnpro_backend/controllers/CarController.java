@@ -52,6 +52,21 @@ public class CarController {
         return ResponseEntity.ok(carService.getCar(carId));
     }
 
+    @Operation(summary = "Get all cars")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cars returned",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CarDetailOutDto.class))}),
+            @ApiResponse(responseCode = "401", description = "unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Car not found",
+                    content = @Content),})
+    @GetMapping("/getAllCar")
+    public ResponseEntity<?> getAllCar() {
+        return ResponseEntity.ok(carService.getAllCars());
+    }
+
+
     @Operation(summary = "Get car info by vin", description = "It's prepared for STK app")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Car returned",

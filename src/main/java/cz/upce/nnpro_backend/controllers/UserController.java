@@ -66,6 +66,19 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(userId));
     }
 
+    @Operation(summary = "Get all users")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User returned",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDetailOutDto.class))}),
+            @ApiResponse(responseCode = "401", description = "unauthorized",
+                    content = @Content)})
+    @SecurityRequirement(name = "NNPRO_API")
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
     @Operation(summary = "Get all roles")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Roles returned (List<Role>)",

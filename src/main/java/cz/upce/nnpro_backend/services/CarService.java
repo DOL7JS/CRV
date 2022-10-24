@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -153,5 +154,10 @@ public class CarService {
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate.getForObject("http://localhost:8081/getCarBySpz/" + spz, String.class);
         return result != null;
+    }
+
+    public List<Car> getAllCars() {
+        List<Car> cars = carRepository.findAll();
+        return cars;
     }
 }

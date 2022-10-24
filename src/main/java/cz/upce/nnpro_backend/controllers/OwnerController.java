@@ -1,11 +1,8 @@
 package cz.upce.nnpro_backend.controllers;
 
 import cz.upce.nnpro_backend.Entities.Owner;
-import cz.upce.nnpro_backend.dtos.CreateCarDto;
 import cz.upce.nnpro_backend.dtos.OwnerDetailOutDto;
 import cz.upce.nnpro_backend.dtos.OwnerDto;
-import cz.upce.nnpro_backend.dtos.UserDetailOutDto;
-import cz.upce.nnpro_backend.services.CarService;
 import cz.upce.nnpro_backend.services.OwnerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,6 +44,20 @@ public class OwnerController {
                                       @RequestParam(defaultValue = "car.SPZ") String orderBy,
                                       @RequestParam(defaultValue = "ASC") String orderDirection) {
         return ResponseEntity.ok(ownerService.getOwner(idOwner, page, pageSize, orderBy, orderDirection));
+    }
+
+    @Operation(summary = "Get all owners")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Owners returned",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = OwnerDetailOutDto.class))}),
+            @ApiResponse(responseCode = "401", description = "unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Owner not found",
+                    content = @Content),})
+    @GetMapping("/getAllOwner")
+    public ResponseEntity<?> getOwner() {
+        return ResponseEntity.ok(ownerService.getAllOwners());
     }
 
     @Operation(summary = "Add owner")
