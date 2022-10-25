@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -156,8 +157,12 @@ public class CarService {
         return result != null;
     }
 
-    public List<Car> getAllCars() {
+    public List<CarDetailOutDto> getAllCars() {
         List<Car> cars = carRepository.findAll();
-        return cars;
+        List<CarDetailOutDto> carDetailOutDtos = new ArrayList<>();
+        for (Car car : cars) {
+            carDetailOutDtos.add(ConversionService.convertToCarDetailOutDto(car));
+        }
+        return carDetailOutDtos;
     }
 }

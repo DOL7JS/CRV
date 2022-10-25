@@ -51,6 +51,7 @@ public class BranchOfficeController {
     public ResponseEntity<?> getOffice(@PathVariable Long officeId) {
         return ResponseEntity.ok(branchOfficeService.getOffice(officeId));
     }
+
     @Operation(summary = "Get all branch offices ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Branch offices returned",

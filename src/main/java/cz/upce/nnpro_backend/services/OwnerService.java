@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -45,16 +46,21 @@ public class OwnerService {
     }
 
 
-    public OwnerDetailOutDto getOwner(Long idOwner, Integer page, Integer pageSize, String orderBy, String orderDirection) {
+    public OwnerDetailOutDto getOwner(Long idOwner) {
         Owner owner = ownerRepository.findById(idOwner).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
-        PageRequest pr = PageRequest.of(page, pageSize, orderDirection.equals("DESC") ? Sort.by(orderBy).descending() : Sort.by(orderBy).ascending());
-        Page<Car> carPage = carOwnerRepository.findCarOwnerByOwner(owner, pr);
-        OwnerDetailOutDto ownerDetailOutDto = ConversionService.convertToOwnerDetailOutDto(owner, carPage);
-        return ownerDetailOutDto;
+        OwnerDetailOutDto ownerDetailOutDto1 = ConversionService.convertToOwnerDetailOutDto(owner);
+//        PageRequest pr = PageRequest.of(page, pageSize, orderDirection.equals("DESC") ? Sort.by(orderBy).descending() : Sort.by(orderBy).ascending());
+//        Page<Car> carPage = carOwnerRepository.findCarOwnerByOwner(owner, pr);
+//        OwnerDetailOutDto ownerDetailOutDto = ConversionService.convertToOwnerDetailOutDto(owner, carPage);
+        return ownerDetailOutDto1;
     }
 
-    public List<Owner> getAllOwners() {
+    public List<OwnerDetailOutDto> getAllOwners() {
         List<Owner> ownerList = ownerRepository.findAll();
-        return ownerList;
+        List<OwnerDetailOutDto> ownerDetailOutDtos = new ArrayList<>();
+        for(Owner owner:ownerList){
+            ownerDetailOutDtos.add(ConversionService.convertToOwnerDetailOutDto(owner));
+        }
+        return ownerDetailOutDtos;
     }
 }

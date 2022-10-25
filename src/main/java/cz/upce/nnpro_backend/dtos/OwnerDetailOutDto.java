@@ -15,13 +15,13 @@ public class OwnerDetailOutDto {
     String street;
     int zipCode;
     int numberOfHouse;
-    Page<Car> cars;
+    List<CarInOwnerDto> cars;
 
-    public Page<Car> getCars() {
+    public List<CarInOwnerDto> getCars() {
         return cars;
     }
 
-    public void setCars(Page<Car> cars) {
+    public void setCars(List<CarInOwnerDto> cars) {
         this.cars = cars;
     }
 

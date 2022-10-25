@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -83,9 +84,13 @@ public class UserService {
         return all;
     }
 
-    public List<User> getAllUsers() {
+    public List<UserDetailOutDto> getAllUsers() {
         List<User> users = userRepository.findAll();
-        return users;
+        List<UserDetailOutDto> userDetailOutDtos = new ArrayList<>();
+        for (User user : users) {
+            userDetailOutDtos.add(ConversionService.convertToUserDetailOutDto(user));
+        }
+        return userDetailOutDtos;
     }
 
     @PostConstruct

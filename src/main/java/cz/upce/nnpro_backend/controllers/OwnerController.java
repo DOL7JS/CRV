@@ -38,12 +38,8 @@ public class OwnerController {
             @ApiResponse(responseCode = "500", description = "Owner not found",
                     content = @Content),})
     @GetMapping("/getOwner/{idOwner}")
-    public ResponseEntity<?> getOwner(@PathVariable Long idOwner,
-                                      @RequestParam(defaultValue = "0") Integer page,
-                                      @RequestParam(defaultValue = "5") Integer pageSize,
-                                      @RequestParam(defaultValue = "car.SPZ") String orderBy,
-                                      @RequestParam(defaultValue = "ASC") String orderDirection) {
-        return ResponseEntity.ok(ownerService.getOwner(idOwner, page, pageSize, orderBy, orderDirection));
+    public ResponseEntity<?> getOwner(@PathVariable Long idOwner) {
+        return ResponseEntity.ok(ownerService.getOwner(idOwner));
     }
 
     @Operation(summary = "Get all owners")
