@@ -7,6 +7,7 @@ import cz.upce.nnpro_backend.config.JwtRequest;
 import cz.upce.nnpro_backend.config.JwtResponse;
 import cz.upce.nnpro_backend.config.JwtTokenUtil;
 import cz.upce.nnpro_backend.dtos.ChangePasswordDto;
+import cz.upce.nnpro_backend.dtos.ErrorDto;
 import cz.upce.nnpro_backend.dtos.UserDetailOutDto;
 import cz.upce.nnpro_backend.dtos.UserDto;
 import cz.upce.nnpro_backend.repositories.UserRepository;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,8 +29,10 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 
@@ -107,7 +111,7 @@ public class UserController {
     @SecurityRequirement(name = "NNPRO_API")
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PostMapping("/addUser")
-    public ResponseEntity<?> addUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> addUser(@RequestBody @Valid UserDto userDto) {
         return ResponseEntity.ok(userService.addUser(userDto));
     }
 
@@ -140,7 +144,7 @@ public class UserController {
     @SecurityRequirement(name = "NNPRO_API")
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/editUser/{userId}")
-    public ResponseEntity<?> editUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
+    public ResponseEntity<?> editUser(@PathVariable Long userId, @RequestBody @Valid UserDto userDto) {
         return ResponseEntity.ok(userService.editUser(userId, userDto));
     }
 
@@ -156,7 +160,7 @@ public class UserController {
     @SecurityRequirement(name = "NNPRO_API")
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/changeUserPassword/{userId}")
-    public ResponseEntity<?> changeUserPassword(@PathVariable Long userId, @RequestBody ChangePasswordDto changePasswordDto) {
+    public ResponseEntity<?> changeUserPassword(@PathVariable Long userId, @RequestBody @Valid ChangePasswordDto changePasswordDto) {
         return ResponseEntity.ok(userService.changePassword(userId, changePasswordDto));
     }
 
@@ -195,4 +199,15 @@ public class UserController {
         }
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorDto handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        ErrorDto errorDto = new ErrorDto();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String errorMessage = error.getDefaultMessage();
+            errorDto.addError(errorMessage);
+        });
+        return errorDto;
+    }
 }

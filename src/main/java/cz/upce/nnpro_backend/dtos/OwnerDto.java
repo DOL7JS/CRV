@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.dtos;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class OwnerDto {
@@ -8,15 +9,15 @@ public class OwnerDto {
     String firstName;
     @NotBlank(message = "Last name is mandatory.")
     String lastName;
-    @NotBlank(message = "Birth date is mandatory.")
+    @NotNull(message = "Birth date is mandatory.")
     LocalDate birthDate;
     @NotBlank(message = "City is mandatory.")
     String city;
     @NotBlank(message = "Street is mandatory.")
     String street;
-    @NotBlank(message = "Zip code is mandatory.")
+    @NotNull(message = "Zip code is mandatory.")
     int zipCode;
-    @NotBlank(message = "Number of house is mandatory.")
+    @NotNull(message = "Number of house is mandatory.")
     int numberOfHouse;
 
     public OwnerDto() {

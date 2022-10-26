@@ -72,7 +72,7 @@ public class BranchOfficeController {
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content)})
     @PostMapping("/addOffice")
-    public ResponseEntity<?> addOffice(@RequestBody BranchOfficeInDto officeDto) {
+    public ResponseEntity<?> addOffice(@RequestBody @Valid BranchOfficeInDto officeDto) {
         return ResponseEntity.ok(branchOfficeService.addOffice(officeDto));
     }
 
@@ -87,7 +87,7 @@ public class BranchOfficeController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PostMapping("/addUserToOffice")
-    public ResponseEntity<?> addUserToOffice(@RequestBody BranchOfficeIdUserIdDto branchOfficeIdUserIdDto) {
+    public ResponseEntity<?> addUserToOffice(@RequestBody @Valid BranchOfficeIdUserIdDto branchOfficeIdUserIdDto) {
         return ResponseEntity.ok(branchOfficeService.addUserToOffice(branchOfficeIdUserIdDto));
     }
 
@@ -117,7 +117,7 @@ public class BranchOfficeController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/editOffice/{officeId}")
-    public ResponseEntity<?> editOffice(@PathVariable Long officeId, @RequestBody BranchOfficeInDto officeDto) {
+    public ResponseEntity<?> editOffice(@PathVariable Long officeId, @RequestBody @Valid BranchOfficeInDto officeDto) {
         return ResponseEntity.ok(branchOfficeService.editOffice(officeId, officeDto));
     }
 
@@ -136,14 +136,14 @@ public class BranchOfficeController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
+    public ErrorDto handleValidationExceptions(
             MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
+        ErrorDto errorDto = new ErrorDto();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+            errorDto.addError(errorMessage);
         });
-        return errors;
+        return errorDto;
     }
+
 }

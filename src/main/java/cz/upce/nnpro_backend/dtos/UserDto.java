@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.dtos;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class UserDto {
     @NotBlank(message = "Username is mandatory.")
@@ -9,7 +10,7 @@ public class UserDto {
     @NotBlank(message = "Password is mandatory.")
     private String password;
     private String jobPosition;
-    @NotBlank(message = "Role id is mandatory.")
+    @NotNull(message = "Role id is mandatory.")
     private Long role;
 
 

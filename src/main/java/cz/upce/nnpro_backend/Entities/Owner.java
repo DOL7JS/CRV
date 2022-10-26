@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,15 +18,15 @@ public class Owner {
     private String firstName;
     @NotBlank(message = "Last name is mandatory.")
     private String lastName;
-    @NotBlank(message = "Birth date is mandatory.")
+    @NotNull(message = "Birth date is mandatory.")
     private LocalDate birthDate;
     @NotBlank(message = "City is mandatory.")
     private String city;
     @NotBlank(message = "Street is mandatory.")
     private String street;
-    @NotBlank(message = "Number of house is mandatory.")
+    @NotNull(message = "Number of house is mandatory.")
     private int numberOfHouse;
-    @NotBlank(message = "Zip code is mandatory.")
+    @NotNull(message = "Zip code is mandatory.")
     private int zipCode;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)

@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Set;
@@ -23,16 +24,16 @@ public class Car {
     private String SPZ;
     @NotBlank(message = "Color is mandatory.")
     private String color;
-    @NotBlank(message = "Engine power is mandatory.")
+    @NotNull(message = "Engine power is mandatory.")
     private double enginePower;
-    @NotBlank(message = "Emission standard is mandatory.")
+    @NotNull(message = "Emission standard is mandatory.")
     private double emissionStandard;
-    @NotBlank(message = "Torque is mandatory.")
+    @NotNull(message = "Torque is mandatory.")
     private double torque;
 
     private boolean isInDeposit = false;
 
-    @NotBlank(message = "Year of creation is mandatory.")
+    @NotNull(message = "Year of creation is mandatory.")
     private LocalDate yearOfCreation;
     @NotBlank(message = "Vin is mandatory.")
     private String vin;

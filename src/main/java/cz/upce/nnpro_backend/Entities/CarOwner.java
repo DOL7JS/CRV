@@ -3,7 +3,7 @@ package cz.upce.nnpro_backend.Entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
@@ -22,7 +22,7 @@ public class CarOwner {
     @JoinColumn(name = "owner_id")
     @JsonIgnore
     private Owner owner;
-    @NotBlank(message = "Start of sign up is mandatory.")
+    @NotNull(message = "Start of sign up is mandatory.")
     private LocalDate startOfSignUp;
     private LocalDate endOfSignUp;
 

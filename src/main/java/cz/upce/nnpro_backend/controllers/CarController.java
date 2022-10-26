@@ -3,10 +3,7 @@ package cz.upce.nnpro_backend.controllers;
 
 import cz.upce.nnpro_backend.Entities.Car;
 import cz.upce.nnpro_backend.Entities.Owner;
-import cz.upce.nnpro_backend.dtos.CarDetailOutDto;
-import cz.upce.nnpro_backend.dtos.CarIdOwnerIdDto;
-import cz.upce.nnpro_backend.dtos.CarOfficeDto;
-import cz.upce.nnpro_backend.dtos.CreateCarDto;
+import cz.upce.nnpro_backend.dtos.*;
 import cz.upce.nnpro_backend.services.CarService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,9 +14,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/car")
@@ -130,7 +136,7 @@ public class CarController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PostMapping("/addCar")
-    public ResponseEntity<?> addCar(@RequestBody CreateCarDto createCarDto) throws Exception {
+    public ResponseEntity<?> addCar(@RequestBody @Valid CreateCarDto createCarDto) throws Exception {
         return ResponseEntity.ok(carService.addCar(createCarDto));
     }
 
@@ -145,7 +151,7 @@ public class CarController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PostMapping("/signInCar/{ownerId}")
-    public ResponseEntity<?> signInCar(@RequestBody CreateCarDto createCarDto, @PathVariable Long ownerId) throws Exception {
+    public ResponseEntity<?> signInCar(@RequestBody @Valid CreateCarDto createCarDto, @PathVariable Long ownerId) throws Exception {
         return ResponseEntity.ok(carService.signInCar(createCarDto, ownerId));
     }
 
@@ -160,7 +166,7 @@ public class CarController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PostMapping("/signInCar/")
-    public ResponseEntity<?> signInExistingCar(@RequestBody CarIdOwnerIdDto createCarDto) throws Exception {
+    public ResponseEntity<?> signInExistingCar(@RequestBody @Valid CarIdOwnerIdDto createCarDto) throws Exception {
         return ResponseEntity.ok(carService.signInExistingCar(createCarDto));
     }
 
@@ -175,7 +181,7 @@ public class CarController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/changeOwner")
-    public ResponseEntity<?> changeOwner(@RequestBody CarIdOwnerIdDto carIdOwnerIdDto) {
+    public ResponseEntity<?> changeOwner(@RequestBody @Valid CarIdOwnerIdDto carIdOwnerIdDto) {
         return ResponseEntity.ok(carService.changeOwner(carIdOwnerIdDto.getCarId(), carIdOwnerIdDto.getOwnerId()));
     }
 
@@ -189,7 +195,7 @@ public class CarController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/signOutCar")
-    public void signOutCar(@RequestBody CarIdOwnerIdDto carIdOwnerIdDto) {
+    public void signOutCar(@RequestBody @Valid CarIdOwnerIdDto carIdOwnerIdDto) {
         carService.signOutCar(carIdOwnerIdDto);
     }
 
@@ -219,7 +225,7 @@ public class CarController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping({"/addCarToOffice", "editCarInOffice"})
-    public ResponseEntity<?> addCarToOffice(@RequestBody CarOfficeDto officeDto) {
+    public ResponseEntity<?> addCarToOffice(@RequestBody @Valid CarOfficeDto officeDto) {
         return ResponseEntity.ok(carService.addCarToOffice(officeDto));
     }
 
@@ -249,9 +255,19 @@ public class CarController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/editCar/{carId}")
-    public ResponseEntity<?> editCar(@PathVariable Long carId, @RequestBody CreateCarDto editCar) {
+    public ResponseEntity<?> editCar(@PathVariable Long carId, @RequestBody @Valid CreateCarDto editCar) {
         return ResponseEntity.ok(carService.editCar(carId, editCar));
     }
 
-
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorDto handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        ErrorDto errorDto = new ErrorDto();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String errorMessage = error.getDefaultMessage();
+            errorDto.addError(errorMessage);
+        });
+        return errorDto;
+    }
 }

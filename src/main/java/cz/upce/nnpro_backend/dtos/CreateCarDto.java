@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.dtos;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -13,14 +14,14 @@ public class CreateCarDto {
     String manufacturer;
     @NotBlank(message = "Type is mandatory.")
     String type;
-    @NotBlank(message = "Year of creation is mandatory.")
+    @NotNull(message = "Year of creation is mandatory.")
     LocalDate yearOfCreation;
     boolean isInDeposit = false;
-    @NotBlank(message = "Engine power is mandatory.")
+    @NotNull(message = "Engine power is mandatory.")
     private double enginePower;
-    @NotBlank(message = "Emission standard is mandatory.")
+    @NotNull(message = "Emission standard is mandatory.")
     private double emissionStandard;
-    @NotBlank(message = "Torque is mandatory.")
+    @NotNull(message = "Torque is mandatory.")
     private double torque;
 
 

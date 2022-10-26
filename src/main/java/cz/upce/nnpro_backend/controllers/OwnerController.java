@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.controllers;
 
 import cz.upce.nnpro_backend.Entities.Owner;
+import cz.upce.nnpro_backend.dtos.ErrorDto;
 import cz.upce.nnpro_backend.dtos.OwnerDetailOutDto;
 import cz.upce.nnpro_backend.dtos.OwnerDto;
 import cz.upce.nnpro_backend.services.OwnerService;
@@ -11,9 +12,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/owner")
@@ -67,7 +72,7 @@ public class OwnerController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PostMapping("/addOwner")
-    public ResponseEntity<?> addOwner(@RequestBody OwnerDto ownerDto) {
+    public ResponseEntity<?> addOwner(@RequestBody @Valid OwnerDto ownerDto) {
         return ResponseEntity.ok(ownerService.addOwner(ownerDto));
     }
 
@@ -97,7 +102,19 @@ public class OwnerController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/editOwner/{idOwner}")
-    public ResponseEntity<?> editOwner(@PathVariable Long idOwner, @RequestBody OwnerDto ownerDto) {
+    public ResponseEntity<?> editOwner(@PathVariable Long idOwner, @RequestBody @Valid OwnerDto ownerDto) {
         return ResponseEntity.ok(ownerService.editOwner(idOwner, ownerDto));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorDto handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        ErrorDto errorDto = new ErrorDto();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String errorMessage = error.getDefaultMessage();
+            errorDto.addError(errorMessage);
+        });
+        return errorDto;
     }
 }
