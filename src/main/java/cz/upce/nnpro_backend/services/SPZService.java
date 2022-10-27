@@ -23,9 +23,9 @@ public class SPZService {
             spzRepository.delete(spz);
         } else {
             Car car = carRepository.findFirstByOrderBySPZAsc();
-            if(car.getSPZ()==null){
+            if (car == null) {
                 spz = new SPZ("1E1 1111");
-            }else{
+            } else {
                 spz = new SPZ(addValueOfSPZ(car.getSPZ()));
             }
         }
