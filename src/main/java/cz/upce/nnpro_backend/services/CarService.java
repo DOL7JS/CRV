@@ -96,13 +96,16 @@ public class CarService {
         return owner;
     }
 
-    public Owner signInExistingCar(CarIdOwnerIdDto carIdOwnerIdDto) {
+    public Owner signInExistingCar(CarIdOwnerIdDto carIdOwnerIdDto) throws Exception {
         Car car = carRepository.findById(carIdOwnerIdDto.getCarId()).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         if (carOwnerRepository.existsByCarAndEndOfSignUpIsNull(car)) {//je prihlasene?
             throw new IllegalArgumentException("The car is still sign up.");
         }
         Owner owner = ownerRepository.findById(carIdOwnerIdDto.getOwnerId()).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
         CarOwner carOwner = new CarOwner();
+        if (car.getSPZ() == null) {
+            car.setSPZ(spzService.generateSPZ().getSPZ());
+        }
         carOwner.setCar(car);
         carOwner.setOwner(owner);
         carOwner.setStartOfSignUp(LocalDate.now());
