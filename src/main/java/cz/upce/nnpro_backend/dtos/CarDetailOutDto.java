@@ -14,10 +14,19 @@ public class CarDetailOutDto {
     private double emissionStandard;
     private double torque;
     private boolean isInDeposit = false;
+    private boolean isStolen = false;
     private LocalDate yearOfCreation;
     private String vin;
     private List<OwnerInCarDto> owners;
     private BranchOfficeDto branchOffice;
+
+    public boolean isStolen() {
+        return isStolen;
+    }
+
+    public void setStolen(boolean stolen) {
+        isStolen = stolen;
+    }
 
     public Long getId() {
         return id;

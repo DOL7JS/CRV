@@ -64,6 +64,7 @@ public class ConversionService {
         carDetailOutDto.setEnginePower(car.getEnginePower());
         carDetailOutDto.setTorque(car.getTorque());
         carDetailOutDto.setInDeposit(car.isInDeposit());
+        carDetailOutDto.setStolen(car.isStolen());
         carDetailOutDto.setManufacturer(car.getManufacturer());
         carDetailOutDto.setType(car.getType());
         carDetailOutDto.setEmissionStandard(car.getEmissionStandard());

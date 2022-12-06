@@ -28,11 +28,20 @@ public class Car {
     private double enginePower;
     @NotNull(message = "Emission standard is mandatory.")
     private double emissionStandard;
+
+    public boolean isStolen() {
+        return isStolen;
+    }
+
+    public void setStolen(boolean stolen) {
+        isStolen = stolen;
+    }
+
     @NotNull(message = "Torque is mandatory.")
     private double torque;
 
     private boolean isInDeposit = false;
-
+    private boolean isStolen = false;
     @NotNull(message = "Year of creation is mandatory.")
     private LocalDate yearOfCreation;
     @NotBlank(message = "Vin is mandatory.")

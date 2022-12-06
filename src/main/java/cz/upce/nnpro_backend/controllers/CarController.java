@@ -108,6 +108,7 @@ public class CarController {
                             schema = @Schema(implementation = boolean.class))}),
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content)})
+
     @GetMapping("/isCarStolenByVin/{vin}")
     public ResponseEntity<?> isCarStolenByVin(@PathVariable String vin) {
         return ResponseEntity.ok(carService.isCarStolenByVin(vin));
