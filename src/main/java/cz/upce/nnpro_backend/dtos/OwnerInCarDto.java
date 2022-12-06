@@ -6,6 +6,16 @@ public class OwnerInCarDto {
     Long id;
     String firstName;
     String lastName;
+    String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     LocalDate birthDate;
     String city;
     String street;

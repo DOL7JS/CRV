@@ -18,6 +18,17 @@ public class Owner {
     private String firstName;
     @NotBlank(message = "Last name is mandatory.")
     private String lastName;
+    @NotBlank(message = "Last name is mandatory.")
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @NotNull(message = "Birth date is mandatory.")
     private LocalDate birthDate;
     @NotBlank(message = "City is mandatory.")

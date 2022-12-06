@@ -75,6 +75,7 @@ public class ConversionService {
             ownerDto.setLastName(carOwner.getOwner().getLastName());
             ownerDto.setCity(carOwner.getOwner().getCity());
             ownerDto.setStreet(carOwner.getOwner().getStreet());
+            ownerDto.setEmail(carOwner.getOwner().getEmail());
             ownerDto.setNumberOfHouse(carOwner.getOwner().getNumberOfHouse());
             ownerDto.setZipCode(carOwner.getOwner().getZipCode());
             ownerDto.setBirthDate(carOwner.getOwner().getBirthDate());
