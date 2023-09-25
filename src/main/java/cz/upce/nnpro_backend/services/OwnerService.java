@@ -3,7 +3,6 @@ package cz.upce.nnpro_backend.services;
 import cz.upce.nnpro_backend.Entities.Owner;
 import cz.upce.nnpro_backend.dtos.OwnerDetailOutDto;
 import cz.upce.nnpro_backend.dtos.OwnerDto;
-import cz.upce.nnpro_backend.repositories.CarOwnerRepository;
 import cz.upce.nnpro_backend.repositories.OwnerRepository;
 import org.springframework.stereotype.Service;
 
