@@ -1,10 +1,12 @@
 package cz.upce.nnpro_backend.services;
 
 import cz.upce.nnpro_backend.Entities.*;
-import cz.upce.nnpro_backend.dtos.*;
+import cz.upce.nnpro_backend.dtos.CarDetailOutDto;
+import cz.upce.nnpro_backend.dtos.CarIdOwnerIdDto;
+import cz.upce.nnpro_backend.dtos.CarOfficeDto;
+import cz.upce.nnpro_backend.dtos.CreateCarDto;
 import cz.upce.nnpro_backend.repositories.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

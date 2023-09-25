@@ -1,15 +1,11 @@
 package cz.upce.nnpro_backend.services;
 
-import cz.upce.nnpro_backend.Entities.Car;
 import cz.upce.nnpro_backend.Entities.Owner;
 import cz.upce.nnpro_backend.dtos.OwnerDetailOutDto;
 import cz.upce.nnpro_backend.dtos.OwnerDto;
 import cz.upce.nnpro_backend.repositories.CarOwnerRepository;
 import cz.upce.nnpro_backend.repositories.OwnerRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +14,9 @@ import java.util.NoSuchElementException;
 @Service
 public class OwnerService {
     private final OwnerRepository ownerRepository;
-    private final CarOwnerRepository carOwnerRepository;
 
-    public OwnerService(OwnerRepository ownerRepository, CarOwnerRepository carOwnerRepository) {
+    public OwnerService(OwnerRepository ownerRepository) {
         this.ownerRepository = ownerRepository;
-        this.carOwnerRepository = carOwnerRepository;
     }
 
 

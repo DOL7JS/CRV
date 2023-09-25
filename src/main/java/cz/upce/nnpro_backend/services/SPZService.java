@@ -53,8 +53,7 @@ public class SPZService {
         }
         number = "1111";
         if (spz.charAt(2) != '9') {
-            String s = spz.substring(0, 2) + (Integer.parseInt(String.valueOf(spz.charAt(2))) + 1) + " " + Integer.parseInt(number);
-            return s;
+            return spz.substring(0, 2) + (Integer.parseInt(String.valueOf(spz.charAt(2))) + 1) + " " + Integer.parseInt(number);
         }
         return (Integer.parseInt(String.valueOf(spz.charAt(0))) + 1) + "E1 " + Integer.parseInt(number);
     }

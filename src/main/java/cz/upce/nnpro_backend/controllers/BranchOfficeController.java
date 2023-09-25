@@ -3,8 +3,6 @@ package cz.upce.nnpro_backend.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import cz.upce.nnpro_backend.Entities.BranchOffice;
-import cz.upce.nnpro_backend.Entities.Car;
-import cz.upce.nnpro_backend.Entities.Owner;
 import cz.upce.nnpro_backend.dtos.*;
 import cz.upce.nnpro_backend.services.BranchOfficeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,14 +15,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/branchOffice")
