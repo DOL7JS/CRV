@@ -49,16 +49,14 @@ public class SPZService {
         }
         String number = spz.substring(4, 8);
         if (!number.equals("9999")) {
-            String s = spz.substring(0, 3) + " " + (Integer.parseInt(number) + 1);
-            return s;
+            return spz.substring(0, 3) + " " + (Integer.parseInt(number) + 1);
         }
         number = "1111";
         if (spz.charAt(2) != '9') {
             String s = spz.substring(0, 2) + (Integer.parseInt(String.valueOf(spz.charAt(2))) + 1) + " " + Integer.parseInt(number);
             return s;
         }
-        String s = (Integer.parseInt(String.valueOf(spz.charAt(0))) + 1) + "E1 " + Integer.parseInt(number);
-        return s;
+        return (Integer.parseInt(String.valueOf(spz.charAt(0))) + 1) + "E1 " + Integer.parseInt(number);
     }
 
     private boolean validateSPZ(String spz) {

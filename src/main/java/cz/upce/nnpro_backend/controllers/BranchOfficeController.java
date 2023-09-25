@@ -130,7 +130,6 @@ public class BranchOfficeController {
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/importData")
     public void importDataToJson(@Valid @RequestBody CarsOwnersDto carsOwnersDto) {
-        //int a = 0;
         branchOfficeService.importData(carsOwnersDto.getCars(), carsOwnersDto.getOwners());
     }
 

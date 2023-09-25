@@ -41,8 +41,7 @@ public class UserService {
         Optional<Role> role = roleRepository.findById(userDto.getRole() == null ? 0 : userDto.getRole());
         User user = ConversionService.convertToUser(userDto, role);
         user.setPassword(webSecurityConfig.passwordEncoder().encode(user.getPassword()));
-        User save = userRepository.save(user);
-        return save;
+        return userRepository.save(user);
     }
 
     public User removeUser(Long userId) {
@@ -58,30 +57,26 @@ public class UserService {
         Optional<Role> role = roleRepository.findById(userDto.getRole() == null ? 0 : userDto.getRole());
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
         User editedUser = ConversionService.convertToUser(userDto, user, role);
-        User save = userRepository.save(editedUser);
-        return save;
+        return userRepository.save(editedUser);
     }
 
     public User changePassword(Long userId, ChangePasswordDto changePasswordDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
         if (bCryptPasswordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
             user.setPassword(bCryptPasswordEncoder.encode(changePasswordDto.getNewPassword()));
-            User save = userRepository.save(user);
-            return save;
+            return userRepository.save(user);
         }
-        throw new IllegalArgumentException("Old password doen't match!");
+        throw new IllegalArgumentException("Old password doesn't match!");
 
     }
 
     public UserDetailOutDto getUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
-        UserDetailOutDto detailOutDto = ConversionService.convertToUserDetailOutDto(user);
-        return detailOutDto;
+        return ConversionService.convertToUserDetailOutDto(user);
     }
 
     public List<Role> getAllRoles() {
-        List<Role> all = roleRepository.findAll();
-        return all;
+        return roleRepository.findAll();
     }
 
     public List<UserDetailOutDto> getAllUsers() {
@@ -116,6 +111,5 @@ public class UserService {
             userRepository.save(userAdmin);
 
         }
-        System.out.println("TESST");
     }
 }

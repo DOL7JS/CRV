@@ -1,11 +1,11 @@
 package cz.upce.nnpro_backend.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.upce.nnpro_backend.Entities.BranchOffice;
 import cz.upce.nnpro_backend.Entities.Car;
 import cz.upce.nnpro_backend.Entities.Owner;
 import cz.upce.nnpro_backend.Entities.User;
-import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeIdUserIdDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeInDto;
 import cz.upce.nnpro_backend.dtos.UserDetailOutDto;
@@ -14,7 +14,6 @@ import cz.upce.nnpro_backend.repositories.CarRepository;
 import cz.upce.nnpro_backend.repositories.OwnerRepository;
 import cz.upce.nnpro_backend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -41,8 +40,7 @@ public class BranchOfficeService {
         branchOffice.setRegion(branchOfficeDto.getRegion());
         branchOffice.setDistrict(branchOfficeDto.getDistrict());
         branchOffice.setCity(branchOfficeDto.getCity());
-        BranchOffice save = branchOfficeRepository.save(branchOffice);
-        return save;
+        return branchOfficeRepository.save(branchOffice);
     }
 
     public BranchOffice removeOffice(Long officeId) {
@@ -62,13 +60,11 @@ public class BranchOfficeService {
         branchOffice.setRegion(officeDto.getRegion());
         branchOffice.setDistrict(officeDto.getDistrict());
         branchOffice.setCity(officeDto.getCity());
-        BranchOffice save = branchOfficeRepository.save(branchOffice);
-        return save;
+        return branchOfficeRepository.save(branchOffice);
     }
 
     public BranchOffice getOffice(Long officeId) {
-        BranchOffice branchOffice = branchOfficeRepository.findById(officeId).orElseThrow(() -> new NoSuchElementException("Branch office not found!"));
-        return branchOffice;
+        return branchOfficeRepository.findById(officeId).orElseThrow(() -> new NoSuchElementException("Branch office not found!"));
     }
 
     public UserDetailOutDto addUserToOffice(BranchOfficeIdUserIdDto branchOfficeIdUserIdDto) {
@@ -76,8 +72,7 @@ public class BranchOfficeService {
         User user = userRepository.findById(branchOfficeIdUserIdDto.getUserId()).orElseThrow(() -> new NoSuchElementException("User not found!"));
         user.setBranchOffice(branchOfficeRepository.findById(branchOfficeIdUserIdDto.getBranchOfficeId()).orElseThrow(() -> new NoSuchElementException("Branch office not found!")));
         User save = userRepository.save(user);
-        UserDetailOutDto detailOutDto = ConversionService.convertToUserDetailOutDto(save);
-        return detailOutDto;
+        return ConversionService.convertToUserDetailOutDto(save);
     }
 
     public String exportData() throws JsonProcessingException {
@@ -99,7 +94,6 @@ public class BranchOfficeService {
     }
 
     public List<BranchOffice> getAllOffices() {
-        List<BranchOffice> branchOffices = branchOfficeRepository.findAll();
-        return branchOffices;
+        return branchOfficeRepository.findAll();
     }
 }

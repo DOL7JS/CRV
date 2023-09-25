@@ -28,15 +28,13 @@ public class OwnerService {
 
     public Owner addOwner(OwnerDto ownerDto) {
         Owner newOwner = ConversionService.convertToOwner(ownerDto);
-        Owner owner = ownerRepository.save(newOwner);
-        return owner;
+        return ownerRepository.save(newOwner);
     }
 
     public Owner editOwner(Long ownerId, OwnerDto ownerDto) {
         Owner owner = ownerRepository.findById(ownerId).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
         Owner newOwner = ConversionService.convertToOwner(owner, ownerDto);
-        Owner save = ownerRepository.save(newOwner);
-        return save;
+        return ownerRepository.save(newOwner);
     }
 
     public Owner removeOwner(Long ownerId) {
@@ -48,11 +46,10 @@ public class OwnerService {
 
     public OwnerDetailOutDto getOwner(Long idOwner) {
         Owner owner = ownerRepository.findById(idOwner).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
-        OwnerDetailOutDto ownerDetailOutDto1 = ConversionService.convertToOwnerDetailOutDto(owner);
-//        PageRequest pr = PageRequest.of(page, pageSize, orderDirection.equals("DESC") ? Sort.by(orderBy).descending() : Sort.by(orderBy).ascending());
+        //        PageRequest pr = PageRequest.of(page, pageSize, orderDirection.equals("DESC") ? Sort.by(orderBy).descending() : Sort.by(orderBy).ascending());
 //        Page<Car> carPage = carOwnerRepository.findCarOwnerByOwner(owner, pr);
 //        OwnerDetailOutDto ownerDetailOutDto = ConversionService.convertToOwnerDetailOutDto(owner, carPage);
-        return ownerDetailOutDto1;
+        return ConversionService.convertToOwnerDetailOutDto(owner);
     }
 
     public List<OwnerDetailOutDto> getAllOwners() {

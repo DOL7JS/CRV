@@ -20,16 +20,14 @@ public class CarService {
     private final CarOwnerRepository carOwnerRepository;
     private final SPZService spzService;
     private final SPZRepository spzRepository;
-    private final UserRepository userRepository;
 
-    public CarService(CarRepository carRepository, OwnerRepository ownerRepository, BranchOfficeRepository branchOfficeRepository, CarOwnerRepository carOwnerRepository, SPZService spzService, SPZRepository spzRepository, UserRepository userRepository) {
+    public CarService(CarRepository carRepository, OwnerRepository ownerRepository, BranchOfficeRepository branchOfficeRepository, CarOwnerRepository carOwnerRepository, SPZService spzService, SPZRepository spzRepository) {
         this.carRepository = carRepository;
         this.ownerRepository = ownerRepository;
         this.branchOfficeRepository = branchOfficeRepository;
         this.carOwnerRepository = carOwnerRepository;
         this.spzService = spzService;
         this.spzRepository = spzRepository;
-        this.userRepository = userRepository;
     }
 
     public Car addCar(CreateCarDto createCarDto) throws Exception {
@@ -37,8 +35,7 @@ public class CarService {
             throw new IllegalArgumentException("The car's vin already exists.");
         }
         Car car = ConversionService.convertToCar(createCarDto, spzService.generateSPZ().getSPZ());
-        Car save = carRepository.save(car);
-        return save;
+        return carRepository.save(car);
 
     }
 
@@ -81,8 +78,7 @@ public class CarService {
         }
         Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         Car editedCar = ConversionService.convertToCar(editCar, car);
-        Car save = carRepository.save(editedCar);
-        return save;
+        return carRepository.save(editedCar);
     }
 
     public Owner signInCar(CreateCarDto createCarDto, Long ownerId) throws Exception {
@@ -117,47 +113,29 @@ public class CarService {
         Car car = carRepository.findById(officeDto.getCarId()).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         BranchOffice branchOffice = branchOfficeRepository.findById(officeDto.getOfficeId()).orElseThrow(() -> new NoSuchElementException("Branch office not found!"));
         car.setBranchOffice(branchOffice);
-        Car save = carRepository.save(car);
-        return save;
+        return carRepository.save(car);
     }
 
     public Car removeCarFromOffice(Long carId) {
         Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         car.setBranchOffice(null);
-        Car save = carRepository.save(car);
-        return save;
+        return carRepository.save(car);
     }
 
     public CarDetailOutDto getCar(Long carId) {
         Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
-        CarDetailOutDto carDetailOutDto = ConversionService.convertToCarDetailOutDto(car);
-        return carDetailOutDto;
+        return ConversionService.convertToCarDetailOutDto(car);
     }
 
 
     public CarDetailOutDto getCarByVin(String vin) {
         Car car = carRepository.findByVin(vin).orElseThrow(() -> new NoSuchElementException("Car not found!"));
-        CarDetailOutDto carDetailOutDto = ConversionService.convertToCarDetailOutDto(car);
-        return carDetailOutDto;
+        return ConversionService.convertToCarDetailOutDto(car);
     }
 
     public CarDetailOutDto getCarBySPZ(String spz) {
         Car car = carRepository.findBySPZ(spz).orElseThrow(() -> new NoSuchElementException("Car not found!"));
-        CarDetailOutDto carDetailOutDto = ConversionService.convertToCarDetailOutDto(car);
-        return carDetailOutDto;
-    }
-
-    public boolean isCarStolenByVin(String vin) {
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject("http://localhost:8081/getCarByVin/" + vin, String.class);
-        return result != null;
-
-    }
-
-    public boolean isCarStolenBySpz(String spz) {
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject("http://localhost:8081/getCarBySpz/" + spz, String.class);
-        return result != null;
+        return ConversionService.convertToCarDetailOutDto(car);
     }
 
     public List<CarDetailOutDto> getAllCars() {
