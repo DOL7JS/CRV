@@ -1,7 +1,7 @@
 package cz.upce.nnpro_backend.services;
 
-import cz.upce.nnpro_backend.Entities.BranchOffice;
-import cz.upce.nnpro_backend.dtos.BranchOfficeIdUserIdDto;
+import cz.upce.nnpro_backend.entities.BranchOffice;
+import cz.upce.nnpro_backend.dtos.BranchOfficeUserDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeInDto;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -81,7 +81,7 @@ public class BranchOfficeServiceTest {
 
         BranchOffice saveOffice = branchOfficeService.addOffice(branchOfficeInDto);
 
-        BranchOfficeIdUserIdDto dto = new BranchOfficeIdUserIdDto();
+        BranchOfficeUserDto dto = new BranchOfficeUserDto();
         dto.setBranchOfficeId(saveOffice.getId());
         dto.setUserId(1L);
         branchOfficeService.addUserToOffice(dto);

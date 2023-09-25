@@ -1,7 +1,7 @@
 package cz.upce.nnpro_backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.upce.nnpro_backend.Entities.BranchOffice;
+import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.config.JwtRequest;
 import cz.upce.nnpro_backend.dtos.*;
 import cz.upce.nnpro_backend.services.BranchOfficeService;
@@ -59,7 +59,7 @@ public class CarControllerTest {
     @Test
     @Order(1)
     void addCarIsOk() throws Exception{
-        CreateCarDto carDto = new CreateCarDto();
+        CarInDto carDto = new CarInDto();
         carDto.setColor("Color");
         carDto.setEnginePower(150);
         carDto.setTorque(150);
@@ -75,7 +75,7 @@ public class CarControllerTest {
 
     @Test
     void addCarIs400error() throws Exception{
-        CreateCarDto carDto = new CreateCarDto();
+        CarInDto carDto = new CarInDto();
         carDto.setColor("Color");
         carDto.setEnginePower(150);
         carDto.setTorque(150);
@@ -91,7 +91,7 @@ public class CarControllerTest {
 
     @Test
     void addCarIs500error() throws Exception{
-        CreateCarDto carDto = new CreateCarDto();
+        CarInDto carDto = new CarInDto();
         carDto.setColor("Color");
         carDto.setEnginePower(150);
         carDto.setTorque(150);
@@ -168,18 +168,18 @@ public class CarControllerTest {
 
     @Test
     void signInCarIsOk() throws Exception {
-        OwnerDto ownerDto = new OwnerDto();
-        ownerDto.setBirthDate(LocalDate.now());
-        ownerDto.setLastName("LastName");
-        ownerDto.setFirstName("FirstName");
-        ownerDto.setCity("City");
-        ownerDto.setZipCode(12345);
-        ownerDto.setNumberOfHouse(1);
-        ownerDto.setStreet("Street");
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setFirstName("FirstName");
+        ownerInDto.setCity("City");
+        ownerInDto.setZipCode(12345);
+        ownerInDto.setNumberOfHouse(1);
+        ownerInDto.setStreet("Street");
 
-        ownerService.addOwner(ownerDto);
+        ownerService.addOwner(ownerInDto);
 
-        CreateCarDto carDto = new CreateCarDto();
+        CarInDto carDto = new CarInDto();
         carDto.setColor("Color");
         carDto.setEnginePower(150);
         carDto.setTorque(150);
@@ -195,7 +195,7 @@ public class CarControllerTest {
 
     @Test
     void signInCarIs400() throws Exception {
-        CreateCarDto carDto = new CreateCarDto();
+        CarInDto carDto = new CarInDto();
         carDto.setColor("Color");
         carDto.setEnginePower(150);
         carDto.setTorque(150);
@@ -211,7 +211,7 @@ public class CarControllerTest {
 
     @Test //Ale vytvoří to auto
     void signInCarIs500() throws Exception {
-        CreateCarDto carDto = new CreateCarDto();
+        CarInDto carDto = new CarInDto();
         carDto.setColor("Color");
         carDto.setEnginePower(150);
         carDto.setTorque(150);
@@ -227,18 +227,18 @@ public class CarControllerTest {
 
     @Test
     void signInExistingCarIsOk() throws Exception{
-        OwnerDto ownerDto = new OwnerDto();
-        ownerDto.setBirthDate(LocalDate.now());
-        ownerDto.setLastName("LastName");
-        ownerDto.setFirstName("FirstName");
-        ownerDto.setCity("City");
-        ownerDto.setZipCode(12345);
-        ownerDto.setNumberOfHouse(1);
-        ownerDto.setStreet("Street");
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setFirstName("FirstName");
+        ownerInDto.setCity("City");
+        ownerInDto.setZipCode(12345);
+        ownerInDto.setNumberOfHouse(1);
+        ownerInDto.setStreet("Street");
 
-        ownerService.addOwner(ownerDto);
+        ownerService.addOwner(ownerInDto);
 
-        CarIdOwnerIdDto idOwnerIdDto = new CarIdOwnerIdDto();
+        CarOwnerDto idOwnerIdDto = new CarOwnerDto();
         idOwnerIdDto.setCarId(1L);
         idOwnerIdDto.setOwnerId(1L);
         doAuthPost("/signInCar/", idOwnerIdDto, status().isOk());
@@ -246,7 +246,7 @@ public class CarControllerTest {
 
     @Test
     void signInExistingCarIs400error() throws Exception{
-        CarIdOwnerIdDto idOwnerIdDto = new CarIdOwnerIdDto();
+        CarOwnerDto idOwnerIdDto = new CarOwnerDto();
         idOwnerIdDto.setCarId(1L);
         idOwnerIdDto.setOwnerId(1L);
         doPost("/signInCar/", idOwnerIdDto, status().is4xxClientError());
@@ -254,7 +254,7 @@ public class CarControllerTest {
 
     @Test
     void signInExistingCarIs500error() throws Exception{
-        CarIdOwnerIdDto idOwnerIdDto = new CarIdOwnerIdDto();
+        CarOwnerDto idOwnerIdDto = new CarOwnerDto();
         idOwnerIdDto.setCarId(99999L);
         idOwnerIdDto.setOwnerId(99999L);
         //doAuthPost("/signInCar/", idOwnerIdDto, status().is5xxServerError());
@@ -263,7 +263,7 @@ public class CarControllerTest {
     @Test
     //Request processing failed; nested exception is java.lang.NullPointerException: Cannot invoke "cz.upce.nnpro_backend.Entities.CarOwner.setEndOfSignUp(java.time.LocalDate)" because "carOwnerOld" is null
     void changeOwnerIsOk() throws Exception{
-        CarIdOwnerIdDto idOwnerIdDto = new CarIdOwnerIdDto();
+        CarOwnerDto idOwnerIdDto = new CarOwnerDto();
         idOwnerIdDto.setCarId(1L);
         idOwnerIdDto.setOwnerId(1L);
         //doAuthPut("/changeOwner", idOwnerIdDto, status().isOk());
@@ -271,7 +271,7 @@ public class CarControllerTest {
 
     @Test
     void changeOwnerIs400error() throws Exception{
-        CarIdOwnerIdDto idOwnerIdDto = new CarIdOwnerIdDto();
+        CarOwnerDto idOwnerIdDto = new CarOwnerDto();
         idOwnerIdDto.setCarId(1L);
         idOwnerIdDto.setOwnerId(1L);
         doPut("/changeOwner", idOwnerIdDto, status().is4xxClientError());
@@ -279,7 +279,7 @@ public class CarControllerTest {
 
     @Test
     void changeOwnerIs500error() throws Exception{
-        CarIdOwnerIdDto idOwnerIdDto = new CarIdOwnerIdDto();
+        CarOwnerDto idOwnerIdDto = new CarOwnerDto();
         idOwnerIdDto.setCarId(1L);
         idOwnerIdDto.setOwnerId(1L);
         //doAuthPut("/changeOwner", idOwnerIdDto, status().is5xxServerError());
@@ -288,7 +288,7 @@ public class CarControllerTest {
     @Test
     //Request processing failed; nested exception is java.lang.NullPointerException: Cannot invoke "cz.upce.nnpro_backend.Entities.CarOwner.setEndOfSignUp(java.time.LocalDate)" because "carOwnerOld" is null
     void signOutCarIsOk() throws Exception {
-        CarIdOwnerIdDto idOwnerIdDto = new CarIdOwnerIdDto();
+        CarOwnerDto idOwnerIdDto = new CarOwnerDto();
         idOwnerIdDto.setCarId(1L);
         idOwnerIdDto.setOwnerId(1L);
 
@@ -297,7 +297,7 @@ public class CarControllerTest {
 
     @Test
     void signOutCarIs400() throws Exception {
-        CarIdOwnerIdDto idOwnerIdDto = new CarIdOwnerIdDto();
+        CarOwnerDto idOwnerIdDto = new CarOwnerDto();
         idOwnerIdDto.setCarId(1L);
         idOwnerIdDto.setOwnerId(1L);
 
@@ -306,7 +306,7 @@ public class CarControllerTest {
 
     @Test
     void signOutCarIs500() throws Exception {
-        CarIdOwnerIdDto idOwnerIdDto = new CarIdOwnerIdDto();
+        CarOwnerDto idOwnerIdDto = new CarOwnerDto();
         idOwnerIdDto.setCarId(1L);
         idOwnerIdDto.setOwnerId(1L);
 
@@ -337,7 +337,7 @@ public class CarControllerTest {
 
         BranchOffice branchOffice = branchOfficeService.addOffice(branchOfficeInDto);
 
-        CarOfficeDto officeDto = new CarOfficeDto();
+        CarBranchOfficeDto officeDto = new CarBranchOfficeDto();
         officeDto.setCarId(1L);
         officeDto.setOfficeId(branchOffice.getId());
         doAuthPut("/addCarToOffice", officeDto, status().isOk());
@@ -345,7 +345,7 @@ public class CarControllerTest {
 
     @Test
     void addCarToOfficeIs400() throws Exception {
-        CarOfficeDto officeDto = new CarOfficeDto();
+        CarBranchOfficeDto officeDto = new CarBranchOfficeDto();
         officeDto.setCarId(1L);
         officeDto.setOfficeId(1L);
         doPut("/addCarToOffice", officeDto, status().is4xxClientError());
@@ -353,7 +353,7 @@ public class CarControllerTest {
 
     @Test
     void addCarToOfficeIs500() throws Exception {
-        CarOfficeDto officeDto = new CarOfficeDto();
+        CarBranchOfficeDto officeDto = new CarBranchOfficeDto();
         officeDto.setCarId(99999L);
         officeDto.setOfficeId(1L);
         //doAuthPut("/addCarToOffice", officeDto, status().is5xxServerError());
@@ -379,7 +379,7 @@ public class CarControllerTest {
 
     @Test
     void editCarIsOk() throws Exception {
-        CreateCarDto editCar = new CreateCarDto();
+        CarInDto editCar = new CarInDto();
         editCar.setColor("Color");
         editCar.setEnginePower(150);
         editCar.setTorque(150);
@@ -394,7 +394,7 @@ public class CarControllerTest {
 
     @Test
     void editCarIs400() throws Exception {
-        CreateCarDto editCar = new CreateCarDto();
+        CarInDto editCar = new CarInDto();
         editCar.setColor("Color");
         editCar.setEnginePower(150);
         editCar.setTorque(150);
@@ -409,7 +409,7 @@ public class CarControllerTest {
 
     @Test
     void editCarIs500() throws Exception {
-        CreateCarDto editCar = new CreateCarDto();
+        CarInDto editCar = new CarInDto();
         editCar.setColor("Color");
         editCar.setEnginePower(150);
         editCar.setTorque(150);

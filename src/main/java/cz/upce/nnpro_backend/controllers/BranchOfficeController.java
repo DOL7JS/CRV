@@ -2,7 +2,7 @@ package cz.upce.nnpro_backend.controllers;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import cz.upce.nnpro_backend.Entities.BranchOffice;
+import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.dtos.*;
 import cz.upce.nnpro_backend.services.BranchOfficeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,15 +74,15 @@ public class BranchOfficeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User added to branch office",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserDetailOutDto.class))}),
+                            schema = @Schema(implementation = UserOutDto.class))}),
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Branch office not found or user not found",
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PostMapping("/addUserToOffice")
-    public ResponseEntity<?> addUserToOffice(@RequestBody @Valid BranchOfficeIdUserIdDto branchOfficeIdUserIdDto) {
-        return ResponseEntity.ok(branchOfficeService.addUserToOffice(branchOfficeIdUserIdDto));
+    public ResponseEntity<?> addUserToOffice(@RequestBody @Valid BranchOfficeUserDto branchOfficeUserDto) {
+        return ResponseEntity.ok(branchOfficeService.addUserToOffice(branchOfficeUserDto));
     }
 
     @Operation(summary = "Remove branch office")

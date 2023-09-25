@@ -1,52 +1,29 @@
-package cz.upce.nnpro_backend.Entities;
+package cz.upce.nnpro_backend.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
-@Entity
-public class Owner {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class OwnerInDto {
     @NotBlank(message = "First name is mandatory.")
-    private String firstName;
+    String firstName;
     @NotBlank(message = "Last name is mandatory.")
-    private String lastName;
-    @NotBlank(message = "Last name is mandatory.")
-    private String email;
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    String lastName;
     @NotNull(message = "Birth date is mandatory.")
-    private LocalDate birthDate;
+    LocalDate birthDate;
     @NotBlank(message = "City is mandatory.")
-    private String city;
+    String city;
     @NotBlank(message = "Street is mandatory.")
-    private String street;
-    @NotNull(message = "Number of house is mandatory.")
-    private int numberOfHouse;
+    String street;
     @NotNull(message = "Zip code is mandatory.")
-    private int zipCode;
+    int zipCode;
+    @NotNull(message = "Number of house is mandatory.")
+    int numberOfHouse;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
-    private Set<CarOwner> carOwners;
+    public OwnerInDto() {
 
-
-    public Long getId() {
-        return id;
     }
+
 
     public String getFirstName() {
         return firstName;
@@ -88,14 +65,6 @@ public class Owner {
         this.street = street;
     }
 
-    public int getNumberOfHouse() {
-        return numberOfHouse;
-    }
-
-    public void setNumberOfHouse(int numberOfHouse) {
-        this.numberOfHouse = numberOfHouse;
-    }
-
     public int getZipCode() {
         return zipCode;
     }
@@ -104,17 +73,11 @@ public class Owner {
         this.zipCode = zipCode;
     }
 
-    public Set<CarOwner> getCarOwners() {
-        return carOwners;
+    public int getNumberOfHouse() {
+        return numberOfHouse;
     }
 
-    public void setCarOwners(Set<CarOwner> cars) {
-        this.carOwners = cars;
+    public void setNumberOfHouse(int numberOfHouse) {
+        this.numberOfHouse = numberOfHouse;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
 }

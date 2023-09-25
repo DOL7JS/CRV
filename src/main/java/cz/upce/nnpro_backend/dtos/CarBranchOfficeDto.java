@@ -1,9 +1,8 @@
 package cz.upce.nnpro_backend.dtos;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public class CarOfficeDto {
+public class CarBranchOfficeDto {
     @NotNull(message = "Car id is mandatory.")
     Long carId;
     @NotNull(message = "Branch office id is mandatory.")

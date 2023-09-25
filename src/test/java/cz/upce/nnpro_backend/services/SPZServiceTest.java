@@ -1,6 +1,6 @@
 package cz.upce.nnpro_backend.services;
 
-import cz.upce.nnpro_backend.Entities.SPZ;
+import cz.upce.nnpro_backend.entities.SPZ;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,7 +1,7 @@
 package cz.upce.nnpro_backend.services;
 
-import cz.upce.nnpro_backend.Entities.Car;
-import cz.upce.nnpro_backend.Entities.SPZ;
+import cz.upce.nnpro_backend.entities.Car;
+import cz.upce.nnpro_backend.entities.SPZ;
 import cz.upce.nnpro_backend.repositories.CarRepository;
 import cz.upce.nnpro_backend.repositories.SPZRepository;
 import org.springframework.stereotype.Service;

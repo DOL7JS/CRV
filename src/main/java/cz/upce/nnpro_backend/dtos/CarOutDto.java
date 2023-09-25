@@ -1,10 +1,9 @@
 package cz.upce.nnpro_backend.dtos;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.List;
 
-public class CarDetailOutDto {
+public class CarOutDto {
     private Long id;
     private String manufacturer;
     private String type;
@@ -17,7 +16,7 @@ public class CarDetailOutDto {
     private boolean isStolen = false;
     private LocalDate yearOfCreation;
     private String vin;
-    private List<OwnerInCarDto> owners;
+    private List<OwnerDto> owners;
     private BranchOfficeDto branchOffice;
 
     public boolean isStolen() {
@@ -118,11 +117,11 @@ public class CarDetailOutDto {
         this.vin = vin;
     }
 
-    public List<OwnerInCarDto> getOwners() {
+    public List<OwnerDto> getOwners() {
         return owners;
     }
 
-    public void setOwners(List<OwnerInCarDto> owners) {
+    public void setOwners(List<OwnerDto> owners) {
         this.owners = owners;
     }
 

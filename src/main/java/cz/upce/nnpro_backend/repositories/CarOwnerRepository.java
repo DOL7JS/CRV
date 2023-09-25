@@ -1,10 +1,9 @@
 package cz.upce.nnpro_backend.repositories;
 
-import cz.upce.nnpro_backend.Entities.Car;
-import cz.upce.nnpro_backend.Entities.CarOwner;
-import cz.upce.nnpro_backend.Entities.Owner;
+import cz.upce.nnpro_backend.entities.Car;
+import cz.upce.nnpro_backend.entities.CarOwner;
+import cz.upce.nnpro_backend.entities.Owner;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

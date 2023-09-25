@@ -1,43 +1,24 @@
-package cz.upce.nnpro_backend.Entities;
+package cz.upce.nnpro_backend.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-@Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class UserInDto {
     @NotBlank(message = "Username is mandatory.")
     private String username;
     private String email;
     @NotBlank(message = "Password is mandatory.")
     private String password;
     private String jobPosition;
-    @ManyToOne
-    @JoinColumn(name = "branchOffice_id")
-    @JsonIgnore
-    private BranchOffice branchOffice;
-    @OneToOne
-    private Role role;
-
-    public BranchOffice getBranchOffice() {
-        return branchOffice;
-    }
-
-    public void setBranchOffice(BranchOffice branchOffice) {
-        this.branchOffice = branchOffice;
-    }
+    @NotNull(message = "Role id is mandatory.")
+    private Long role;
 
 
-    public Role getRole() {
+    public Long getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(Long role) {
         this.role = role;
     }
 
@@ -71,13 +52,5 @@ public class User {
 
     public void setJobPosition(String jobPosition) {
         this.jobPosition = jobPosition;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }

@@ -1,10 +1,10 @@
 package cz.upce.nnpro_backend.services;
 
-import cz.upce.nnpro_backend.Entities.*;
-import cz.upce.nnpro_backend.dtos.CarDetailOutDto;
-import cz.upce.nnpro_backend.dtos.CarIdOwnerIdDto;
-import cz.upce.nnpro_backend.dtos.CarOfficeDto;
-import cz.upce.nnpro_backend.dtos.CreateCarDto;
+import cz.upce.nnpro_backend.entities.*;
+import cz.upce.nnpro_backend.dtos.CarOutDto;
+import cz.upce.nnpro_backend.dtos.CarOwnerDto;
+import cz.upce.nnpro_backend.dtos.CarBranchOfficeDto;
+import cz.upce.nnpro_backend.dtos.CarInDto;
 import cz.upce.nnpro_backend.repositories.*;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +32,11 @@ public class CarService {
         this.spzRepository = spzRepository;
     }
 
-    public Car addCar(CreateCarDto createCarDto) throws Exception {
-        if (carRepository.existsByVin(createCarDto.getVin())) {
+    public Car addCar(CarInDto carInDto) throws Exception {
+        if (carRepository.existsByVin(carInDto.getVin())) {
             throw new IllegalArgumentException("The car's vin already exists.");
         }
-        Car car = ConversionService.convertToCar(createCarDto, spzService.generateSPZ().getSPZ());
+        Car car = ConversionService.convertToCar(carInDto, spzService.generateSPZ().getSPZ());
         return carRepository.save(car);
 
     }
@@ -55,8 +55,8 @@ public class CarService {
         return owner;
     }
 
-    public void signOutCar(CarIdOwnerIdDto carIdOwnerIdDto) {
-        CarOwner carOwnerOld = carOwnerRepository.findByCarIdAndOwnerId(carIdOwnerIdDto.getCarId(), carIdOwnerIdDto.getOwnerId());
+    public void signOutCar(CarOwnerDto carOwnerDto) {
+        CarOwner carOwnerOld = carOwnerRepository.findByCarIdAndOwnerId(carOwnerDto.getCarId(), carOwnerDto.getOwnerId());
         carOwnerOld.setEndOfSignUp(LocalDate.now());
         carOwnerRepository.save(carOwnerOld);
         carRepository.setSPZNullByCar(carOwnerOld.getCar());
@@ -74,7 +74,7 @@ public class CarService {
         return car;
     }
 
-    public Car editCar(Long carId, CreateCarDto editCar) {
+    public Car editCar(Long carId, CarInDto editCar) {
         if (carRepository.existsByVinAndIdIsNot(editCar.getVin(), carId)) {
             throw new IllegalArgumentException("The car's vin already exists.");
         }
@@ -83,8 +83,8 @@ public class CarService {
         return carRepository.save(editedCar);
     }
 
-    public Owner signInCar(CreateCarDto createCarDto, Long ownerId) throws Exception {
-        Car car = addCar(createCarDto);
+    public Owner signInCar(CarInDto carInDto, Long ownerId) throws Exception {
+        Car car = addCar(carInDto);
         Owner owner = ownerRepository.findById(ownerId).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
         CarOwner carOwner = new CarOwner();
         carOwner.setCar(car);
@@ -94,12 +94,12 @@ public class CarService {
         return owner;
     }
 
-    public Owner signInExistingCar(CarIdOwnerIdDto carIdOwnerIdDto) throws Exception {
-        Car car = carRepository.findById(carIdOwnerIdDto.getCarId()).orElseThrow(() -> new NoSuchElementException("Car not found!"));
+    public Owner signInExistingCar(CarOwnerDto carOwnerDto) throws Exception {
+        Car car = carRepository.findById(carOwnerDto.getCarId()).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         if (carOwnerRepository.existsByCarAndEndOfSignUpIsNull(car)) {//je prihlasene?
             throw new IllegalArgumentException("The car is still sign up.");
         }
-        Owner owner = ownerRepository.findById(carIdOwnerIdDto.getOwnerId()).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
+        Owner owner = ownerRepository.findById(carOwnerDto.getOwnerId()).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
         CarOwner carOwner = new CarOwner();
         if (car.getSPZ() == null) {
             car.setSPZ(spzService.generateSPZ().getSPZ());
@@ -111,7 +111,7 @@ public class CarService {
         return owner;
     }
 
-    public Car addCarToOffice(CarOfficeDto officeDto) {
+    public Car addCarToOffice(CarBranchOfficeDto officeDto) {
         Car car = carRepository.findById(officeDto.getCarId()).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         BranchOffice branchOffice = branchOfficeRepository.findById(officeDto.getOfficeId()).orElseThrow(() -> new NoSuchElementException("Branch office not found!"));
         car.setBranchOffice(branchOffice);
@@ -124,28 +124,28 @@ public class CarService {
         return carRepository.save(car);
     }
 
-    public CarDetailOutDto getCar(Long carId) {
+    public CarOutDto getCar(Long carId) {
         Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         return ConversionService.convertToCarDetailOutDto(car);
     }
 
 
-    public CarDetailOutDto getCarByVin(String vin) {
+    public CarOutDto getCarByVin(String vin) {
         Car car = carRepository.findByVin(vin).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         return ConversionService.convertToCarDetailOutDto(car);
     }
 
-    public CarDetailOutDto getCarBySPZ(String spz) {
+    public CarOutDto getCarBySPZ(String spz) {
         Car car = carRepository.findBySPZ(spz).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         return ConversionService.convertToCarDetailOutDto(car);
     }
 
-    public List<CarDetailOutDto> getAllCars() {
+    public List<CarOutDto> getAllCars() {
         List<Car> cars = carRepository.findAll();
-        List<CarDetailOutDto> carDetailOutDtos = new ArrayList<>();
+        List<CarOutDto> carOutDtos = new ArrayList<>();
         for (Car car : cars) {
-            carDetailOutDtos.add(ConversionService.convertToCarDetailOutDto(car));
+            carOutDtos.add(ConversionService.convertToCarDetailOutDto(car));
         }
-        return carDetailOutDtos;
+        return carOutDtos;
     }
 }

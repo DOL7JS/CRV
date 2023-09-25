@@ -1,8 +1,8 @@
 package cz.upce.nnpro_backend.dtos;
 
-import cz.upce.nnpro_backend.Entities.Role;
+import cz.upce.nnpro_backend.entities.Role;
 
-public class UserDetailOutDto {
+public class UserOutDto {
     private Long id;
     private String username;
     private String email;

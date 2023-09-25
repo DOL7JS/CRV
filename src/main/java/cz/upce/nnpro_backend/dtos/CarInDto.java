@@ -3,9 +3,8 @@ package cz.upce.nnpro_backend.dtos;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Date;
 
-public class CreateCarDto {
+public class CarInDto {
     @NotBlank(message = "Vin is mandatory.")
     String vin;
     @NotBlank(message = "Color is mandatory.")

@@ -1,6 +1,6 @@
 package cz.upce.nnpro_backend.repositories;
 
-import cz.upce.nnpro_backend.Entities.Role;
+import cz.upce.nnpro_backend.entities.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

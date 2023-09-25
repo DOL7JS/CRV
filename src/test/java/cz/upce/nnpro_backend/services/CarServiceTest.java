@@ -1,8 +1,8 @@
 package cz.upce.nnpro_backend.services;
 
-import cz.upce.nnpro_backend.Entities.BranchOffice;
-import cz.upce.nnpro_backend.Entities.Car;
-import cz.upce.nnpro_backend.Entities.Owner;
+import cz.upce.nnpro_backend.entities.BranchOffice;
+import cz.upce.nnpro_backend.entities.Car;
+import cz.upce.nnpro_backend.entities.Owner;
 import cz.upce.nnpro_backend.dtos.*;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -34,7 +34,7 @@ public class CarServiceTest {
     @Test
     @Order(1)
     void addCarTest() throws Exception {
-        CreateCarDto carDto = new CreateCarDto();
+        CarInDto carDto = new CarInDto();
 
         carDto.setColor("Color");
         carDto.setEnginePower(150);
@@ -71,7 +71,7 @@ public class CarServiceTest {
 
     @Test
     void editCarTest() {
-        CreateCarDto carDto = new CreateCarDto();
+        CarInDto carDto = new CarInDto();
         carDto.setColor("New_Color");
         carDto.setEnginePower(150);
         carDto.setTorque(150);
@@ -88,18 +88,18 @@ public class CarServiceTest {
 
     @Test
     void signInCarTest() throws Exception {
-        OwnerDto ownerDto = new OwnerDto();
-        ownerDto.setStreet("Street");
-        ownerDto.setCity("City");
-        ownerDto.setNumberOfHouse(1);
-        ownerDto.setLastName("LastName");
-        ownerDto.setFirstName("FirstName");
-        ownerDto.setBirthDate(LocalDate.now());
-        ownerDto.setZipCode(12345);
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setStreet("Street");
+        ownerInDto.setCity("City");
+        ownerInDto.setNumberOfHouse(1);
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setFirstName("FirstName");
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setZipCode(12345);
 
-        ownerService.addOwner(ownerDto);
+        ownerService.addOwner(ownerInDto);
 
-        CreateCarDto carDto = new CreateCarDto();
+        CarInDto carDto = new CarInDto();
         carDto.setColor("Color");
         carDto.setEnginePower(150);
         carDto.setTorque(150);
@@ -116,18 +116,18 @@ public class CarServiceTest {
 
     @Test
     void signInExistingCarTest() throws Exception {
-        OwnerDto ownerDto = new OwnerDto();
-        ownerDto.setStreet("Street");
-        ownerDto.setCity("City");
-        ownerDto.setNumberOfHouse(1);
-        ownerDto.setLastName("LastName");
-        ownerDto.setFirstName("FirstName");
-        ownerDto.setBirthDate(LocalDate.now());
-        ownerDto.setZipCode(12345);
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setStreet("Street");
+        ownerInDto.setCity("City");
+        ownerInDto.setNumberOfHouse(1);
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setFirstName("FirstName");
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setZipCode(12345);
 
-        ownerService.addOwner(ownerDto);
+        ownerService.addOwner(ownerInDto);
 
-        CarIdOwnerIdDto car = new CarIdOwnerIdDto();
+        CarOwnerDto car = new CarOwnerDto();
         car.setOwnerId(1L);
         car.setCarId(1L);
         Owner owner = carService.signInExistingCar(car);
@@ -142,7 +142,7 @@ public class CarServiceTest {
         branchOfficeInDto.setCity("City");
         BranchOffice saveOffice = branchOfficeService.addOffice(branchOfficeInDto);
 
-        CarOfficeDto carDto = new CarOfficeDto();
+        CarBranchOfficeDto carDto = new CarBranchOfficeDto();
 
         carDto.setCarId(1L);
         carDto.setOfficeId(saveOffice.getId());
@@ -153,7 +153,7 @@ public class CarServiceTest {
 
     @Test
     void getCarTest() throws Exception {
-        CreateCarDto carDto = new CreateCarDto();
+        CarInDto carDto = new CarInDto();
         carDto.setColor("Color");
         carDto.setEnginePower(150);
         carDto.setTorque(150);

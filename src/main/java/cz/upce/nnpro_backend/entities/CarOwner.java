@@ -1,4 +1,4 @@
-package cz.upce.nnpro_backend.Entities;
+package cz.upce.nnpro_backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

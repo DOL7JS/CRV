@@ -1,9 +1,9 @@
 package cz.upce.nnpro_backend.controllers;
 
-import cz.upce.nnpro_backend.Entities.Owner;
+import cz.upce.nnpro_backend.entities.Owner;
 import cz.upce.nnpro_backend.dtos.ErrorDto;
-import cz.upce.nnpro_backend.dtos.OwnerDetailOutDto;
-import cz.upce.nnpro_backend.dtos.OwnerDto;
+import cz.upce.nnpro_backend.dtos.OwnerOutDto;
+import cz.upce.nnpro_backend.dtos.OwnerInDto;
 import cz.upce.nnpro_backend.services.OwnerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,7 +37,7 @@ public class OwnerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Owner returned",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = OwnerDetailOutDto.class))}),
+                            schema = @Schema(implementation = OwnerOutDto.class))}),
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Owner not found",
@@ -51,7 +51,7 @@ public class OwnerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Owners returned",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = OwnerDetailOutDto.class))}),
+                            schema = @Schema(implementation = OwnerOutDto.class))}),
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Owner not found",
@@ -72,8 +72,8 @@ public class OwnerController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PostMapping("/addOwner")
-    public ResponseEntity<?> addOwner(@RequestBody @Valid OwnerDto ownerDto) {
-        return ResponseEntity.ok(ownerService.addOwner(ownerDto));
+    public ResponseEntity<?> addOwner(@RequestBody @Valid OwnerInDto ownerInDto) {
+        return ResponseEntity.ok(ownerService.addOwner(ownerInDto));
     }
 
     @Operation(summary = "Remove owner")
@@ -102,8 +102,8 @@ public class OwnerController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/editOwner/{idOwner}")
-    public ResponseEntity<?> editOwner(@PathVariable Long idOwner, @RequestBody @Valid OwnerDto ownerDto) {
-        return ResponseEntity.ok(ownerService.editOwner(idOwner, ownerDto));
+    public ResponseEntity<?> editOwner(@PathVariable Long idOwner, @RequestBody @Valid OwnerInDto ownerInDto) {
+        return ResponseEntity.ok(ownerService.editOwner(idOwner, ownerInDto));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

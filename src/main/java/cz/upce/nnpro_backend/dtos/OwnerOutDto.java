@@ -1,12 +1,9 @@
 package cz.upce.nnpro_backend.dtos;
 
-import cz.upce.nnpro_backend.Entities.Car;
-import org.springframework.data.domain.Page;
-
 import java.time.LocalDate;
 import java.util.List;
 
-public class OwnerDetailOutDto {
+public class OwnerOutDto {
     Long id;
     String firstName;
     String lastName;
@@ -15,17 +12,17 @@ public class OwnerDetailOutDto {
     String street;
     int zipCode;
     int numberOfHouse;
-    List<CarInOwnerDto> cars;
+    List<CarDto> cars;
 
-    public List<CarInOwnerDto> getCars() {
+    public List<CarDto> getCars() {
         return cars;
     }
 
-    public void setCars(List<CarInOwnerDto> cars) {
+    public void setCars(List<CarDto> cars) {
         this.cars = cars;
     }
 
-    public OwnerDetailOutDto() {
+    public OwnerOutDto() {
 
     }
 

@@ -2,7 +2,7 @@ package cz.upce.nnpro_backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.upce.nnpro_backend.config.JwtRequest;
-import cz.upce.nnpro_backend.dtos.OwnerDto;
+import cz.upce.nnpro_backend.dtos.OwnerInDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
@@ -64,30 +64,30 @@ public class OwnerControllerTest {
     @Test
     @Order(1)
     void addOwnerIsOk() throws Exception {
-        OwnerDto ownerDto = new OwnerDto();
-        ownerDto.setBirthDate(LocalDate.now());
-        ownerDto.setCity("City");
-        ownerDto.setFirstName("FirstName");
-        ownerDto.setLastName("LastName");
-        ownerDto.setStreet("Street");
-        ownerDto.setZipCode(123456);
-        ownerDto.setNumberOfHouse(1);
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setCity("City");
+        ownerInDto.setFirstName("FirstName");
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setStreet("Street");
+        ownerInDto.setZipCode(123456);
+        ownerInDto.setNumberOfHouse(1);
 
-        doAuthPost("/addOwner", ownerDto, status().isOk());
+        doAuthPost("/addOwner", ownerInDto, status().isOk());
     }
 
     @Test
     void addOwnerIs400() throws Exception {
-        OwnerDto ownerDto = new OwnerDto();
-        ownerDto.setBirthDate(LocalDate.now());
-        ownerDto.setCity("City");
-        ownerDto.setFirstName("FirstName");
-        ownerDto.setLastName("LastName");
-        ownerDto.setStreet("Street");
-        ownerDto.setZipCode(123456);
-        ownerDto.setNumberOfHouse(1);
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setCity("City");
+        ownerInDto.setFirstName("FirstName");
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setStreet("Street");
+        ownerInDto.setZipCode(123456);
+        ownerInDto.setNumberOfHouse(1);
 
-        doPost("/addOwner", ownerDto, status().is4xxClientError());
+        doPost("/addOwner", ownerInDto, status().is4xxClientError());
     }
 
     @Test
@@ -114,42 +114,42 @@ public class OwnerControllerTest {
     @Test
     @Order(3)
     void editOwnerIsOk() throws Exception {
-        OwnerDto ownerDto = new OwnerDto();
-        ownerDto.setBirthDate(LocalDate.now());
-        ownerDto.setCity("City");
-        ownerDto.setFirstName("FirstName");
-        ownerDto.setLastName("LastName");
-        ownerDto.setStreet("Street");
-        ownerDto.setZipCode(123456);
-        ownerDto.setNumberOfHouse(1);
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setCity("City");
+        ownerInDto.setFirstName("FirstName");
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setStreet("Street");
+        ownerInDto.setZipCode(123456);
+        ownerInDto.setNumberOfHouse(1);
 
-        doAuthPut("/editOwner/1", ownerDto, status().isOk());
+        doAuthPut("/editOwner/1", ownerInDto, status().isOk());
     }
 
     @Test
     void editOwnerIs400() throws Exception {
-        OwnerDto ownerDto = new OwnerDto();
-        ownerDto.setBirthDate(LocalDate.now());
-        ownerDto.setCity("City");
-        ownerDto.setFirstName("FirstName");
-        ownerDto.setLastName("LastName");
-        ownerDto.setStreet("Street");
-        ownerDto.setZipCode(123456);
-        ownerDto.setNumberOfHouse(1);
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setCity("City");
+        ownerInDto.setFirstName("FirstName");
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setStreet("Street");
+        ownerInDto.setZipCode(123456);
+        ownerInDto.setNumberOfHouse(1);
 
-        doPut("/editOwner/1", ownerDto, status().is4xxClientError());
+        doPut("/editOwner/1", ownerInDto, status().is4xxClientError());
     }
 
     @Test
     void editOwnerIs500() throws Exception {
-        OwnerDto ownerDto = new OwnerDto();
-        ownerDto.setBirthDate(LocalDate.now());
-        ownerDto.setCity("City");
-        ownerDto.setFirstName("FirstName");
-        ownerDto.setLastName("LastName");
-        ownerDto.setStreet("Street");
-        ownerDto.setZipCode(123456);
-        ownerDto.setNumberOfHouse(1);
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setCity("City");
+        ownerInDto.setFirstName("FirstName");
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setStreet("Street");
+        ownerInDto.setZipCode(123456);
+        ownerInDto.setNumberOfHouse(1);
 
         //doAuthPut("/editOwner/99999", ownerDto, status().is5xxServerError());
     }

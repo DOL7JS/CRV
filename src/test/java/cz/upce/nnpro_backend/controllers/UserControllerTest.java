@@ -2,8 +2,8 @@ package cz.upce.nnpro_backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.upce.nnpro_backend.config.JwtRequest;
-import cz.upce.nnpro_backend.dtos.ChangePasswordDto;
-import cz.upce.nnpro_backend.dtos.UserDto;
+import cz.upce.nnpro_backend.dtos.NewPasswordDto;
+import cz.upce.nnpro_backend.dtos.UserInDto;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,26 +108,26 @@ public class UserControllerTest {
     @Test
     @Order(1)
     void addUserTestIsOk() throws Exception {
-        UserDto userDto = new UserDto();
-        userDto.setUsername("user");
-        userDto.setEmail("user@email.com");
-        userDto.setPassword("heslo");
-        userDto.setJobPosition(null);
-        userDto.setRole(3L);
+        UserInDto userInDto = new UserInDto();
+        userInDto.setUsername("user");
+        userInDto.setEmail("user@email.com");
+        userInDto.setPassword("heslo");
+        userInDto.setJobPosition(null);
+        userInDto.setRole(3L);
 
-        doAuthPost("/user/addUser", userDto, status().isOk());
+        doAuthPost("/user/addUser", userInDto, status().isOk());
     }
 
     @Test
     void addUserTestIs400error() throws Exception {
-        UserDto userDto = new UserDto();
-        userDto.setUsername("user");
-        userDto.setEmail("user@email.com");
-        userDto.setPassword("heslo");
-        userDto.setJobPosition(null);
-        userDto.setRole(3L);
+        UserInDto userInDto = new UserInDto();
+        userInDto.setUsername("user");
+        userInDto.setEmail("user@email.com");
+        userInDto.setPassword("heslo");
+        userInDto.setJobPosition(null);
+        userInDto.setRole(3L);
 
-        doPost("/user/addUser", userDto, status().is4xxClientError());
+        doPost("/user/addUser", userInDto, status().is4xxClientError());
     }
 
     @Test //Tady skáče 400
@@ -138,36 +138,36 @@ public class UserControllerTest {
     @Test
     @Order(2)
     void editUserIsOk() throws Exception {
-        UserDto userDto = new UserDto();
-        userDto.setUsername("user");
-        userDto.setEmail("novyuser@email.com");
-        userDto.setPassword("noveheslo");
-        userDto.setJobPosition(null);
-        userDto.setRole(3L);
+        UserInDto userInDto = new UserInDto();
+        userInDto.setUsername("user");
+        userInDto.setEmail("novyuser@email.com");
+        userInDto.setPassword("noveheslo");
+        userInDto.setJobPosition(null);
+        userInDto.setRole(3L);
 
-        doAuthPut("/user/editUser/2", userDto, status().isOk());
+        doAuthPut("/user/editUser/2", userInDto, status().isOk());
     }
 
     @Test
     void editUserIs400error() throws Exception {
-        UserDto userDto = new UserDto();
-        userDto.setUsername("user");
-        userDto.setEmail("novyuser@email.com");
-        userDto.setPassword("noveheslo");
-        userDto.setJobPosition(null);
-        userDto.setRole(3L);
+        UserInDto userInDto = new UserInDto();
+        userInDto.setUsername("user");
+        userInDto.setEmail("novyuser@email.com");
+        userInDto.setPassword("noveheslo");
+        userInDto.setJobPosition(null);
+        userInDto.setRole(3L);
 
-        doPut("/user/editUser/2", userDto, status().is4xxClientError());
+        doPut("/user/editUser/2", userInDto, status().is4xxClientError());
     }
 
     @Test //Tady skáče 400
     void editUserIs500error() throws Exception {
-        UserDto userDto = new UserDto();
-        userDto.setUsername("user99999");
-        userDto.setEmail("novyuser99999@email.com");
-        userDto.setPassword("noveheslo");
-        userDto.setJobPosition(null);
-        userDto.setRole(3L);
+        UserInDto userInDto = new UserInDto();
+        userInDto.setUsername("user99999");
+        userInDto.setEmail("novyuser99999@email.com");
+        userInDto.setPassword("noveheslo");
+        userInDto.setJobPosition(null);
+        userInDto.setRole(3L);
 
         //doAuthPut("/user/editUser/99999", userDto, status().is5xxServerError());
     }
@@ -175,7 +175,7 @@ public class UserControllerTest {
 
     @Test
     void changeUserPasswordTestIsOk() throws Exception {
-        ChangePasswordDto newPassword = new ChangePasswordDto();
+        NewPasswordDto newPassword = new NewPasswordDto();
         newPassword.setOldPassword("heslo");
         newPassword.setNewPassword("noveheslo");
 
@@ -184,7 +184,7 @@ public class UserControllerTest {
 
     @Test
     void changeUserPasswordTestIs400error() throws Exception {
-        ChangePasswordDto newPassword = new ChangePasswordDto();
+        NewPasswordDto newPassword = new NewPasswordDto();
         newPassword.setOldPassword("heslo");
         newPassword.setNewPassword("noveheslo");
 
@@ -194,7 +194,7 @@ public class UserControllerTest {
     @Test //Neskáče 500
     //Request processing failed; nested exception is java.util.NoSuchElementException: User not found!
     void changeUserPasswordTestIs500error() throws Exception {
-        ChangePasswordDto newPassword = new ChangePasswordDto();
+        NewPasswordDto newPassword = new NewPasswordDto();
         newPassword.setOldPassword("heslo");
         newPassword.setNewPassword("noveheslo");
 

@@ -1,11 +1,11 @@
 package cz.upce.nnpro_backend.services;
 
-import cz.upce.nnpro_backend.Entities.Role;
-import cz.upce.nnpro_backend.Entities.User;
+import cz.upce.nnpro_backend.entities.Role;
+import cz.upce.nnpro_backend.entities.User;
 import cz.upce.nnpro_backend.config.WebSecurityConfig;
-import cz.upce.nnpro_backend.dtos.ChangePasswordDto;
-import cz.upce.nnpro_backend.dtos.UserDetailOutDto;
-import cz.upce.nnpro_backend.dtos.UserDto;
+import cz.upce.nnpro_backend.dtos.NewPasswordDto;
+import cz.upce.nnpro_backend.dtos.UserOutDto;
+import cz.upce.nnpro_backend.dtos.UserInDto;
 import cz.upce.nnpro_backend.repositories.RoleRepository;
 import cz.upce.nnpro_backend.repositories.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,12 +34,12 @@ public class UserService {
         this.webSecurityConfig = webSecurityConfig;
     }
 
-    public User addUser(UserDto userDto) {
-        if (userRepository.existsByUsername(userDto.getUsername())) {
+    public User addUser(UserInDto userInDto) {
+        if (userRepository.existsByUsername(userInDto.getUsername())) {
             throw new IllegalArgumentException("The username already exists.");
         }
-        Optional<Role> role = roleRepository.findById(userDto.getRole() == null ? 0 : userDto.getRole());
-        User user = ConversionService.convertToUser(userDto, role);
+        Optional<Role> role = roleRepository.findById(userInDto.getRole() == null ? 0 : userInDto.getRole());
+        User user = ConversionService.convertToUser(userInDto, role);
         user.setPassword(webSecurityConfig.passwordEncoder().encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -50,27 +50,27 @@ public class UserService {
         return user;
     }
 
-    public User editUser(Long userId, UserDto userDto) {
-        if (userRepository.existsByUsernameAndIdIsNot(userDto.getUsername(), userId)) {
+    public User editUser(Long userId, UserInDto userInDto) {
+        if (userRepository.existsByUsernameAndIdIsNot(userInDto.getUsername(), userId)) {
             throw new IllegalArgumentException("The username already exists.");
         }
-        Optional<Role> role = roleRepository.findById(userDto.getRole() == null ? 0 : userDto.getRole());
+        Optional<Role> role = roleRepository.findById(userInDto.getRole() == null ? 0 : userInDto.getRole());
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
-        User editedUser = ConversionService.convertToUser(userDto, user, role);
+        User editedUser = ConversionService.convertToUser(userInDto, user, role);
         return userRepository.save(editedUser);
     }
 
-    public User changePassword(Long userId, ChangePasswordDto changePasswordDto) {
+    public User changePassword(Long userId, NewPasswordDto newPasswordDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
-        if (bCryptPasswordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
-            user.setPassword(bCryptPasswordEncoder.encode(changePasswordDto.getNewPassword()));
+        if (bCryptPasswordEncoder.matches(newPasswordDto.getOldPassword(), user.getPassword())) {
+            user.setPassword(bCryptPasswordEncoder.encode(newPasswordDto.getNewPassword()));
             return userRepository.save(user);
         }
         throw new IllegalArgumentException("Old password doesn't match!");
 
     }
 
-    public UserDetailOutDto getUser(Long userId) {
+    public UserOutDto getUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
         return ConversionService.convertToUserDetailOutDto(user);
     }
@@ -79,13 +79,13 @@ public class UserService {
         return roleRepository.findAll();
     }
 
-    public List<UserDetailOutDto> getAllUsers() {
+    public List<UserOutDto> getAllUsers() {
         List<User> users = userRepository.findAll();
-        List<UserDetailOutDto> userDetailOutDtos = new ArrayList<>();
+        List<UserOutDto> userOutDtos = new ArrayList<>();
         for (User user : users) {
-            userDetailOutDtos.add(ConversionService.convertToUserDetailOutDto(user));
+            userOutDtos.add(ConversionService.convertToUserDetailOutDto(user));
         }
-        return userDetailOutDtos;
+        return userOutDtos;
     }
 
     @PostConstruct

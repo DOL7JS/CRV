@@ -2,7 +2,7 @@ package cz.upce.nnpro_backend.dtos;
 
 import java.time.LocalDate;
 
-public class CarInOwnerDto {
+public class CarDto {
 
     private Long id;
     private String manufacturer;

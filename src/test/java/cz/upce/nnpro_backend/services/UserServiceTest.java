@@ -1,10 +1,10 @@
 package cz.upce.nnpro_backend.services;
 
-import cz.upce.nnpro_backend.Entities.Role;
-import cz.upce.nnpro_backend.Entities.User;
-import cz.upce.nnpro_backend.dtos.ChangePasswordDto;
-import cz.upce.nnpro_backend.dtos.UserDetailOutDto;
-import cz.upce.nnpro_backend.dtos.UserDto;
+import cz.upce.nnpro_backend.entities.Role;
+import cz.upce.nnpro_backend.entities.User;
+import cz.upce.nnpro_backend.dtos.NewPasswordDto;
+import cz.upce.nnpro_backend.dtos.UserOutDto;
+import cz.upce.nnpro_backend.dtos.UserInDto;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -28,14 +28,14 @@ public class UserServiceTest {
     @Test
     @Order(1)
     void addUserTest(){
-        UserDto userDto = new UserDto();
-        userDto.setRole(1L);
-        userDto.setPassword("heslo");
-        userDto.setEmail("email@email.com");
-        userDto.setJobPosition("JobPosition");
-        userDto.setUsername("username");
+        UserInDto userInDto = new UserInDto();
+        userInDto.setRole(1L);
+        userInDto.setPassword("heslo");
+        userInDto.setEmail("email@email.com");
+        userInDto.setJobPosition("JobPosition");
+        userInDto.setUsername("username");
 
-        User user = userService.addUser(userDto);
+        User user = userService.addUser(userInDto);
 
         assertNotNull(user.getId());
     }
@@ -43,23 +43,23 @@ public class UserServiceTest {
     @Test
     @Order(2)
     void editUserTest(){
-        UserDto userDto = new UserDto();
-        userDto.setRole(1L);
-        userDto.setPassword("heslo");
-        userDto.setEmail("email@email.com");
-        userDto.setJobPosition("JobPosition");
-        userDto.setUsername("username2");
+        UserInDto userInDto = new UserInDto();
+        userInDto.setRole(1L);
+        userInDto.setPassword("heslo");
+        userInDto.setEmail("email@email.com");
+        userInDto.setJobPosition("JobPosition");
+        userInDto.setUsername("username2");
 
-        User saveUser = userService.addUser(userDto);
+        User saveUser = userService.addUser(userInDto);
 
-        UserDto editUserDto = new UserDto();
-        editUserDto.setRole(1L);
-        editUserDto.setPassword("heslo");
-        editUserDto.setEmail("email@email.com");
-        editUserDto.setJobPosition("JobPosition");
-        editUserDto.setUsername("username_changed");
+        UserInDto editUserInDto = new UserInDto();
+        editUserInDto.setRole(1L);
+        editUserInDto.setPassword("heslo");
+        editUserInDto.setEmail("email@email.com");
+        editUserInDto.setJobPosition("JobPosition");
+        editUserInDto.setUsername("username_changed");
 
-        User user = userService.editUser(saveUser.getId(), editUserDto);
+        User user = userService.editUser(saveUser.getId(), editUserInDto);
 
         assertNotNull(user);
         assertEquals("username_changed", user.getUsername());
@@ -68,25 +68,25 @@ public class UserServiceTest {
     @Test
     @Order(3)
     void changePasswordTest(){
-        UserDto userDto = new UserDto();
-        userDto.setRole(1L);
-        userDto.setPassword("heslo");
-        userDto.setEmail("email@email.com");
-        userDto.setJobPosition("JobPosition");
-        userDto.setUsername("username3");
+        UserInDto userInDto = new UserInDto();
+        userInDto.setRole(1L);
+        userInDto.setPassword("heslo");
+        userInDto.setEmail("email@email.com");
+        userInDto.setJobPosition("JobPosition");
+        userInDto.setUsername("username3");
 
-        User saveUser = userService.addUser(userDto);
+        User saveUser = userService.addUser(userInDto);
 
-        ChangePasswordDto changePasswordDto = new ChangePasswordDto();
-        changePasswordDto.setOldPassword("heslo");
-        changePasswordDto.setNewPassword("password");
-        userService.changePassword(saveUser.getId(), changePasswordDto);
+        NewPasswordDto newPasswordDto = new NewPasswordDto();
+        newPasswordDto.setOldPassword("heslo");
+        newPasswordDto.setNewPassword("password");
+        userService.changePassword(saveUser.getId(), newPasswordDto);
     }
 
     @Test
     @Order(4)
     void getUserTest(){
-        UserDetailOutDto user = userService.getUser(1L);
+        UserOutDto user = userService.getUser(1L);
         assertNotNull(user);
         assertEquals(3,user.getRole().getId());
     }
@@ -101,21 +101,21 @@ public class UserServiceTest {
     @Test
     @Order(6)
     void getAllUsersTest(){
-        List<UserDetailOutDto> list = userService.getAllUsers();
+        List<UserOutDto> list = userService.getAllUsers();
         assertEquals(4, list.size());
     }
 
     @Test
     @Order(7)
     void removeUserTest(){
-        UserDto userDto = new UserDto();
-        userDto.setRole(1L);
-        userDto.setPassword("heslo");
-        userDto.setEmail("email@email.com");
-        userDto.setJobPosition("JobPosition");
-        userDto.setUsername("username5");
+        UserInDto userInDto = new UserInDto();
+        userInDto.setRole(1L);
+        userInDto.setPassword("heslo");
+        userInDto.setEmail("email@email.com");
+        userInDto.setJobPosition("JobPosition");
+        userInDto.setUsername("username5");
 
-        User saveUser = userService.addUser(userDto);
+        User saveUser = userService.addUser(userInDto);
 
         User user = userService.removeUser(saveUser.getId());
         assertNotNull(user);

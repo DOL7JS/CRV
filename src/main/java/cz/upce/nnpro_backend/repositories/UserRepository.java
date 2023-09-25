@@ -1,8 +1,7 @@
 package cz.upce.nnpro_backend.repositories;
 
-import cz.upce.nnpro_backend.Entities.BranchOffice;
-import cz.upce.nnpro_backend.Entities.Role;
-import cz.upce.nnpro_backend.Entities.User;
+import cz.upce.nnpro_backend.entities.BranchOffice;
+import cz.upce.nnpro_backend.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

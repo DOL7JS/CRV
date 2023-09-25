@@ -1,8 +1,8 @@
 package cz.upce.nnpro_backend.services;
 
-import cz.upce.nnpro_backend.Entities.Owner;
-import cz.upce.nnpro_backend.dtos.OwnerDetailOutDto;
-import cz.upce.nnpro_backend.dtos.OwnerDto;
+import cz.upce.nnpro_backend.entities.Owner;
+import cz.upce.nnpro_backend.dtos.OwnerOutDto;
+import cz.upce.nnpro_backend.dtos.OwnerInDto;
 import cz.upce.nnpro_backend.repositories.OwnerRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +19,14 @@ public class OwnerService {
     }
 
 
-    public Owner addOwner(OwnerDto ownerDto) {
-        Owner newOwner = ConversionService.convertToOwner(ownerDto);
+    public Owner addOwner(OwnerInDto ownerInDto) {
+        Owner newOwner = ConversionService.convertToOwner(ownerInDto);
         return ownerRepository.save(newOwner);
     }
 
-    public Owner editOwner(Long ownerId, OwnerDto ownerDto) {
+    public Owner editOwner(Long ownerId, OwnerInDto ownerInDto) {
         Owner owner = ownerRepository.findById(ownerId).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
-        Owner newOwner = ConversionService.convertToOwner(owner, ownerDto);
+        Owner newOwner = ConversionService.convertToOwner(owner, ownerInDto);
         return ownerRepository.save(newOwner);
     }
 
@@ -37,7 +37,7 @@ public class OwnerService {
     }
 
 
-    public OwnerDetailOutDto getOwner(Long idOwner) {
+    public OwnerOutDto getOwner(Long idOwner) {
         Owner owner = ownerRepository.findById(idOwner).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
         //        PageRequest pr = PageRequest.of(page, pageSize, orderDirection.equals("DESC") ? Sort.by(orderBy).descending() : Sort.by(orderBy).ascending());
 //        Page<Car> carPage = carOwnerRepository.findCarOwnerByOwner(owner, pr);
@@ -45,12 +45,12 @@ public class OwnerService {
         return ConversionService.convertToOwnerDetailOutDto(owner);
     }
 
-    public List<OwnerDetailOutDto> getAllOwners() {
+    public List<OwnerOutDto> getAllOwners() {
         List<Owner> ownerList = ownerRepository.findAll();
-        List<OwnerDetailOutDto> ownerDetailOutDtos = new ArrayList<>();
+        List<OwnerOutDto> ownerOutDtos = new ArrayList<>();
         for(Owner owner:ownerList){
-            ownerDetailOutDtos.add(ConversionService.convertToOwnerDetailOutDto(owner));
+            ownerOutDtos.add(ConversionService.convertToOwnerDetailOutDto(owner));
         }
-        return ownerDetailOutDtos;
+        return ownerOutDtos;
     }
 }

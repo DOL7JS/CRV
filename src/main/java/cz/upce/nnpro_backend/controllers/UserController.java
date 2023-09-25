@@ -1,15 +1,15 @@
 package cz.upce.nnpro_backend.controllers;
 
 
-import cz.upce.nnpro_backend.Entities.Role;
-import cz.upce.nnpro_backend.Entities.User;
+import cz.upce.nnpro_backend.entities.Role;
+import cz.upce.nnpro_backend.entities.User;
 import cz.upce.nnpro_backend.config.JwtRequest;
 import cz.upce.nnpro_backend.config.JwtResponse;
 import cz.upce.nnpro_backend.config.JwtTokenUtil;
-import cz.upce.nnpro_backend.dtos.ChangePasswordDto;
+import cz.upce.nnpro_backend.dtos.NewPasswordDto;
 import cz.upce.nnpro_backend.dtos.ErrorDto;
-import cz.upce.nnpro_backend.dtos.UserDetailOutDto;
-import cz.upce.nnpro_backend.dtos.UserDto;
+import cz.upce.nnpro_backend.dtos.UserOutDto;
+import cz.upce.nnpro_backend.dtos.UserInDto;
 import cz.upce.nnpro_backend.repositories.UserRepository;
 import cz.upce.nnpro_backend.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,7 +32,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -59,7 +57,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User returned",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserDetailOutDto.class))}),
+                            schema = @Schema(implementation = UserOutDto.class))}),
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "User not found",
@@ -74,7 +72,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User returned",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserDetailOutDto.class))}),
+                            schema = @Schema(implementation = UserOutDto.class))}),
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content)})
     @SecurityRequirement(name = "NNPRO_API")
@@ -111,8 +109,8 @@ public class UserController {
     @SecurityRequirement(name = "NNPRO_API")
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PostMapping("/addUser")
-    public ResponseEntity<?> addUser(@RequestBody @Valid UserDto userDto) {
-        return ResponseEntity.ok(userService.addUser(userDto));
+    public ResponseEntity<?> addUser(@RequestBody @Valid UserInDto userInDto) {
+        return ResponseEntity.ok(userService.addUser(userInDto));
     }
 
 
@@ -144,8 +142,8 @@ public class UserController {
     @SecurityRequirement(name = "NNPRO_API")
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/editUser/{userId}")
-    public ResponseEntity<?> editUser(@PathVariable Long userId, @RequestBody @Valid UserDto userDto) {
-        return ResponseEntity.ok(userService.editUser(userId, userDto));
+    public ResponseEntity<?> editUser(@PathVariable Long userId, @RequestBody @Valid UserInDto userInDto) {
+        return ResponseEntity.ok(userService.editUser(userId, userInDto));
     }
 
     @Operation(summary = "Change user password ")
@@ -160,8 +158,8 @@ public class UserController {
     @SecurityRequirement(name = "NNPRO_API")
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/changeUserPassword/{userId}")
-    public ResponseEntity<?> changeUserPassword(@PathVariable Long userId, @RequestBody @Valid ChangePasswordDto changePasswordDto) {
-        return ResponseEntity.ok(userService.changePassword(userId, changePasswordDto));
+    public ResponseEntity<?> changeUserPassword(@PathVariable Long userId, @RequestBody @Valid NewPasswordDto newPasswordDto) {
+        return ResponseEntity.ok(userService.changePassword(userId, newPasswordDto));
     }
 
     @Operation(summary = "Login user")

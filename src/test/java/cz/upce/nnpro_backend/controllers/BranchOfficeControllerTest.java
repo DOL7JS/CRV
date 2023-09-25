@@ -2,7 +2,7 @@ package cz.upce.nnpro_backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.upce.nnpro_backend.config.JwtRequest;
-import cz.upce.nnpro_backend.dtos.BranchOfficeIdUserIdDto;
+import cz.upce.nnpro_backend.dtos.BranchOfficeUserDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeInDto;
 import cz.upce.nnpro_backend.dtos.CarsOwnersDto;
 import org.junit.jupiter.api.*;
@@ -102,7 +102,7 @@ public class BranchOfficeControllerTest {
 
     @Test
     void addUserToOfficeIsOk() throws Exception{
-        BranchOfficeIdUserIdDto userIdDto = new BranchOfficeIdUserIdDto();
+        BranchOfficeUserDto userIdDto = new BranchOfficeUserDto();
         userIdDto.setUserId(1L);
         userIdDto.setBranchOfficeId(1L);
 
@@ -111,7 +111,7 @@ public class BranchOfficeControllerTest {
 
     @Test
     void addUserToOfficeIs400() throws Exception{
-        BranchOfficeIdUserIdDto userIdDto = new BranchOfficeIdUserIdDto();
+        BranchOfficeUserDto userIdDto = new BranchOfficeUserDto();
         userIdDto.setUserId(5L);
         userIdDto.setBranchOfficeId(1L);
 

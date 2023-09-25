@@ -1,7 +1,7 @@
 package cz.upce.nnpro_backend.dtos;
 
-import cz.upce.nnpro_backend.Entities.Car;
-import cz.upce.nnpro_backend.Entities.Owner;
+import cz.upce.nnpro_backend.entities.Car;
+import cz.upce.nnpro_backend.entities.Owner;
 
 import java.util.List;
 

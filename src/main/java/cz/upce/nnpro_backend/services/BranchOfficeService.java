@@ -2,13 +2,13 @@ package cz.upce.nnpro_backend.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.upce.nnpro_backend.Entities.BranchOffice;
-import cz.upce.nnpro_backend.Entities.Car;
-import cz.upce.nnpro_backend.Entities.Owner;
-import cz.upce.nnpro_backend.Entities.User;
-import cz.upce.nnpro_backend.dtos.BranchOfficeIdUserIdDto;
+import cz.upce.nnpro_backend.entities.BranchOffice;
+import cz.upce.nnpro_backend.entities.Car;
+import cz.upce.nnpro_backend.entities.Owner;
+import cz.upce.nnpro_backend.entities.User;
+import cz.upce.nnpro_backend.dtos.BranchOfficeUserDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeInDto;
-import cz.upce.nnpro_backend.dtos.UserDetailOutDto;
+import cz.upce.nnpro_backend.dtos.UserOutDto;
 import cz.upce.nnpro_backend.repositories.BranchOfficeRepository;
 import cz.upce.nnpro_backend.repositories.CarRepository;
 import cz.upce.nnpro_backend.repositories.OwnerRepository;
@@ -67,10 +67,10 @@ public class BranchOfficeService {
         return branchOfficeRepository.findById(officeId).orElseThrow(() -> new NoSuchElementException("Branch office not found!"));
     }
 
-    public UserDetailOutDto addUserToOffice(BranchOfficeIdUserIdDto branchOfficeIdUserIdDto) {
+    public UserOutDto addUserToOffice(BranchOfficeUserDto branchOfficeUserDto) {
 
-        User user = userRepository.findById(branchOfficeIdUserIdDto.getUserId()).orElseThrow(() -> new NoSuchElementException("User not found!"));
-        user.setBranchOffice(branchOfficeRepository.findById(branchOfficeIdUserIdDto.getBranchOfficeId()).orElseThrow(() -> new NoSuchElementException("Branch office not found!")));
+        User user = userRepository.findById(branchOfficeUserDto.getUserId()).orElseThrow(() -> new NoSuchElementException("User not found!"));
+        user.setBranchOffice(branchOfficeRepository.findById(branchOfficeUserDto.getBranchOfficeId()).orElseThrow(() -> new NoSuchElementException("Branch office not found!")));
         User save = userRepository.save(user);
         return ConversionService.convertToUserDetailOutDto(save);
     }
