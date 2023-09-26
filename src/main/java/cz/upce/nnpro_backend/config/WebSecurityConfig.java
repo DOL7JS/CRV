@@ -65,6 +65,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v3/api-docs/**").permitAll()
                 .antMatchers("/car/**").permitAll()
 
+                .antMatchers("/**").permitAll()//
+
                 .anyRequest().authenticated().and().
                 // make sure we use stateless session; session won't be used to
                 // store user's state.
