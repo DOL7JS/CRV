@@ -45,7 +45,7 @@ public class Car {
     private LocalDate yearOfCreation;
     @NotBlank(message = "Vin is mandatory.")
     private String vin;
-    @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     private Set<CarOwner> carOwners;
 
     @ManyToOne

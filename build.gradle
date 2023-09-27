@@ -28,9 +28,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'junit:junit:4.13.1'
+    implementation 'org.webjars.bowergithub.vaadin:vaadin-button:2.4.0'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    //runtimeOnly 'mysql:mysql-connector-java'
     implementation 'org.mariadb.jdbc:mariadb-java-client:2.1.2'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
@@ -42,8 +43,6 @@ dependencies {
     implementation 'com.vaadin:vaadin:23.2.2'
     implementation 'com.vaadin:vaadin-spring-boot-starter:23.2.2'
     testImplementation 'com.vaadin:vaadin-testbench:23.2.2'
-    testImplementation 'org.junit.vintage:junit-vintage-engine:5.8.2'
-    testImplementation 'io.github.bonigarcia:webdrivermanager:5.1.1'
 }
 
 tasks.named('test') {

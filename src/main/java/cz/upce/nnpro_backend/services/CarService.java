@@ -142,10 +142,6 @@ public class CarService {
 
     public List<CarOutDto> getAllCars() {
         List<Car> cars = carRepository.findAll();
-        List<CarOutDto> carOutDtos = new ArrayList<>();
-        for (Car car : cars) {
-            carOutDtos.add(ConversionService.convertToCarDetailOutDto(car));
-        }
-        return carOutDtos;
+        return new ArrayList<>(cars.stream().map(ConversionService::convertToCarDetailOutDto).toList());
     }
 }
