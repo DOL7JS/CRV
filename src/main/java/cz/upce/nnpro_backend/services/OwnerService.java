@@ -39,9 +39,6 @@ public class OwnerService {
 
     public OwnerOutDto getOwner(Long idOwner) {
         Owner owner = ownerRepository.findById(idOwner).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
-        //        PageRequest pr = PageRequest.of(page, pageSize, orderDirection.equals("DESC") ? Sort.by(orderBy).descending() : Sort.by(orderBy).ascending());
-//        Page<Car> carPage = carOwnerRepository.findCarOwnerByOwner(owner, pr);
-//        OwnerDetailOutDto ownerDetailOutDto = ConversionService.convertToOwnerDetailOutDto(owner, carPage);
         return ConversionService.convertToOwnerDetailOutDto(owner);
     }
 

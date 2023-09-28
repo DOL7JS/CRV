@@ -10,6 +10,8 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import cz.upce.frontend.Menu;
@@ -36,6 +38,9 @@ public class CarsList extends Composite<VerticalLayout> {
                 {
                     if (listener.getClickCount() == 2) {
                         Notification.show(listener.getItem().getVin());
+                        stripedGrid.getUI().ifPresent(ui -> ui.navigate(
+                                CarDetail.class,
+                                new RouteParameters("carID", listener.getItem().getId().toString())));
                     }
                 }
         );

@@ -1,10 +1,7 @@
 package cz.upce.nnpro_backend.services;
 
+import cz.upce.nnpro_backend.dtos.*;
 import cz.upce.nnpro_backend.entities.*;
-import cz.upce.nnpro_backend.dtos.CarOutDto;
-import cz.upce.nnpro_backend.dtos.CarOwnerDto;
-import cz.upce.nnpro_backend.dtos.CarBranchOfficeDto;
-import cz.upce.nnpro_backend.dtos.CarInDto;
 import cz.upce.nnpro_backend.repositories.*;
 import org.springframework.stereotype.Service;
 
@@ -61,10 +58,16 @@ public class CarService {
         carOwnerRepository.save(carOwnerOld);
         carRepository.setSPZNullByCar(carOwnerOld.getCar());
         spzRepository.save(new SPZ(carOwnerOld.getCar().getSPZ()));
-//        carOwnerRepository.deleteByCarIdAndOwnerId(carIdOwnerIdDto.getCarId(), carIdOwnerIdDto.getOwnerId());
-//        Car deletedCar = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
-//        carRepository.deleteById(carId);
-//        return deletedCar;
+    }
+
+    public void signOutCar(Long carId) {
+        CarOwner carOwnerOld = carOwnerRepository.findByCarIdAndEndOfSignUpIsNull(carId);
+        if (carOwnerOld != null) {
+            carOwnerOld.setEndOfSignUp(LocalDate.now());
+            carOwnerRepository.save(carOwnerOld);
+            carRepository.setSPZNullByCar(carOwnerOld.getCar());
+            spzRepository.save(new SPZ(carOwnerOld.getCar().getSPZ()));
+        }
     }
 
     public Car putCarInDeposit(Long carId) {
@@ -92,6 +95,27 @@ public class CarService {
         carOwner.setStartOfSignUp(LocalDate.now());
         carOwnerRepository.save(carOwner);
         return owner;
+    }
+
+    public Car signInCar(Long carId, OwnerInDto ownerInDto) throws Exception {
+        CarOwner byCarIdAndEndOfSignUpIsNull = carOwnerRepository.findByCarIdAndEndOfSignUpIsNull(carId);
+        if (byCarIdAndEndOfSignUpIsNull != null) {
+            byCarIdAndEndOfSignUpIsNull.setEndOfSignUp(LocalDate.now());
+            carOwnerRepository.save(byCarIdAndEndOfSignUpIsNull);
+        }
+        Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
+        if (car.getSPZ() == null) {
+            car.setSPZ(spzService.generateSPZ().getSPZ());
+        }
+        car = carRepository.save(car);
+        Owner owner = ConversionService.convertToOwner(ownerInDto);
+        owner = ownerRepository.save(owner);
+        CarOwner carOwner = new CarOwner();
+        carOwner.setCar(car);
+        carOwner.setOwner(owner);
+        carOwner.setStartOfSignUp(LocalDate.now());
+        carOwnerRepository.save(carOwner);
+        return car;
     }
 
     public Owner signInExistingCar(CarOwnerDto carOwnerDto) throws Exception {

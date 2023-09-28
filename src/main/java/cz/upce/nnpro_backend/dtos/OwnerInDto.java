@@ -9,12 +9,23 @@ public class OwnerInDto {
     String firstName;
     @NotBlank(message = "Last name is mandatory.")
     String lastName;
+    @NotBlank(message = "Last name is mandatory.")
+    String email;
     @NotNull(message = "Birth date is mandatory.")
     LocalDate birthDate;
     @NotBlank(message = "City is mandatory.")
     String city;
     @NotBlank(message = "Street is mandatory.")
     String street;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @NotNull(message = "Zip code is mandatory.")
     int zipCode;
     @NotNull(message = "Number of house is mandatory.")

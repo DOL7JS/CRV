@@ -1,4 +1,4 @@
-package cz.upce.frontend.Office;
+package cz.upce.frontend.office;
 
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.grid.Grid;
@@ -6,10 +6,8 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import cz.upce.frontend.Menu;
-import cz.upce.nnpro_backend.dtos.CarOutDto;
 import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.services.BranchOfficeService;
-import cz.upce.nnpro_backend.services.CarService;
 
 @Route(value = "offices", layout = Menu.class)
 public class OfficeList extends Composite<VerticalLayout> {

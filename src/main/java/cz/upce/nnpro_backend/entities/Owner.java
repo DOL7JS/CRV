@@ -37,7 +37,7 @@ public class Owner {
     @NotNull(message = "Zip code is mandatory.")
     private int zipCode;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private Set<CarOwner> carOwners;
 
 

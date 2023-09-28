@@ -99,6 +99,7 @@ public class ConversionService {
         newOwner.setFirstName(ownerInDto.getFirstName());
         newOwner.setLastName(ownerInDto.getLastName());
         newOwner.setBirthDate(ownerInDto.getBirthDate());
+        newOwner.setEmail(ownerInDto.getEmail());
         newOwner.setCity(ownerInDto.getCity());
         newOwner.setStreet(ownerInDto.getStreet());
         newOwner.setZipCode(ownerInDto.getZipCode());
