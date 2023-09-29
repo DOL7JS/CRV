@@ -26,6 +26,31 @@ public class ConversionService {
         return userDto;
     }
 
+    public static List<BranchOfficeDto> convertListToListOfficeDto(List<BranchOffice> old) {
+        List<BranchOfficeDto> list = new ArrayList<>();
+        for (BranchOffice office : old) {
+            list.add(convertToOfficeDto(office));
+        }
+        return list;
+    }
+
+    public static BranchOfficeInDto convertToBranchOfficeInDto(BranchOfficeDto branchOfficeDto) {
+        BranchOfficeInDto branchOfficeInDto = new BranchOfficeInDto();
+        branchOfficeInDto.setCity(branchOfficeDto.getCity());
+        branchOfficeInDto.setRegion(branchOfficeDto.getRegion());
+        branchOfficeInDto.setDistrict(branchOfficeDto.getDistrict());
+        return branchOfficeInDto;
+    }
+
+    public static BranchOfficeDto convertToOfficeDto(BranchOffice old) {
+        BranchOfficeDto branchOfficeDto = new BranchOfficeDto();
+        branchOfficeDto.setId(old.getId());
+        branchOfficeDto.setCity(old.getCity());
+        branchOfficeDto.setDistrict(old.getDistrict());
+        branchOfficeDto.setRegion(old.getRegion());
+        return branchOfficeDto;
+    }
+
     public static Car convertToCar(CarInDto carInDto, String spz) {
         Car newCar = new Car();
         newCar.setVin(carInDto.getVin());

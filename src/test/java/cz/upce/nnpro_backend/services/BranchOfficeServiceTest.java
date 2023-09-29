@@ -1,5 +1,6 @@
 package cz.upce.nnpro_backend.services;
 
+import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
 import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.dtos.BranchOfficeUserDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeInDto;
@@ -67,7 +68,7 @@ public class BranchOfficeServiceTest {
         branchOfficeInDto.setDistrict("District4");
 
         BranchOffice saveOffice = branchOfficeService.addOffice(branchOfficeInDto);
-        BranchOffice branchOffice = branchOfficeService.getOffice(saveOffice.getId());
+        BranchOfficeDto branchOffice = branchOfficeService.getOffice(saveOffice.getId());
         assertEquals(saveOffice.getId(), branchOffice.getId());
     }
 
@@ -91,7 +92,7 @@ public class BranchOfficeServiceTest {
     @Test
     @Order(4)
     void getAllOfficesTest(){
-        List<BranchOffice> list = branchOfficeService.getAllOffices();
+        List<BranchOfficeDto> list = branchOfficeService.getAllOffices();
         assertEquals(3, list.size());
     }
 

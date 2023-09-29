@@ -2,6 +2,7 @@ package cz.upce.nnpro_backend.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
 import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.entities.Car;
 import cz.upce.nnpro_backend.entities.Owner;
@@ -60,11 +61,13 @@ public class BranchOfficeService {
         branchOffice.setRegion(officeDto.getRegion());
         branchOffice.setDistrict(officeDto.getDistrict());
         branchOffice.setCity(officeDto.getCity());
-        return branchOfficeRepository.save(branchOffice);
+        BranchOffice save = branchOfficeRepository.save(branchOffice);
+        return save;
     }
 
-    public BranchOffice getOffice(Long officeId) {
-        return branchOfficeRepository.findById(officeId).orElseThrow(() -> new NoSuchElementException("Branch office not found!"));
+    public BranchOfficeDto getOffice(Long officeId) {
+        return ConversionService.convertToOfficeDto(branchOfficeRepository.findById(officeId).orElseThrow(() -> new NoSuchElementException("Branch office not found!")));
+        //return branchOfficeRepository.findById(officeId).orElseThrow(() -> new NoSuchElementException("Branch office not found!"));
     }
 
     public UserOutDto addUserToOffice(BranchOfficeUserDto branchOfficeUserDto) {
@@ -93,7 +96,7 @@ public class BranchOfficeService {
         ownerRepository.saveAll(owners);
     }
 
-    public List<BranchOffice> getAllOffices() {
-        return branchOfficeRepository.findAll();
+    public List<BranchOfficeDto> getAllOffices() {
+        return ConversionService.convertListToListOfficeDto(branchOfficeRepository.findAll());
     }
 }

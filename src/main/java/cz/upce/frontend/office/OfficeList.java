@@ -9,7 +9,7 @@ import cz.upce.frontend.Menu;
 import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.services.BranchOfficeService;
 
-@Route(value = "offices", layout = Menu.class)
+@Route(value = "officesOLD", layout = Menu.class)
 public class OfficeList extends Composite<VerticalLayout> {
     private final BranchOfficeService officeList;
 
@@ -27,7 +27,7 @@ public class OfficeList extends Composite<VerticalLayout> {
         grid.addColumn(BranchOffice::getRegion).setHeader("Kraj");
         grid.addColumn(BranchOffice::getDistrict).setHeader("Okres");
         grid.addColumn(BranchOffice::getCity).setHeader("Město");
-        grid.setItems(officeList.getAllOffices());
+        //grid.setItems(officeList.getAllOffices());
     }
 
 }
