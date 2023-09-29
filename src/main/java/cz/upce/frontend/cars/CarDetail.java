@@ -6,6 +6,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
@@ -18,20 +19,27 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.validator.EmailValidator;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
+import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
 import cz.upce.nnpro_backend.dtos.CarOutDto;
 import cz.upce.nnpro_backend.dtos.OwnerDto;
 import cz.upce.nnpro_backend.dtos.OwnerInDto;
 import cz.upce.nnpro_backend.dtos.OwnerOutDto;
+import cz.upce.nnpro_backend.entities.Car;
 import cz.upce.nnpro_backend.entities.Owner;
 import cz.upce.nnpro_backend.services.CarService;
 import cz.upce.nnpro_backend.services.ConversionService;
 import cz.upce.nnpro_backend.services.OwnerService;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static cz.upce.frontend.FieldValidator.validateEmptyField;
 
 @Route(value = "cars/:carID", layout = Menu.class)
 public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
@@ -52,6 +60,7 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
     H3 h3Deposit = new H3();
     Grid<OwnerDto> stripedGrid = new Grid<>(OwnerDto.class, false);
 
+
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         String id = event.getRouteParameters().get("carID").orElse("-1");
@@ -68,10 +77,12 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         stripedGrid.addColumn(OwnerDto::getFirstName).setHeader("Jméno");
         stripedGrid.addColumn(OwnerDto::getLastName).setHeader("Příjmení");
         stripedGrid.addColumn(OwnerDto::getStartOfSignUp).setHeader("Přihlášení");
-        stripedGrid.addColumn(OwnerDto::getEndOfSignUp).setHeader("Odhlášení");//.setSortOrderProvider(new QuerySortOrder("", SortDirection.ASCENDING));
+        Grid.Column<OwnerDto> columnSignOut = stripedGrid.addColumn(OwnerDto::getEndOfSignUp).setHeader("Odhlášení");
         if (car != null) {
             stripedGrid.setItems(car.getOwners());
         }
+        GridSortOrder<OwnerDto> sort = new GridSortOrder<>(columnSignOut, SortDirection.DESCENDING);
+        stripedGrid.sort(List.of(sort));
     }
 
     private void SetCarDetail(CarOutDto car) {
@@ -99,28 +110,52 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         VerticalLayout middleLayout = new VerticalLayout();
         HorizontalLayout detailCarLayout = new HorizontalLayout();
         H1 h1CarDetail = new H1();
+        h1CarDetail.getStyle().set("margin-top", "0");
         Button buttonEditCar = new Button();
+        buttonEditCar.getStyle().set("display", "flex").set("justify-content", "center").set("align-items", "center");
+        h3SPZ.getStyle().set("margin-top", "0");
+        h3VIN.getStyle().set("margin-top", "0");
+        h3Manufacturer.getStyle().set("margin-top", "0");
+        h3CreationDate.getStyle().set("margin-top", "0");
+        h3Model.getStyle().set("margin-top", "0");
+        h3Color.getStyle().set("margin-top", "0");
+        h3EnginePower.getStyle().set("margin-top", "0");
+        h3EmissionStandard.getStyle().set("margin-top", "0");
+        h3Torque.getStyle().set("margin-top", "0");
+        h3Stolen.getStyle().set("margin-top", "0");
+        h3Deposit.getStyle().set("margin-top", "0");
         H2 h2SPZ = new H2();
+        h2SPZ.getStyle().set("margin-bottom", "0");
         Hr hr = new Hr();
         H2 h2VIN = new H2();
+        h2VIN.getStyle().set("margin-bottom", "0");
         Hr hr2 = new Hr();
         H2 h2Manufacturer = new H2();
+        h2Manufacturer.getStyle().set("margin-bottom", "0");
         Hr hr3 = new Hr();
         H2 h2Model = new H2();
+        h2Model.getStyle().set("margin-bottom", "0");
         Hr hr4 = new Hr();
         H2 h2CreationDate = new H2();
+        h2CreationDate.getStyle().set("margin-bottom", "0");
         Hr hr5 = new Hr();
         H2 h2Color = new H2();
+        h2Color.getStyle().set("margin-bottom", "0");
         Hr hr6 = new Hr();
         H2 h2EnginePower = new H2();
+        h2EnginePower.getStyle().set("margin-bottom", "0");
         Hr hr7 = new Hr();
         H2 h2EmissionStandard = new H2();
+        h2EmissionStandard.getStyle().set("margin-bottom", "0");
         Hr hr8 = new Hr();
         H2 h2Torque = new H2();
+        h2Torque.getStyle().set("margin-bottom", "0");
         Hr hr9 = new Hr();
         H2 h2Stolen = new H2();
+        h2Stolen.getStyle().set("margin-bottom", "0");
         Hr hr10 = new Hr();
         H2 h2Deposit = new H2();
+        h2Deposit.getStyle().set("margin-bottom", "0");
         Hr hr11 = new Hr();
         Hr hr12 = new Hr();
         VerticalLayout layoutColumn4 = new VerticalLayout();
@@ -132,10 +167,10 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
             signOutCar();
 
         });
-//       Button buttonOverrideOwner = new Button();
-//        buttonSignIn.addClickListener(event -> {
-//            openSignInDialog();
-//        });
+//        Button buttonOverrideOwner = new Button();
+        buttonSignIn.addClickListener(event -> {
+            openSignInDialog();
+        });
         setHeightFull();
         setWidthFull();
         setFlexGrow(1.0, mainHorizontalLayout);
@@ -153,6 +188,10 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         detailCarLayout.addClassName(Gap.MEDIUM);
         h1CarDetail.setText("Detail auta");
         buttonEditCar.setText("Upravit");
+        buttonEditCar.addClickListener(event -> {
+            buttonEditCar.getUI().ifPresent(ui -> ui.navigate(RouteConfiguration.forSessionScope()
+                    .getUrl(CarAddEdit.class, car.getId())));
+        });
         buttonEditCar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         h2SPZ.setText("SPZ");
         h2VIN.setText("VIN");
@@ -225,9 +264,15 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
     }
 
     private void signOutCar() {
-        carService.signOutCar(car.getId());
-        stripedGrid.getDataProvider().refreshAll();
-        Notification.show("Auto bylo odhlášeno", 2000, Notification.Position.MIDDLE);
+        CarOutDto carOutDto = carService.signOutCar(car.getId());
+        if (carOutDto != null) {
+            car = carOutDto;
+            stripedGrid.setItems(car.getOwners());
+            Notification.show("Auto bylo odhlášeno", 2000, Notification.Position.MIDDLE);
+        } else {
+            Notification.show("Nelze odhlásit nepříhlášené auto", 2000, Notification.Position.MIDDLE);
+        }
+
     }
 
     private void openSignInDialog() {
@@ -279,8 +324,8 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
             dialog.close();
         });
         Button saveButton = new Button("Uložit", e -> {
-            boolean valid = !validateEmptyField(firstNameField) & !validateEmptyField(lastNameField) & !validateEmptyField(cityField)
-                    & !validateEmptyField(streetField) & !validateEmptyField(houseNumberField) & !validateEmptyField(zipCodeField) & !validateEmptyField(emailField);
+            boolean valid = !FieldValidator.validateEmptyField(firstNameField) & !FieldValidator.validateEmptyField(lastNameField) & !FieldValidator.validateEmptyField(cityField)
+                    & !FieldValidator.validateEmptyField(streetField) & !FieldValidator.validateEmptyField(houseNumberField) & !FieldValidator.validateEmptyField(zipCodeField) & !FieldValidator.validateEmptyField(emailField);
 
             if (dateField.getValue() == null) {
                 dateField.setInvalid(true);
@@ -299,8 +344,8 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
                 try {
                     car = ConversionService.convertToCarDetailOutDto(carService.signInCar(car.getId(), ownerInDto));
                     h3SPZ.setText(car.getSPZ());
-                    stripedGrid.getDataProvider().refreshAll();
-                    SetCarOwners(car);
+                    stripedGrid.setItems(car.getOwners());
+                    //SetCarOwners(car);
                 } catch (Exception ex) {
                     Notification.show(ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
                     throw new RuntimeException(ex);
@@ -344,7 +389,12 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         });
         Button saveButton = new Button("Uložit", e -> {
             if (!ownerComboBox.isEmpty()) {
-                carService.changeOwner(car.getId(), ownerComboBox.getValue().getId());
+                try {
+                    car = ConversionService.convertToCarDetailOutDto(carService.changeOwner(car.getId(), ownerComboBox.getValue().getId()));
+                    stripedGrid.setItems(car.getOwners());
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
                 dialogOwner.close();
 
             }
@@ -365,24 +415,5 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         return dialogLayout;
     }
 
-    boolean validateEmptyField(TextField textField) {
-        if (textField.isEmpty()) {
-            textField.setInvalid(true);
-        }
-        return textField.isEmpty();
-    }
 
-    boolean validateEmptyField(NumberField textField) {
-        if (textField.isEmpty()) {
-            textField.setInvalid(true);
-        }
-        return textField.isEmpty();
-    }
-
-    boolean validateEmptyField(EmailField textField) {
-        if (textField.isEmpty()) {
-            textField.setInvalid(true);
-        }
-        return textField.isEmpty();
-    }
 }

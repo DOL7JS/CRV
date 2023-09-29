@@ -38,18 +38,25 @@ public class CarService {
 
     }
 
-    public Owner changeOwner(Long carId, Long idOwner) {
+    public Car changeOwner(Long carId, Long idOwner) throws Exception {
         Owner owner = ownerRepository.findById(idOwner).orElseThrow(() -> new NoSuchElementException("Owner not found!"));
-        Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         CarOwner carOwnerOld = carOwnerRepository.findByCarIdAndEndOfSignUpIsNull(carId);
-        carOwnerOld.setEndOfSignUp(LocalDate.now());
-        carOwnerRepository.save(carOwnerOld);
+        if (carOwnerOld != null) {
+            carOwnerOld.setEndOfSignUp(LocalDate.now());
+            carOwnerRepository.save(carOwnerOld);
+        }
+        Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
+        if (car.getSPZ() == null) {
+            car.setSPZ(spzService.generateSPZ().getSPZ());
+            car = carRepository.save(car);
+        }
         CarOwner carOwnerNew = new CarOwner();
         carOwnerNew.setCar(car);
         carOwnerNew.setOwner(owner);
         carOwnerNew.setStartOfSignUp(LocalDate.now());
-        carOwnerRepository.save(carOwnerNew);
-        return owner;
+        CarOwner save = carOwnerRepository.save(carOwnerNew);
+        save.getCar().getCarOwners().add(save);
+        return save.getCar();
     }
 
     public void signOutCar(CarOwnerDto carOwnerDto) {
@@ -60,14 +67,16 @@ public class CarService {
         spzRepository.save(new SPZ(carOwnerOld.getCar().getSPZ()));
     }
 
-    public void signOutCar(Long carId) {
+    public CarOutDto signOutCar(Long carId) {
         CarOwner carOwnerOld = carOwnerRepository.findByCarIdAndEndOfSignUpIsNull(carId);
         if (carOwnerOld != null) {
             carOwnerOld.setEndOfSignUp(LocalDate.now());
             carOwnerRepository.save(carOwnerOld);
             carRepository.setSPZNullByCar(carOwnerOld.getCar());
             spzRepository.save(new SPZ(carOwnerOld.getCar().getSPZ()));
+            return ConversionService.convertToCarDetailOutDto(carOwnerOld.getCar());
         }
+        return null;
     }
 
     public Car putCarInDeposit(Long carId) {

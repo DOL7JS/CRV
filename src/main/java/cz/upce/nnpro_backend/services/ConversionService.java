@@ -33,6 +33,7 @@ public class ConversionService {
         newCar.setColor(carInDto.getColor());
         newCar.setEnginePower(carInDto.getEnginePower());
         newCar.setInDeposit(carInDto.isInDeposit());
+        newCar.setStolen(carInDto.isStolen());
         newCar.setManufacturer(carInDto.getManufacturer());
         newCar.setType(carInDto.getType());
         newCar.setEmissionStandard(carInDto.getEmissionStandard());
@@ -46,6 +47,8 @@ public class ConversionService {
         newCar.setEnginePower(carInDto.getEnginePower());
         newCar.setInDeposit(carInDto.isInDeposit());
         newCar.setManufacturer(carInDto.getManufacturer());
+        newCar.setStolen(carInDto.isStolen());
+
         newCar.setType(carInDto.getType());
         newCar.setEmissionStandard(carInDto.getEmissionStandard());
         newCar.setYearOfCreation(carInDto.getYearOfCreation());

@@ -13,9 +13,12 @@ public class CarInDto {
     String manufacturer;
     @NotBlank(message = "Type is mandatory.")
     String type;
+
+
     @NotNull(message = "Year of creation is mandatory.")
     LocalDate yearOfCreation;
     boolean isInDeposit = false;
+    boolean isStolen = false;
     @NotNull(message = "Engine power is mandatory.")
     private double enginePower;
     @NotNull(message = "Emission standard is mandatory.")
@@ -23,6 +26,13 @@ public class CarInDto {
     @NotNull(message = "Torque is mandatory.")
     private double torque;
 
+    public boolean isStolen() {
+        return isStolen;
+    }
+
+    public void setStolen(boolean stolen) {
+        isStolen = stolen;
+    }
 
     public String getVin() {
         return vin;

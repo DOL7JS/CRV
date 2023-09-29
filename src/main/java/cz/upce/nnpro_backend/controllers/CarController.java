@@ -97,7 +97,6 @@ public class CarController {
     }
 
 
-
     @Operation(summary = "Add car to app", description = "It will add car without owner or branch office")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Car returned",
@@ -154,7 +153,7 @@ public class CarController {
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/changeOwner")
-    public ResponseEntity<?> changeOwner(@RequestBody @Valid CarOwnerDto carOwnerDto) {
+    public ResponseEntity<?> changeOwner(@RequestBody @Valid CarOwnerDto carOwnerDto) throws Exception {
         return ResponseEntity.ok(carService.changeOwner(carOwnerDto.getCarId(), carOwnerDto.getOwnerId()));
     }
 

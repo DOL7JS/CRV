@@ -19,6 +19,10 @@ public class CarOutDto {
     private List<OwnerDto> owners;
     private BranchOfficeDto branchOffice;
 
+    public boolean isSigned() {
+        return owners.stream().anyMatch(item -> item.getEndOfSignUp() == null);
+    }
+
     public boolean isStolen() {
         return isStolen;
     }
