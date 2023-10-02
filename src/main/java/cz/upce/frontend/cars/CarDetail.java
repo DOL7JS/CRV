@@ -1,5 +1,6 @@
 package cz.upce.frontend.cars;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -43,6 +44,7 @@ import static cz.upce.frontend.FieldValidator.validateEmptyField;
 
 @Route(value = "cars/:carID", layout = Menu.class)
 public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
+    private final String OWNER_EDIT = "owners/%s/edit";
 
     CarOutDto car;
     private final CarService carService;
@@ -70,34 +72,6 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
             SetCarOwners(car);
         }
         Notification.show("ID: " + id);
-    }
-
-    private void SetCarOwners(CarOutDto car) {
-        stripedGrid.removeAllColumns();
-        stripedGrid.addColumn(OwnerDto::getFirstName).setHeader("Jméno");
-        stripedGrid.addColumn(OwnerDto::getLastName).setHeader("Příjmení");
-        stripedGrid.addColumn(OwnerDto::getStartOfSignUp).setHeader("Přihlášení");
-        Grid.Column<OwnerDto> columnSignOut = stripedGrid.addColumn(OwnerDto::getEndOfSignUp).setHeader("Odhlášení");
-        if (car != null) {
-            stripedGrid.setItems(car.getOwners());
-        }
-        GridSortOrder<OwnerDto> sort = new GridSortOrder<>(columnSignOut, SortDirection.DESCENDING);
-        stripedGrid.sort(List.of(sort));
-    }
-
-    private void SetCarDetail(CarOutDto car) {
-        h3SPZ.setText(car.getSPZ() == null ? "-" : car.getSPZ());
-        h3Manufacturer.setText(car.getManufacturer());
-        h3Model.setText(car.getType());
-        h3Color.setText(car.getColor());
-        h3VIN.setText(car.getVin());
-        h3CreationDate.setText(car.getYearOfCreation().toString());
-        h3EnginePower.setText(String.valueOf(car.getEnginePower()));
-        h3EmissionStandard.setText(String.valueOf(car.getEmissionStandard()));
-        h3Torque.setText(String.valueOf(car.getTorque()));
-        h3Stolen.setText(car.isStolen() ? "Ano" : "Ne");
-        h3Deposit.setText(car.isInDeposit() ? "Ano" : "Ne");
-
     }
 
 
@@ -167,7 +141,6 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
             signOutCar();
 
         });
-//        Button buttonOverrideOwner = new Button();
         buttonSignIn.addClickListener(event -> {
             openSignInDialog();
         });
@@ -290,23 +263,25 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
                 .set("font-size", "1.5em").set("font-weight", "bold");
 
         TextField firstNameField = new TextField("Jméno");
+        TextField lastNameField = new TextField("Příjmení");
+        EmailField emailField = new EmailField("Email");
+        DatePicker dateField = new DatePicker("Datum narození");
+        TextField cityField = new TextField("Město");
+        TextField streetField = new TextField("Ulice");
+        NumberField houseNumberField = new NumberField("Číslo popisné");
+        NumberField zipCodeField = new NumberField("PSČ");
+
         firstNameField.setRequired(true);
         firstNameField.setRequiredIndicatorVisible(true);
-        TextField lastNameField = new TextField("Příjmení");
         lastNameField.setRequired(true);
-        EmailField emailField = new EmailField("Email");
         emailField.setRequiredIndicatorVisible(true);
-        DatePicker dateField = new DatePicker("Datum narození");
         dateField.setRequired(true);
-        TextField cityField = new TextField("Město");
         cityField.setRequired(true);
-        TextField streetField = new TextField("Ulice");
         streetField.setRequired(true);
-        NumberField houseNumberField = new NumberField("Číslo popisné");
         houseNumberField.setRequiredIndicatorVisible(true);
-        NumberField zipCodeField = new NumberField("PSČ");
         zipCodeField.setRequiredIndicatorVisible(true);
         zipCodeField.setMax(5);
+
         Binder<OwnerDto> binder = new Binder<>(OwnerDto.class);
         binder.forField(firstNameField).withValidator(name -> name.length() > 1, "Name must have at least 2 characters").bind(OwnerDto::getFirstName, OwnerDto::setFirstName);
         binder.forField(lastNameField).withValidator(name -> name.length() > 1, "Name must have at least 2 characters").bind(OwnerDto::getLastName, OwnerDto::setLastName);
@@ -324,13 +299,15 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
             dialog.close();
         });
         Button saveButton = new Button("Uložit", e -> {
-            boolean valid = !FieldValidator.validateEmptyField(firstNameField) & !FieldValidator.validateEmptyField(lastNameField) & !FieldValidator.validateEmptyField(cityField)
-                    & !FieldValidator.validateEmptyField(streetField) & !FieldValidator.validateEmptyField(houseNumberField) & !FieldValidator.validateEmptyField(zipCodeField) & !FieldValidator.validateEmptyField(emailField);
+            boolean valid = !FieldValidator.validateEmptyField(firstNameField)
+                    & !FieldValidator.validateEmptyField(lastNameField)
+                    & !FieldValidator.validateEmptyField(cityField)
+                    & !FieldValidator.validateEmptyField(streetField)
+                    & !FieldValidator.validateEmptyField(houseNumberField)
+                    & !FieldValidator.validateEmptyField(zipCodeField)
+                    & !FieldValidator.validateEmptyField(emailField)
+                    & !FieldValidator.validateEmptyField(dateField);
 
-            if (dateField.getValue() == null) {
-                dateField.setInvalid(true);
-                valid = false;
-            }
             if (binder.isValid() && valid) {
                 OwnerInDto ownerInDto = new OwnerInDto();
                 ownerInDto.setFirstName(firstNameField.getValue());
@@ -345,7 +322,6 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
                     car = ConversionService.convertToCarDetailOutDto(carService.signInCar(car.getId(), ownerInDto));
                     h3SPZ.setText(car.getSPZ());
                     stripedGrid.setItems(car.getOwners());
-                    //SetCarOwners(car);
                 } catch (Exception ex) {
                     Notification.show(ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
                     throw new RuntimeException(ex);
@@ -353,7 +329,7 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
                 dialog.close();
             }
         });
-        Button ownerButton = new Button("Zvolit existujícího vlastníka", e -> {
+        Button ownerButton = new Button("Existující vlastník", e -> {
             dialog.close();
             Dialog dialogOwner = new Dialog();
             dialogOwner.getElement().setAttribute("aria-label", "Přihlásit auto");
@@ -381,7 +357,7 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         headline.getStyle().set("margin", "var(--lumo-space-m) 0 0 0")
                 .set("font-size", "1.5em").set("font-weight", "bold");
 
-        ComboBox<OwnerOutDto> ownerComboBox = new ComboBox("Vlastník");
+        ComboBox<OwnerOutDto> ownerComboBox = new ComboBox<>("Vlastník");
         ownerComboBox.setItems(ownerService.getAllOwners());
         ownerComboBox.setItemLabelGenerator(item -> item.getFirstName() + " " + item.getLastName() + ", " + item.getBirthDate().toString());
         Button cancelButton = new Button("Zrušit", e -> {
@@ -411,9 +387,39 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         dialogLayout.setPadding(false);
         dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
         dialogLayout.getStyle().set("width", "300px").set("max-width", "100%");
-
         return dialogLayout;
     }
 
+    private void SetCarOwners(CarOutDto car) {
+        stripedGrid.removeAllColumns();
+        stripedGrid.addColumn(OwnerDto::getFirstName).setHeader("Jméno");
+        stripedGrid.addColumn(OwnerDto::getLastName).setHeader("Příjmení");
+        stripedGrid.addColumn(OwnerDto::getStartOfSignUp).setHeader("Přihlášení");
+        Grid.Column<OwnerDto> columnSignOut = stripedGrid.addColumn(OwnerDto::getEndOfSignUp).setHeader("Odhlášení");
+        if (car != null) {
+            stripedGrid.setItems(car.getOwners());
+        }
+        GridSortOrder<OwnerDto> sort = new GridSortOrder<>(columnSignOut, SortDirection.DESCENDING);
+        stripedGrid.sort(List.of(sort));
+        stripedGrid.addItemClickListener(item -> {
+            if (item.getClickCount() == 2) {
+                UI.getCurrent().navigate(String.format(OWNER_EDIT, item.getItem().getId()));
+            }
+        });
+    }
+
+    private void SetCarDetail(CarOutDto car) {
+        h3SPZ.setText(car.getSPZ() == null ? "-" : car.getSPZ());
+        h3Manufacturer.setText(car.getManufacturer());
+        h3Model.setText(car.getType());
+        h3Color.setText(car.getColor());
+        h3VIN.setText(car.getVin());
+        h3CreationDate.setText(car.getYearOfCreation().toString());
+        h3EnginePower.setText(String.valueOf(car.getEnginePower()));
+        h3EmissionStandard.setText(String.valueOf(car.getEmissionStandard()));
+        h3Torque.setText(String.valueOf(car.getTorque()));
+        h3Stolen.setText(car.isStolen() ? "Ano" : "Ne");
+        h3Deposit.setText(car.isInDeposit() ? "Ano" : "Ne");
+    }
 
 }

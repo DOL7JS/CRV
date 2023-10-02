@@ -19,9 +19,7 @@ import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
 import cz.upce.nnpro_backend.dtos.CarInDto;
 import cz.upce.nnpro_backend.dtos.CarOutDto;
-import cz.upce.nnpro_backend.entities.Car;
 import cz.upce.nnpro_backend.services.CarService;
-import cz.upce.nnpro_backend.services.ConversionService;
 
 @Route(value = "cars/edit", layout = Menu.class)
 public class CarAddEdit extends VerticalLayout implements HasUrlParameter<Long> {
@@ -49,77 +47,70 @@ public class CarAddEdit extends VerticalLayout implements HasUrlParameter<Long> 
             checkboxIsInDeposit.setEnabled(false);
             checkboxIsStolen.setEnabled(false);
         }
-        Notification.show("ID: " + parameter);
-    }
-
-    private void SetCarDetail(CarOutDto car) {
-        textFieldVIN.setValue(car.getVin());
-        textFieldManufacturer.setValue(car.getManufacturer());
-        textFieldTorque.setValue(car.getTorque());
-        textFieldColor.setValue(car.getColor());
-        textFieldModel.setValue(car.getType());
-        datePickerCreationYear.setValue(car.getYearOfCreation());
-        numberFieldEnginePower.setValue(car.getEnginePower());
-        numberFieldEmissionStandard.setValue(car.getEmissionStandard());
-        checkboxIsStolen.setValue(car.isStolen());
-        checkboxIsInDeposit.setValue(car.isInDeposit());
     }
 
 
     CarAddEdit(CarService carService) {
         this.carService = carService;
-        HorizontalLayout layoutMain = new HorizontalLayout();
-        VerticalLayout layoutColumn5 = new VerticalLayout();
-        VerticalLayout layoutMiddle = new VerticalLayout();
-        H3 h3 = new H3();
-        HorizontalLayout layoutRow2 = new HorizontalLayout();
-        VerticalLayout layoutColumn3 = new VerticalLayout();
-        VerticalLayout layoutColumn4 = new VerticalLayout();
-        HorizontalLayout layoutRow3 = new HorizontalLayout();
-        HorizontalLayout layoutRow4 = new HorizontalLayout();
-        Button buttonSave = new Button();
+        HorizontalLayout horizontalLayoutMain = new HorizontalLayout();
+        VerticalLayout verticalLayoutEmptyLeft = new VerticalLayout();
+        VerticalLayout verticalLayoutEmptyRight = new VerticalLayout();
 
-        checkboxIsStolen.setLabel("Kradené?");
-        checkboxIsInDeposit.setLabel("V depositu?");
-        VerticalLayout layoutColumn6 = new VerticalLayout();
+        VerticalLayout layoutMiddle = new VerticalLayout();
+        HorizontalLayout horizontalLayoutMiddle = new HorizontalLayout();
+        VerticalLayout verticalLayoutLeftColumnFields = new VerticalLayout();
+        VerticalLayout verticalLayoutRightColumnFields = new VerticalLayout();
+        HorizontalLayout horizontalLayoutButton = new HorizontalLayout();
+
+        Button buttonSave = new Button();
+        H3 h3 = new H3();
+
+
         setWidthFull();
         addClassName(Padding.LARGE);
         setHeightFull();
-        layoutMain.setWidthFull();
-        setFlexGrow(1.0, layoutMain);
-        layoutMain.setFlexGrow(1.0, layoutColumn5);
-        layoutColumn5.setWidth(null);
-        layoutMain.setFlexGrow(1.0, layoutMiddle);
+        horizontalLayoutMain.setWidthFull();
+        setFlexGrow(1.0, horizontalLayoutMain);
+        horizontalLayoutMain.setFlexGrow(1.0, verticalLayoutEmptyLeft);
+        horizontalLayoutMain.setFlexGrow(1.0, layoutMiddle);
         layoutMiddle.addClassName(Padding.XSMALL);
-        layoutMiddle.setWidth(null);
+
+        checkboxIsStolen.setLabel("Kradené?");
+        checkboxIsInDeposit.setLabel("V depositu?");
         h3.setText("Informace o autě");
-        layoutRow2.setWidthFull();
-        layoutRow2.addClassName(Gap.LARGE);
-        layoutMiddle.setFlexGrow(1.0, layoutRow2);
-        layoutRow2.setFlexGrow(1.0, layoutColumn3);
-        layoutColumn3.setWidth(null);
-        textFieldVIN.setLabel("VIN");
-        textFieldVIN.setWidthFull();
         textFieldManufacturer.setLabel("Výrobce");
-        textFieldManufacturer.setWidthFull();
-        textFieldColor.setLabel("Barva");
-        textFieldColor.setWidthFull();
         numberFieldEmissionStandard.setLabel("Emisní standard");
-        numberFieldEmissionStandard.setWidthFull();
-        layoutRow2.setFlexGrow(1.0, layoutColumn4);
-        layoutColumn4.setWidth(null);
         datePickerCreationYear.setLabel("Datum výroby");
-        datePickerCreationYear.setWidthFull();
-        layoutRow3.addClassName(Gap.MEDIUM);
-        layoutRow3.setWidthFull();
-        textFieldModel.setLabel("Model");
-        layoutRow3.setFlexGrow(1.0, textFieldModel);
         numberFieldEnginePower.setLabel("Výkon");
-        numberFieldEnginePower.setWidthFull();
+        textFieldModel.setLabel("Model");
         textFieldTorque.setLabel("Točivý moment");
-        textFieldTorque.setWidthFull();
-        layoutRow4.addClassName(Gap.MEDIUM);
         buttonSave.setText("Uložit");
+        textFieldColor.setLabel("Barva");
+        textFieldVIN.setLabel("VIN");
+
+        horizontalLayoutMiddle.addClassName(Gap.LARGE);
+        layoutMiddle.setFlexGrow(1.0, horizontalLayoutMiddle);
+        horizontalLayoutMiddle.setFlexGrow(1.0, verticalLayoutLeftColumnFields);
+        horizontalLayoutMain.setFlexGrow(1.0, verticalLayoutEmptyRight);
+        horizontalLayoutMiddle.setFlexGrow(1.0, verticalLayoutRightColumnFields);
+
+        layoutMiddle.setWidth(null);
+        verticalLayoutEmptyLeft.setWidth(null);
+        verticalLayoutLeftColumnFields.setWidth(null);
+        verticalLayoutRightColumnFields.setWidth(null);
+        verticalLayoutEmptyRight.setWidth(null);
+        horizontalLayoutMiddle.setWidthFull();
+        textFieldVIN.setWidthFull();
+        textFieldColor.setWidthFull();
+        datePickerCreationYear.setWidthFull();
+        textFieldManufacturer.setWidthFull();
+        numberFieldEmissionStandard.setWidthFull();
+        numberFieldEnginePower.setWidthFull();
+        textFieldTorque.setWidthFull();
+        textFieldModel.setWidthFull();
+        horizontalLayoutButton.addClassName(Gap.MEDIUM);
+        buttonSave.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
         buttonSave.addClickListener(event -> {
             try {
                 SaveCar();
@@ -137,31 +128,40 @@ public class CarAddEdit extends VerticalLayout implements HasUrlParameter<Long> 
         binder.forField(textFieldColor).withValidator(name -> name.length() > 1, "Color must have at least 2 characters").bind(CarInDto::getVin, CarInDto::setVin);
 
 
-        buttonSave.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        layoutMain.setFlexGrow(1.0, layoutColumn6);
-        layoutColumn6.setWidth(null);
-        add(layoutMain);
-        layoutMain.add(layoutColumn5);
-        layoutMain.add(layoutMiddle);
+        add(horizontalLayoutMain);
+        horizontalLayoutMain.add(verticalLayoutEmptyLeft);
+        horizontalLayoutMain.add(layoutMiddle);
         layoutMiddle.add(h3);
-        layoutMiddle.add(layoutRow2);
-        layoutRow2.add(layoutColumn3);
-        layoutColumn3.add(textFieldVIN);
-        layoutColumn3.add(textFieldManufacturer);
-        layoutColumn3.add(textFieldColor);
-        layoutColumn3.add(numberFieldEmissionStandard);
-        layoutColumn3.add(checkboxIsStolen);
-        layoutRow2.add(layoutColumn4);
-        layoutColumn4.add(datePickerCreationYear);
-        layoutColumn4.add(layoutRow3);
-        layoutRow3.add(textFieldModel);
-        layoutColumn4.add(numberFieldEnginePower);
-        layoutColumn4.add(textFieldTorque);
-        layoutColumn4.add(checkboxIsInDeposit);
-        layoutMiddle.add(layoutRow4);
-        layoutRow4.add(buttonSave);
-        layoutMain.add(layoutColumn6);
+        layoutMiddle.add(horizontalLayoutMiddle);
+        horizontalLayoutMiddle.add(verticalLayoutLeftColumnFields);
+        verticalLayoutLeftColumnFields.add(textFieldVIN);
+        verticalLayoutLeftColumnFields.add(textFieldManufacturer);
+        verticalLayoutLeftColumnFields.add(textFieldColor);
+        verticalLayoutLeftColumnFields.add(numberFieldEmissionStandard);
+        verticalLayoutLeftColumnFields.add(checkboxIsStolen);
+        horizontalLayoutMiddle.add(verticalLayoutRightColumnFields);
+        verticalLayoutRightColumnFields.add(datePickerCreationYear);
+        verticalLayoutRightColumnFields.add(textFieldModel);
+        verticalLayoutRightColumnFields.add(numberFieldEnginePower);
+        verticalLayoutRightColumnFields.add(textFieldTorque);
+        verticalLayoutRightColumnFields.add(checkboxIsInDeposit);
+        layoutMiddle.add(horizontalLayoutButton);
+        horizontalLayoutButton.add(buttonSave);
+        horizontalLayoutMain.add(verticalLayoutEmptyRight);
 
+    }
+
+    private void SetCarDetail(CarOutDto car) {
+        textFieldVIN.setValue(car.getVin());
+        textFieldManufacturer.setValue(car.getManufacturer());
+        textFieldTorque.setValue(car.getTorque());
+        textFieldColor.setValue(car.getColor());
+        textFieldModel.setValue(car.getType());
+        datePickerCreationYear.setValue(car.getYearOfCreation());
+        numberFieldEnginePower.setValue(car.getEnginePower());
+        numberFieldEmissionStandard.setValue(car.getEmissionStandard());
+        checkboxIsStolen.setValue(car.isStolen());
+        checkboxIsInDeposit.setValue(car.isInDeposit());
     }
 
     private void SaveCar() throws Exception {

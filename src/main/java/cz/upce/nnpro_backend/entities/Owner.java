@@ -15,7 +15,7 @@ public class Owner {
     private String firstName;
     @NotBlank(message = "Last name is mandatory.")
     private String lastName;
-    @NotBlank(message = "Last name is mandatory.")
+    @NotBlank(message = "Email name is mandatory.")
     private String email;
 
     public String getEmail() {

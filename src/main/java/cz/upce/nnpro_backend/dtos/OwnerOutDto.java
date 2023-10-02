@@ -2,11 +2,15 @@ package cz.upce.nnpro_backend.dtos;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 public class OwnerOutDto {
     Long id;
     String firstName;
     String lastName;
+    String email;
+
+
     LocalDate birthDate;
     String city;
     String street;
@@ -24,6 +28,14 @@ public class OwnerOutDto {
 
     public OwnerOutDto() {
 
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Long getId() {
@@ -88,5 +100,18 @@ public class OwnerOutDto {
 
     public void setNumberOfHouse(int numberOfHouse) {
         this.numberOfHouse = numberOfHouse;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OwnerOutDto that = (OwnerOutDto) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

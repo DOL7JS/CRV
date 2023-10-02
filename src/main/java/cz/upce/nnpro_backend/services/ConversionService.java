@@ -140,6 +140,7 @@ public class ConversionService {
         newOwner.setFirstName(ownerInDto.getFirstName());
         newOwner.setLastName(ownerInDto.getLastName());
         newOwner.setBirthDate(ownerInDto.getBirthDate());
+        newOwner.setEmail(ownerInDto.getEmail());
         newOwner.setCity(ownerInDto.getCity());
         newOwner.setStreet(ownerInDto.getStreet());
         newOwner.setZipCode(ownerInDto.getZipCode());
@@ -184,6 +185,7 @@ public class ConversionService {
         ownerOutDto.setId(owner.getId());
         ownerOutDto.setFirstName(owner.getFirstName());
         ownerOutDto.setLastName(owner.getLastName());
+        ownerOutDto.setEmail(owner.getEmail());
         ownerOutDto.setBirthDate(owner.getBirthDate());
         ownerOutDto.setCity(owner.getCity());
         ownerOutDto.setStreet(owner.getStreet());

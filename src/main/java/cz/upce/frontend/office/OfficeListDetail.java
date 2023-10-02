@@ -28,7 +28,7 @@ import cz.upce.nnpro_backend.services.ConversionService;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @Route(value = "offices/:officeID?/:action?(edit)", layout = Menu.class)
-public class OfficeDetail extends Div implements BeforeEnterObserver {
+public class OfficeListDetail extends Div implements BeforeEnterObserver {
 
     private final String OFFICE_ID = "officeID";
     private final String OFFICE_EDIT = "offices/%s/edit";
@@ -43,95 +43,12 @@ public class OfficeDetail extends Div implements BeforeEnterObserver {
     private final Button cancel = new Button("Zrušit");
     private final Button save = new Button("Uložit");
 
-    private final BeanValidationBinder<BranchOfficeDto> binder;
+    private BeanValidationBinder<BranchOfficeDto> binder;
 
     private BranchOfficeDto branchOfficeDto;
 
 
     private final BranchOfficeService branchOfficeService;
-
-    public OfficeDetail(BranchOfficeService branchOfficeService) {
-        this.branchOfficeService = branchOfficeService;
-        addClassNames("master-detail-view");
-
-        // Create UI
-        HorizontalLayout splitLayout = new HorizontalLayout();
-
-        createGridLayout(splitLayout);
-        createEditorLayout(splitLayout);
-
-        add(splitLayout);
-
-        // Configure Grid
-        grid.addColumn(BranchOfficeDto::getRegion).setAutoWidth(true).setHeader("Kraj");
-        grid.addColumn(BranchOfficeDto::getDistrict).setAutoWidth(true).setHeader("Okres");
-        grid.addColumn(BranchOfficeDto::getCity).setAutoWidth(true).setHeader("Město");
-
-        grid.setItems(branchOfficeService.getAllOffices());
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
-
-        // when a row is selected or deselected, populate form
-        grid.asSingleSelect().addValueChangeListener(event -> {
-            if (event.getValue() != null) {
-                UI.getCurrent().navigate(String.format(OFFICE_EDIT, event.getValue().getId()));
-            } else {
-                clearForm();
-                UI.getCurrent().navigate(OfficeDetail.class);
-            }
-        });
-
-        // Configure Form
-        binder = new BeanValidationBinder<>(BranchOfficeDto.class);
-
-        // Bind fields. This is where you'd define e.g. validation rules
-
-        binder.bindInstanceFields(this);
-        binder.forField(city).withValidator(name -> name.length() > 0, "City must have at least 1 character").bind(BranchOfficeDto::getCity, BranchOfficeDto::setCity);
-        binder.forField(district).withValidator(name -> name.length() > 0, "District must have at least 1 character").bind(BranchOfficeDto::getDistrict, BranchOfficeDto::setDistrict);
-        binder.forField(region).withValidator(name -> name.length() > 0, "Region must have at least 1 character").bind(BranchOfficeDto::getRegion, BranchOfficeDto::setRegion);
-
-        cancel.addClickListener(e -> {
-            clearForm();
-            refreshGrid();
-        });
-
-        BeanValidationBinder<BranchOfficeDto> finalBinder = binder;
-        save.addClickListener(e -> {
-            try {
-                boolean isValid = !FieldValidator.validateEmptyField(city) & !FieldValidator.validateEmptyField(district) &
-                        !FieldValidator.validateEmptyField(region);
-                if (!isValid) {
-                    Notification.show("Vyplňte všechna pole.", 3000, Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
-                    return;
-                }
-                if (this.branchOfficeDto == null) {
-                    this.branchOfficeDto = new BranchOfficeDto();
-                    branchOfficeDto.setCity(city.getValue());
-                    branchOfficeDto.setRegion(region.getValue());
-                    branchOfficeDto.setDistrict(district.getValue());
-                    branchOfficeService.addOffice(ConversionService.convertToBranchOfficeInDto(branchOfficeDto));
-                    Notification.show("Stanice přidána.");
-                } else {
-                    branchOfficeDto.setCity(city.getValue());
-                    branchOfficeDto.setRegion(region.getValue());
-                    branchOfficeDto.setDistrict(district.getValue());
-                    branchOfficeService.editOffice(branchOfficeDto.getId(), ConversionService.convertToBranchOfficeInDto(branchOfficeDto));
-                    Notification.show("Stanice aktualizována.");
-                }
-                finalBinder.writeBean(this.branchOfficeDto);
-                clearForm();
-                refreshGrid();
-                UI.getCurrent().navigate(OfficeDetail.class);
-            } catch (ObjectOptimisticLockingFailureException exception) {
-                Notification n = Notification.show(
-                        "Error updating the data. Somebody else has updated the record while you were making changes.");
-                n.setPosition(Position.MIDDLE);
-                n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            } catch (ValidationException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-    }
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -144,12 +61,95 @@ public class OfficeDetail extends Div implements BeforeEnterObserver {
                 Notification.show(
                         String.format("The requested office was not found, ID = %s", samplePersonId.get()), 3000,
                         Notification.Position.BOTTOM_START);
-                // when a row is selected but the data is no longer available,
-                // refresh grid
                 refreshGrid();
-                event.forwardTo(OfficeDetail.class);
+                event.forwardTo(OfficeListDetail.class);
             }
         }
+    }
+
+    public OfficeListDetail(BranchOfficeService branchOfficeService) {
+        this.branchOfficeService = branchOfficeService;
+
+        HorizontalLayout splitLayout = new HorizontalLayout();
+        createGridLayout(splitLayout);
+        createEditorLayout(splitLayout);
+        add(splitLayout);
+
+        configureGrid();
+        configureBinder();
+
+        cancel.addClickListener(e -> {
+            clearForm();
+            refreshGrid();
+        });
+
+        BeanValidationBinder<BranchOfficeDto> finalBinder = binder;
+        save.addClickListener(e -> {
+            try {
+                boolean isValid = !FieldValidator.validateEmptyField(city)
+                        & !FieldValidator.validateEmptyField(district)
+                        & !FieldValidator.validateEmptyField(region);
+
+                if (!isValid) {
+                    Notification.show("Vyplňte všechna pole.", 3000, Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    return;
+                }
+                if (this.branchOfficeDto == null) {
+                    this.branchOfficeDto = new BranchOfficeDto();
+                    setBranchOfficeDto();
+                    branchOfficeService.addOffice(ConversionService.convertToBranchOfficeInDto(branchOfficeDto));
+                    Notification.show("Stanice přidána.");
+                } else {
+                    setBranchOfficeDto();
+                    branchOfficeService.editOffice(branchOfficeDto.getId(), ConversionService.convertToBranchOfficeInDto(branchOfficeDto));
+                    Notification.show("Stanice aktualizována.");
+                }
+                finalBinder.writeBean(this.branchOfficeDto);
+                clearForm();
+                refreshGrid();
+                UI.getCurrent().navigate(OfficeListDetail.class);
+            } catch (ObjectOptimisticLockingFailureException exception) {
+                Notification n = Notification.show(
+                        "Error updating the data. Somebody else has updated the record while you were making changes.");
+                n.setPosition(Position.MIDDLE);
+                n.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            } catch (ValidationException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+    }
+
+    private void setBranchOfficeDto() {
+        branchOfficeDto.setCity(city.getValue());
+        branchOfficeDto.setRegion(region.getValue());
+        branchOfficeDto.setDistrict(district.getValue());
+    }
+
+    private void configureGrid() {
+        grid.addColumn(BranchOfficeDto::getRegion).setAutoWidth(true).setHeader("Kraj");
+        grid.addColumn(BranchOfficeDto::getDistrict).setAutoWidth(true).setHeader("Okres");
+        grid.addColumn(BranchOfficeDto::getCity).setAutoWidth(true).setHeader("Město");
+
+        grid.setItems(branchOfficeService.getAllOffices());
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+
+        grid.asSingleSelect().addValueChangeListener(event -> {
+            if (event.getValue() != null) {
+                UI.getCurrent().navigate(String.format(OFFICE_EDIT, event.getValue().getId()));
+            } else {
+                clearForm();
+                UI.getCurrent().navigate(OfficeListDetail.class);
+            }
+        });
+    }
+
+    private void configureBinder() {
+        binder = new BeanValidationBinder<>(BranchOfficeDto.class);
+        binder.bindInstanceFields(this);
+        binder.forField(city).withValidator(name -> name.length() > 0, "City must have at least 1 character").bind(BranchOfficeDto::getCity, BranchOfficeDto::setCity);
+        binder.forField(district).withValidator(name -> name.length() > 0, "District must have at least 1 character").bind(BranchOfficeDto::getDistrict, BranchOfficeDto::setDistrict);
+        binder.forField(region).withValidator(name -> name.length() > 0, "Region must have at least 1 character").bind(BranchOfficeDto::getRegion, BranchOfficeDto::setRegion);
+
     }
 
     private void createEditorLayout(HorizontalLayout splitLayout) {

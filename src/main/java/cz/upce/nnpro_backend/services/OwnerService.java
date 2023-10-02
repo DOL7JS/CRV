@@ -1,5 +1,6 @@
 package cz.upce.nnpro_backend.services;
 
+import cz.upce.nnpro_backend.dtos.CarDto;
 import cz.upce.nnpro_backend.entities.Owner;
 import cz.upce.nnpro_backend.dtos.OwnerOutDto;
 import cz.upce.nnpro_backend.dtos.OwnerInDto;
@@ -45,9 +46,14 @@ public class OwnerService {
     public List<OwnerOutDto> getAllOwners() {
         List<Owner> ownerList = ownerRepository.findAll();
         List<OwnerOutDto> ownerOutDtos = new ArrayList<>();
-        for(Owner owner:ownerList){
+        for (Owner owner : ownerList) {
             ownerOutDtos.add(ConversionService.convertToOwnerDetailOutDto(owner));
         }
         return ownerOutDtos;
+    }
+
+    public List<CarDto> getOwnerCars(Long ownerId) {
+        OwnerOutDto owner = getOwner(ownerId);
+        return owner.getCars();
     }
 }
