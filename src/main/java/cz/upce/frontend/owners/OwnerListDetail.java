@@ -38,10 +38,12 @@ import cz.upce.nnpro_backend.dtos.OwnerOutDto;
 import cz.upce.nnpro_backend.services.OwnerService;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import javax.annotation.security.PermitAll;
 import java.util.List;
 import java.util.Optional;
 
 @Route(value = "owners/:ownerID?/:action?(edit)", layout = Menu.class)
+@PermitAll
 public class OwnerListDetail extends Composite<VerticalLayout> implements BeforeEnterObserver {
     private final String OWNER_ID = "ownerID";
     private final String OWNER_EDIT = "owners/%s/edit";

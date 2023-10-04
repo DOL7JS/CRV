@@ -27,7 +27,10 @@ import cz.upce.nnpro_backend.services.BranchOfficeService;
 import cz.upce.nnpro_backend.services.ConversionService;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import javax.annotation.security.PermitAll;
+
 @Route(value = "offices/:officeID?/:action?(edit)", layout = Menu.class)
+@PermitAll
 public class OfficeListDetail extends Div implements BeforeEnterObserver {
 
     private final String OFFICE_ID = "officeID";

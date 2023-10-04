@@ -36,6 +36,7 @@ import cz.upce.nnpro_backend.services.CarService;
 import cz.upce.nnpro_backend.services.ConversionService;
 import cz.upce.nnpro_backend.services.OwnerService;
 
+import javax.annotation.security.PermitAll;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +44,8 @@ import java.util.List;
 import static cz.upce.frontend.FieldValidator.validateEmptyField;
 
 @Route(value = "cars/:carID", layout = Menu.class)
+@PermitAll
+
 public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
     private final String OWNER_EDIT = "owners/%s/edit";
 

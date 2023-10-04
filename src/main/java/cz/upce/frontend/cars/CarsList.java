@@ -16,7 +16,10 @@ import cz.upce.frontend.Menu;
 import cz.upce.nnpro_backend.dtos.CarOutDto;
 import cz.upce.nnpro_backend.services.CarService;
 
+import javax.annotation.security.PermitAll;
+
 @Route(value = "cars", layout = Menu.class)
+@PermitAll
 public class CarsList extends Composite<VerticalLayout> {
     private final CarService carService;
 

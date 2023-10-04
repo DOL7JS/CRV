@@ -1,24 +1,27 @@
 package cz.upce.frontend;
 
 import com.vaadin.flow.component.applayout.AppLayout;
-import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.dom.ElementFactory;
-import com.vaadin.flow.router.RouteParameters;
-import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import cz.upce.frontend.office.OfficeListDetail;
 import cz.upce.frontend.cars.CarsList;
 import cz.upce.frontend.owners.OwnerListDetail;
-import cz.upce.frontend.users.UserDetail;
 import cz.upce.frontend.users.UserList;
+import cz.upce.nnpro_backend.security.SecurityService;
 
+import javax.annotation.security.PermitAll;
+
+@PermitAll
 public class Menu extends AppLayout {
-    public Menu() {
+
+    private final SecurityService securityService;
+
+    public Menu(SecurityService securityService) {
+        this.securityService = securityService;
         HorizontalLayout horizontalLayoutMain = new HorizontalLayout();
         VerticalLayout verticalLayoutLeft = new VerticalLayout();
         VerticalLayout verticalLayoutMiddle = new VerticalLayout();
@@ -34,11 +37,18 @@ public class Menu extends AppLayout {
         verticalLayoutLeft.add(menuBar);
 
 
-        Button avatar = new Button("DOL7JS");
+        Button avatar = new Button(securityService.getAuthenticatedUser().getUsername());
+
         avatar.addClickListener(event -> {
-            avatar.getUI().ifPresent(ui -> ui.navigate(String.format("users/edit/%s", "1")));
+            avatar.getUI().ifPresent(ui -> ui.navigate(String.format("users/edit/%d", securityService.getAuthenticatedUser().getId())));
         });
-        verticalLayoutRight.add(avatar);
+        Button buttonLogOut = new Button("Odhlásit");
+        buttonLogOut.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        buttonLogOut.addClickListener(event -> {
+            securityService.logout();
+        });
+        HorizontalLayout horizontalLayoutAvatar = new HorizontalLayout(avatar, buttonLogOut);
+        verticalLayoutRight.add(horizontalLayoutAvatar);
 
         horizontalLayoutMain.add(verticalLayoutLeft, verticalLayoutMiddle, verticalLayoutRight);
         addToNavbar(horizontalLayoutMain);

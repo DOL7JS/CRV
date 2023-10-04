@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.services;
 
 import cz.upce.nnpro_backend.repositories.UserRepository;
+import cz.upce.nnpro_backend.security.UserDetailDto;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +26,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-        return new User(user.getUsername(), user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getName())));
+        return new UserDetailDto(user.getUsername(), user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getName())), user.getId());
 
     }
 

@@ -36,11 +36,13 @@ import cz.upce.nnpro_backend.services.BranchOfficeService;
 import cz.upce.nnpro_backend.services.RoleService;
 import cz.upce.nnpro_backend.services.UserService;
 
+import javax.annotation.security.PermitAll;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Route(value = "users/edit/:userID?", layout = Menu.class)
+@PermitAll
 
 public class UserDetail extends Composite<VerticalLayout> implements BeforeEnterObserver {
     private final String USER_ID = "userID";

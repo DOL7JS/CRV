@@ -14,7 +14,10 @@ import cz.upce.frontend.Menu;
 import cz.upce.nnpro_backend.dtos.*;
 import cz.upce.nnpro_backend.services.UserService;
 
+import javax.annotation.security.PermitAll;
+
 @Route(value = "users/:userID?/:action?(edit)", layout = Menu.class)
+@PermitAll
 
 public class UserList extends Composite<VerticalLayout> {
     private final Grid<UserOutDto> grid = new Grid<>(UserOutDto.class, false);
