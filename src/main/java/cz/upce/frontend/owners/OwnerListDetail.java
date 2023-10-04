@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Route(value = "owners/:ownerID?/:action?(edit)", layout = Menu.class)
-
 public class OwnerListDetail extends Composite<VerticalLayout> implements BeforeEnterObserver {
     private final String OWNER_ID = "ownerID";
     private final String OWNER_EDIT = "owners/%s/edit";

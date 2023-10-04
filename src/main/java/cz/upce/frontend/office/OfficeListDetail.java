@@ -149,7 +149,6 @@ public class OfficeListDetail extends Div implements BeforeEnterObserver {
         binder.forField(city).withValidator(name -> name.length() > 0, "City must have at least 1 character").bind(BranchOfficeDto::getCity, BranchOfficeDto::setCity);
         binder.forField(district).withValidator(name -> name.length() > 0, "District must have at least 1 character").bind(BranchOfficeDto::getDistrict, BranchOfficeDto::setDistrict);
         binder.forField(region).withValidator(name -> name.length() > 0, "Region must have at least 1 character").bind(BranchOfficeDto::getRegion, BranchOfficeDto::setRegion);
-
     }
 
     private void createEditorLayout(HorizontalLayout splitLayout) {
@@ -184,7 +183,10 @@ public class OfficeListDetail extends Div implements BeforeEnterObserver {
         wrapper.setClassName("grid-wrapper");
         splitLayout.add(wrapper);
         splitLayout.setFlexGrow(1.0, wrapper);
+        grid.setHeightFull();
+        //wrapper.setHeightFull();
         wrapper.add(grid);
+        //splitLayout.add(grid);
     }
 
     private void refreshGrid() {

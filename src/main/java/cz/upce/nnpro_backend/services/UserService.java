@@ -1,11 +1,13 @@
 package cz.upce.nnpro_backend.services;
 
+import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.entities.Role;
 import cz.upce.nnpro_backend.entities.User;
 import cz.upce.nnpro_backend.config.WebSecurityConfig;
 import cz.upce.nnpro_backend.dtos.NewPasswordDto;
 import cz.upce.nnpro_backend.dtos.UserOutDto;
 import cz.upce.nnpro_backend.dtos.UserInDto;
+import cz.upce.nnpro_backend.repositories.BranchOfficeRepository;
 import cz.upce.nnpro_backend.repositories.RoleRepository;
 import cz.upce.nnpro_backend.repositories.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,14 +26,16 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final WebSecurityConfig webSecurityConfig;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private final BranchOfficeRepository branchOfficeRepository;
 
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository,
-                       WebSecurityConfig webSecurityConfig
-    ) {
+                       WebSecurityConfig webSecurityConfig,
+                       BranchOfficeRepository branchOfficeRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.webSecurityConfig = webSecurityConfig;
+        this.branchOfficeRepository = branchOfficeRepository;
     }
 
     public User addUser(UserInDto userInDto) {
@@ -39,7 +43,8 @@ public class UserService {
             throw new IllegalArgumentException("The username already exists.");
         }
         Optional<Role> role = roleRepository.findById(userInDto.getRole() == null ? 0 : userInDto.getRole());
-        User user = ConversionService.convertToUser(userInDto, role);
+        Optional<BranchOffice> office = branchOfficeRepository.findById(userInDto.getOffice() == null ? 0 : userInDto.getOffice());
+        User user = ConversionService.convertToUser(userInDto, role, office);
         user.setPassword(webSecurityConfig.passwordEncoder().encode(user.getPassword()));
         return userRepository.save(user);
     }

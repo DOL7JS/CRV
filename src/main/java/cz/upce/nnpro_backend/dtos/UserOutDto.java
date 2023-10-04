@@ -30,6 +30,10 @@ public class UserOutDto {
         return role;
     }
 
+    public String getRoleDescription() {
+        return role.getDescription();
+    }
+
     public void setRole(Role role) {
         this.role = role;
     }

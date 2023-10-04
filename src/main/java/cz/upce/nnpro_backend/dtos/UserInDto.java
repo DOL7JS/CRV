@@ -14,8 +14,19 @@ public class UserInDto {
     private Long role;
 
 
+    @NotNull(message = "Office id is mandatory.")
+    private Long office;
+
     public Long getRole() {
         return role;
+    }
+
+    public Long getOffice() {
+        return office;
+    }
+
+    public void setOffice(Long office) {
+        this.office = office;
     }
 
     public void setRole(Long role) {

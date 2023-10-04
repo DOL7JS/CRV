@@ -20,6 +20,7 @@ public class ConversionService {
             branchOfficeDto.setId(user.getBranchOffice().getId());
             branchOfficeDto.setRegion(user.getBranchOffice().getRegion());
             branchOfficeDto.setDistrict(user.getBranchOffice().getDistrict());
+            branchOfficeDto.setCity(user.getBranchOffice().getCity());
             userDto.setBranchOfficeDto(branchOfficeDto);
         }
 
@@ -148,13 +149,14 @@ public class ConversionService {
         return newOwner;
     }
 
-    public static User convertToUser(UserInDto userInDto, Optional<Role> role) {
+    public static User convertToUser(UserInDto userInDto, Optional<Role> role, Optional<BranchOffice> office) {
         User user = new User();
         user.setUsername(userInDto.getUsername());
         user.setEmail(userInDto.getEmail());
         user.setPassword(userInDto.getPassword());
         user.setJobPosition(userInDto.getJobPosition());
         role.ifPresent(user::setRole);
+        office.ifPresent(user::setBranchOffice);
         return user;
     }
 
@@ -165,20 +167,6 @@ public class ConversionService {
         role.ifPresent(user::setRole);
         return user;
     }
-
-//    public static OwnerDetailOutDto convertToOwnerDetailOutDto(Owner owner, Page<Car> carPage) {
-//        OwnerDetailOutDto ownerDetailOutDto = new OwnerDetailOutDto();
-//        ownerDetailOutDto.setId(owner.getId());
-//        ownerDetailOutDto.setFirstName(owner.getFirstName());
-//        ownerDetailOutDto.setLastName(owner.getLastName());
-//        ownerDetailOutDto.setBirthDate(owner.getBirthDate());
-//        ownerDetailOutDto.setCity(owner.getCity());
-//        ownerDetailOutDto.setStreet(owner.getStreet());
-//        ownerDetailOutDto.setZipCode(owner.getZipCode());
-//        ownerDetailOutDto.setNumberOfHouse(owner.getNumberOfHouse());
-//        ownerDetailOutDto.setCars(carPage);
-//        return ownerDetailOutDto;
-//    }
 
     public static OwnerOutDto convertToOwnerDetailOutDto(Owner owner) {
         OwnerOutDto ownerOutDto = new OwnerOutDto();
