@@ -57,8 +57,12 @@ public class Menu extends AppLayout {
     private void setMenuBarData(MenuBar menuBar) {
         menuBar.addItem("Domů", event -> menuBar.getUI().ifPresent(ui -> ui.navigate(Homepage.class)));
         menuBar.addItem("Auta", event -> menuBar.getUI().ifPresent(ui -> ui.navigate(CarsList.class)));
-        menuBar.addItem("Stanice", event -> menuBar.getUI().ifPresent(ui -> ui.navigate(OfficeListDetail.class)));
         menuBar.addItem("Vlastníci", event -> menuBar.getUI().ifPresent(ui -> ui.navigate(OwnerListDetail.class)));
-        menuBar.addItem("Uživatelé", event -> menuBar.getUI().ifPresent(ui -> ui.navigate(UserList.class)));
+
+        if (securityService.isAdmin() || securityService.isKrajOfficer()) {
+            menuBar.addItem("Stanice", event -> menuBar.getUI().ifPresent(ui -> ui.navigate(OfficeListDetail.class)));
+            menuBar.addItem("Uživatelé", event -> menuBar.getUI().ifPresent(ui -> ui.navigate(UserList.class)));
+
+        }
     }
 }

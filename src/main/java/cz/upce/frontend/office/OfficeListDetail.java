@@ -23,6 +23,7 @@ import java.util.Optional;
 import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
 import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
+import cz.upce.nnpro_backend.security.SecurityService;
 import cz.upce.nnpro_backend.services.BranchOfficeService;
 import cz.upce.nnpro_backend.services.ConversionService;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -52,6 +53,8 @@ public class OfficeListDetail extends Div implements BeforeEnterObserver {
 
 
     private final BranchOfficeService branchOfficeService;
+    private final SecurityService securityService;
+
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -70,8 +73,9 @@ public class OfficeListDetail extends Div implements BeforeEnterObserver {
         }
     }
 
-    public OfficeListDetail(BranchOfficeService branchOfficeService) {
+    public OfficeListDetail(BranchOfficeService branchOfficeService, SecurityService securityService) {
         this.branchOfficeService = branchOfficeService;
+        this.securityService = securityService;
 
         HorizontalLayout splitLayout = new HorizontalLayout();
         createGridLayout(splitLayout);
@@ -133,7 +137,11 @@ public class OfficeListDetail extends Div implements BeforeEnterObserver {
         grid.addColumn(BranchOfficeDto::getDistrict).setAutoWidth(true).setHeader("Okres");
         grid.addColumn(BranchOfficeDto::getCity).setAutoWidth(true).setHeader("Město");
 
-        grid.setItems(branchOfficeService.getAllOffices());
+        if (securityService.isAdmin()) {
+            grid.setItems(branchOfficeService.getAllOffices());
+        } else if (securityService.isKrajOfficer()) {
+            grid.setItems(branchOfficeService.getOfficesByRegion(securityService.getAuthenticatedUser().getBranchOffice()));
+        }
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
 
         grid.asSingleSelect().addValueChangeListener(event -> {

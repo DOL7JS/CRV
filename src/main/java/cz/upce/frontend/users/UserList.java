@@ -5,28 +5,27 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import cz.upce.frontend.Menu;
-import cz.upce.nnpro_backend.dtos.*;
+import cz.upce.nnpro_backend.dtos.UserOutDto;
+import cz.upce.nnpro_backend.security.SecurityService;
 import cz.upce.nnpro_backend.services.UserService;
 
-import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
 @Route(value = "users/:userID?/:action?(edit)", layout = Menu.class)
-@PermitAll
-
+@RolesAllowed({"ROLE_Admin", "ROLE_Kraj"})
 public class UserList extends Composite<VerticalLayout> {
     private final Grid<UserOutDto> grid = new Grid<>(UserOutDto.class, false);
 
     private final UserService userService;
+    private final SecurityService securityService;
 
-
-    public UserList(UserService userService) {
+    public UserList(UserService userService, SecurityService securityService) {
         this.userService = userService;
+        this.securityService = securityService;
         getContent().addClassNames("master-detail-view");
 
         VerticalLayout verticalLayoutMain = new VerticalLayout();
@@ -60,7 +59,11 @@ public class UserList extends Composite<VerticalLayout> {
         grid.addColumn(item -> item.getRole().getDescription()).setAutoWidth(true).setHeader("Role").setSortable(true).setComparator(item -> item.getRole().getDescription());
         grid.addColumn(item -> item.getBranchOfficeDto().getCity()).setAutoWidth(true).setHeader("Stanice").setSortable(true).setComparator(item -> item.getBranchOfficeDto().getCity());
 
-        grid.setItems(userService.getAllUsers());
+        if (securityService.isAdmin()) {
+            grid.setItems(userService.getAllUsers());
+        } else if (securityService.isKrajOfficer()) {
+            grid.setItems(userService.getUsersByRegion(securityService.getAuthenticatedUser().getBranchOffice()));
+        }
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
     }
 

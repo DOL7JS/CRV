@@ -99,4 +99,8 @@ public class BranchOfficeService {
     public List<BranchOfficeDto> getAllOffices() {
         return ConversionService.convertListToListOfficeDto(branchOfficeRepository.findAll());
     }
+
+    public List<BranchOfficeDto> getOfficesByRegion(BranchOffice branchOffice) {
+        return ConversionService.convertListToListOfficeDto(branchOfficeRepository.findByRegion(branchOffice.getRegion()));
+    }
 }

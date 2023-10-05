@@ -30,15 +30,12 @@ import cz.upce.nnpro_backend.dtos.CarOutDto;
 import cz.upce.nnpro_backend.dtos.OwnerDto;
 import cz.upce.nnpro_backend.dtos.OwnerInDto;
 import cz.upce.nnpro_backend.dtos.OwnerOutDto;
-import cz.upce.nnpro_backend.entities.Car;
-import cz.upce.nnpro_backend.entities.Owner;
+import cz.upce.nnpro_backend.security.SecurityService;
 import cz.upce.nnpro_backend.services.CarService;
 import cz.upce.nnpro_backend.services.ConversionService;
 import cz.upce.nnpro_backend.services.OwnerService;
 
 import javax.annotation.security.PermitAll;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static cz.upce.frontend.FieldValidator.validateEmptyField;
@@ -52,6 +49,7 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
     CarOutDto car;
     private final CarService carService;
     private final OwnerService ownerService;
+    private final SecurityService securityService;
     H3 h3SPZ = new H3();
     H3 h3VIN = new H3();
     H3 h3Manufacturer = new H3();
@@ -65,22 +63,22 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
     H3 h3Deposit = new H3();
     Grid<OwnerDto> stripedGrid = new Grid<>(OwnerDto.class, false);
 
-
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         String id = event.getRouteParameters().get("carID").orElse("-1");
         if (!id.equals("-1")) {
+
             car = carService.getCar(Long.valueOf(id));
             SetCarDetail(car);
             SetCarOwners(car);
         }
-        Notification.show("ID: " + id);
     }
 
 
-    CarDetail(CarService carService, OwnerService ownerService) {
+    CarDetail(CarService carService, OwnerService ownerService, SecurityService securityService) {
         this.carService = carService;
         this.ownerService = ownerService;
+        this.securityService = securityService;
         HorizontalLayout mainHorizontalLayout = new HorizontalLayout();
         VerticalLayout leftEmptyLayout = new VerticalLayout();
         VerticalLayout rightLayout = new VerticalLayout();
@@ -195,7 +193,11 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         rightLayout.add(middleLayout);
         middleLayout.add(detailCarLayout);
         detailCarLayout.add(h1CarDetail);
-        detailCarLayout.add(buttonEditCar);
+        if (securityService.isAdmin() || securityService.isOkresOfficer()) {
+            detailCarLayout.add(buttonEditCar);
+            layoutRow3.add(buttonSignIn);
+            layoutRow3.add(buttonSignOut);
+        }
         middleLayout.add(h2SPZ);
         middleLayout.add(h3SPZ);
         middleLayout.add(hr);
@@ -233,8 +235,7 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         mainHorizontalLayout.add(layoutColumn4);
         layoutColumn4.add(h2Owners);
         layoutColumn4.add(layoutRow3);
-        layoutRow3.add(buttonSignIn);
-        layoutRow3.add(buttonSignOut);
+
         layoutColumn4.add(stripedGrid);
 
     }

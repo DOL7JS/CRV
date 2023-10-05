@@ -14,6 +14,7 @@ import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouteParameters;
 import cz.upce.frontend.Menu;
 import cz.upce.nnpro_backend.dtos.CarOutDto;
+import cz.upce.nnpro_backend.security.SecurityService;
 import cz.upce.nnpro_backend.services.CarService;
 
 import javax.annotation.security.PermitAll;
@@ -22,17 +23,18 @@ import javax.annotation.security.PermitAll;
 @PermitAll
 public class CarsList extends Composite<VerticalLayout> {
     private final CarService carService;
+    private final SecurityService securityService;
 
-    public CarsList(CarService carService) {
+    public CarsList(CarService carService, SecurityService securityService) {
         this.carService = carService;
+        this.securityService = securityService;
 
-        Button buttonPrimary = new Button();
-        buttonPrimary.setText("Přidat auto");
-        buttonPrimary.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonPrimary.addClickListener(event -> {
-            buttonPrimary.getUI().ifPresent(ui -> ui.navigate(CarAddEdit.class));
+        Button buttonAddCar = new Button();
+        buttonAddCar.setText("Přidat auto");
+        buttonAddCar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        buttonAddCar.addClickListener(event -> {
+            buttonAddCar.getUI().ifPresent(ui -> ui.navigate(CarAddEdit.class));
         });
-
         Grid<CarOutDto> gridCars = new Grid<>(CarOutDto.class, false);
         getContent().setHeightFull();
         getContent().setWidthFull();
@@ -43,7 +45,9 @@ public class CarsList extends Composite<VerticalLayout> {
                 gridCars.getUI().ifPresent(ui -> ui.navigate(CarDetail.class, new RouteParameters("carID", listener.getItem().getId().toString())));
             }
         });
-        getContent().add(buttonPrimary);
+        if (securityService.isAdmin() || securityService.isOkresOfficer()) {
+            getContent().add(buttonAddCar);
+        }
         getContent().add(gridCars);
     }
 
@@ -57,12 +61,16 @@ public class CarsList extends Composite<VerticalLayout> {
         grid.addColumn(CarOutDto::getEnginePower).setHeader("Výkon").setSortable(true);
         grid.addComponentColumn(car -> createStatusIcon(car.isSigned()))
                 .setHeader("Přihlášeno").setSortable(true).setComparator(item -> item.isSigned() ? "y" : "n");
-        grid.addColumn(new ComponentRenderer<>(Button::new, (button, car) -> {
-            button.addClickListener(event ->
-                    button.getUI().ifPresent(ui -> ui.navigate(RouteConfiguration.forSessionScope()
-                            .getUrl(CarAddEdit.class, car.getId()))));
-            button.setIcon(new Icon(VaadinIcon.EDIT));
-        }));
+
+        if (securityService.isAdmin() || securityService.isOkresOfficer()) {
+            grid.addColumn(new ComponentRenderer<>(Button::new, (button, car) -> {
+                button.addClickListener(event ->
+                        button.getUI().ifPresent(ui -> ui.navigate(RouteConfiguration.forSessionScope()
+                                .getUrl(CarAddEdit.class, car.getId()))));
+                button.setIcon(new Icon(VaadinIcon.EDIT));
+            }));
+        }
+
         grid.setItems(carService.getAllCars());
     }
 

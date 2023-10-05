@@ -93,6 +93,16 @@ public class UserService {
         return userOutDtos;
     }
 
+    public List<UserOutDto> getUsersByRegion(BranchOffice branchOffice) {
+        List<User> byBranchOfficeRegion = userRepository.findByBranchOffice_Region(branchOffice.getRegion());
+        List<UserOutDto> userOutDtos = new ArrayList<>();
+        for (User user : byBranchOfficeRegion) {
+            userOutDtos.add(ConversionService.convertToUserDetailOutDto(user));
+        }
+        return userOutDtos;
+
+    }
+
     @PostConstruct
     public void init() {
         if (roleRepository.count() != 3) {
@@ -117,4 +127,6 @@ public class UserService {
 
         }
     }
+
+
 }

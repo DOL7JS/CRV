@@ -1,15 +1,12 @@
 package cz.upce.frontend.users;
 
-import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -30,15 +27,19 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
 import cz.upce.frontend.office.OfficeListDetail;
-import cz.upce.nnpro_backend.dtos.*;
+import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
+import cz.upce.nnpro_backend.dtos.NewPasswordDto;
+import cz.upce.nnpro_backend.dtos.UserInDto;
+import cz.upce.nnpro_backend.dtos.UserOutDto;
 import cz.upce.nnpro_backend.entities.Role;
+import cz.upce.nnpro_backend.security.SecurityService;
 import cz.upce.nnpro_backend.services.BranchOfficeService;
 import cz.upce.nnpro_backend.services.RoleService;
 import cz.upce.nnpro_backend.services.UserService;
 
 import javax.annotation.security.PermitAll;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Route(value = "users/edit/:userID?", layout = Menu.class)
@@ -50,11 +51,42 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
     private final BranchOfficeService branchOfficeService;
     private final RoleService roleService;
     private UserOutDto userOutDto;
+    private final SecurityService securityService;
+
+    TextField textFieldUsername;
+    EmailField emailField;
+    PasswordField passwordField;
+    TextField textFieldJobPosition;
+    ComboBox<BranchOfficeDto> comboBoxOffice;
+    ComboBox<Role> comboBoxRole;
+    Button buttonSave;
+    Button buttonChangePassword;
+    VerticalLayout verticalLayoutInMiddle;
+    HorizontalLayout horizontalLayoutButtons;
+    PasswordField oldPassword;
+    PasswordField newPassword;
+    HorizontalLayout horizontalLayoutMain;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
+
+
         Optional<Long> userId = event.getRouteParameters().get(USER_ID).map(Long::parseLong);
         if (userId.isPresent()) {
+            if (securityService.isKrajOfficer() && securityService.getAuthenticatedUser().getId().equals(userId.get())) {
+                comboBoxRole.setEnabled(false);
+            } else if (securityService.isKrajOfficer() && !securityService.getAuthenticatedUser().getId().equals(userId.get())) {
+
+            } else if (securityService.isOkresOfficer() && securityService.getAuthenticatedUser().getId().equals(userId.get())) {
+                textFieldJobPosition.setEnabled(false);
+                comboBoxOffice.setEnabled(false);
+                comboBoxRole.setEnabled(false);
+            } else if (securityService.isOkresOfficer() && !securityService.getAuthenticatedUser().getId().equals(userId.get())) {
+                horizontalLayoutMain.removeAll();
+                Notification.show("Nemáte oprávnění", 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                return;
+            }
+
             Optional<UserOutDto> user = Optional.ofNullable(userService.getUser(userId.get()));
             if (user.isPresent()) {
                 verticalLayoutInMiddle.remove(passwordField);
@@ -72,31 +104,12 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
         }
     }
 
-    private void fillFields(UserOutDto userOutDto) {
-        textFieldUsername.setValue(userOutDto.getUsername());
-        emailField.setValue(userOutDto.getEmail());
-        textFieldJobPosition.setValue(userOutDto.getJobPosition());
-        comboBoxOffice.setValue(userOutDto.getBranchOfficeDto());
-        comboBoxRole.setValue(userOutDto.getRole());
-        this.userOutDto = userOutDto;
-    }
-
-    TextField textFieldUsername;
-    EmailField emailField;
-    PasswordField passwordField;
-    TextField textFieldJobPosition;
-    ComboBox<BranchOfficeDto> comboBoxOffice;
-    ComboBox<Role> comboBoxRole;
-    Button buttonSave;
-    Button buttonChangePassword;
-    VerticalLayout verticalLayoutInMiddle;
-    HorizontalLayout horizontalLayoutButtons;
-
-    public UserDetail(UserService userService, BranchOfficeService branchOfficeService, RoleService roleService) {
+    public UserDetail(UserService userService, BranchOfficeService branchOfficeService, RoleService roleService, SecurityService securityService) {
         this.userService = userService;
         this.branchOfficeService = branchOfficeService;
         this.roleService = roleService;
-        HorizontalLayout horizontalLayoutMain = new HorizontalLayout();
+        this.securityService = securityService;
+        horizontalLayoutMain = new HorizontalLayout();
         VerticalLayout verticalLayoutEmptyLeft = new VerticalLayout();
         VerticalLayout verticalLayoutMiddle = new VerticalLayout();
         H3 h3 = new H3();
@@ -187,8 +200,15 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
         binderPassword.forField(newPassword).withValidator(password -> password.length() > 7, "Password must have at least 8 characters").bind(NewPasswordDto::getNewPassword, NewPasswordDto::setNewPassword);
     }
 
-    PasswordField oldPassword;
-    PasswordField newPassword;
+    private void fillFields(UserOutDto userOutDto) {
+        textFieldUsername.setValue(userOutDto.getUsername());
+        emailField.setValue(userOutDto.getEmail());
+        textFieldJobPosition.setValue(userOutDto.getJobPosition());
+        comboBoxOffice.setValue(userOutDto.getBranchOfficeDto());
+        comboBoxRole.setValue(userOutDto.getRole());
+        this.userOutDto = userOutDto;
+    }
+
 
     private void openDialog() {
         Dialog dialog = new Dialog();

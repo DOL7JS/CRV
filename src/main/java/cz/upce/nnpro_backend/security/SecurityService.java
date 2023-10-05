@@ -30,4 +30,16 @@ public class SecurityService {
                 VaadinServletRequest.getCurrent().getHttpServletRequest(), null,
                 null);
     }
+
+    public boolean isAdmin() {
+        return getAuthenticatedUser().getAuthorities().stream().anyMatch(item -> item.getAuthority().contains("ROLE_Admin"));
+    }
+
+    public boolean isKrajOfficer() {
+        return getAuthenticatedUser().getAuthorities().stream().anyMatch(item -> item.getAuthority().contains("ROLE_Kraj"));
+    }
+
+    public boolean isOkresOfficer() {
+        return getAuthenticatedUser().getAuthorities().stream().anyMatch(item -> item.getAuthority().contains("ROLE_Okres"));
+    }
 }

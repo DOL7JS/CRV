@@ -11,7 +11,10 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -35,10 +38,12 @@ import cz.upce.frontend.cars.CarDetail;
 import cz.upce.nnpro_backend.dtos.CarDto;
 import cz.upce.nnpro_backend.dtos.OwnerInDto;
 import cz.upce.nnpro_backend.dtos.OwnerOutDto;
+import cz.upce.nnpro_backend.security.SecurityService;
 import cz.upce.nnpro_backend.services.OwnerService;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +73,7 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
     private OwnerOutDto ownerOutDto;
 
     private final OwnerService ownerService;
+    private final SecurityService securityService;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -75,72 +81,172 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
         if (ownerId.isPresent()) {
             Optional<OwnerOutDto> owner = Optional.ofNullable(ownerService.getOwner(ownerId.get()));
             if (owner.isPresent()) {
-                populateForm(owner.get());
+                if (securityService.isKrajOfficer()) {
+                    openOwnerDialog(owner.get());
+                } else {
+                    populateForm(owner.get());
+                }
                 grid.select(owner.get());
             } else {
                 Notification.show(
                         String.format("The requested owner was not found, ID = %s", ownerId.get()), 3000,
                         Notification.Position.BOTTOM_START);
-                // when a row is selected but the data is no longer available,
-                // refresh grid
                 refreshGrid();
                 event.forwardTo(OwnerListDetail.class);
             }
         }
     }
 
+    private void openOwnerDialog(OwnerOutDto item) {
+        Dialog dialog = new Dialog();
+        VerticalLayout verticalLayoutMain = new VerticalLayout();
+        H1 h1FirstName = new H1();
+        H3 h3FirstName = new H3();
+        Paragraph paragraphFirstName = new Paragraph();
+        H3 h3LastName = new H3();
+        Paragraph paragraphLastName = new Paragraph();
+        H3 h3Email = new H3();
+        Paragraph paragraphEmail = new Paragraph();
+        H3 h3BirthDate = new H3();
+        Paragraph paragraphBirthDate = new Paragraph();
+        H3 h3City = new H3();
+        Paragraph paragraphCity = new Paragraph();
+        H3 h3Street = new H3();
+        Paragraph paragraphStreet = new Paragraph();
+        H3 h3HouseNumber = new H3();
+        Paragraph paragraphHouseNumber = new Paragraph();
+        H3 h3ZipCode = new H3();
+        Paragraph paragraphZipCode = new Paragraph();
 
-    public OwnerListDetail(OwnerService ownerService) {
+        HorizontalLayout layoutRowFirstName = new HorizontalLayout();
+        HorizontalLayout layoutRowButtons = new HorizontalLayout();
+        HorizontalLayout layoutRowLastName = new HorizontalLayout();
+        HorizontalLayout layoutRowEmail = new HorizontalLayout();
+        HorizontalLayout layoutRowBirthDate = new HorizontalLayout();
+        HorizontalLayout layoutRowCity = new HorizontalLayout();
+        HorizontalLayout layoutRowStreet = new HorizontalLayout();
+        HorizontalLayout layoutRowHouseNumber = new HorizontalLayout();
+        HorizontalLayout layoutRowZipCode = new HorizontalLayout();
+        Button buttonCarHistory = new Button();
+        Button buttonClose = new Button();
+        verticalLayoutMain.addClassName(LumoUtility.Gap.XSMALL);
+        verticalLayoutMain.setHeightFull();
+        verticalLayoutMain.setWidthFull();
+        h1FirstName.setText("Vlastník");
+
+        h3FirstName.setText("Jméno");
+        paragraphFirstName.setText(item.getFirstName());
+        h3LastName.setText("Příjmení");
+        paragraphLastName.setText(item.getLastName());
+        h3Email.setText("Email");
+        paragraphEmail.setText(item.getEmail());
+        h3BirthDate.setText("Datum narození");
+        paragraphBirthDate.setText(item.getBirthDate().toString());
+        h3City.setText("Město");
+        paragraphCity.setText(item.getCity());
+        h3Street.setText("Ulice");
+        paragraphStreet.setText(item.getStreet());
+        h3HouseNumber.setText("Číslo popisné");
+        paragraphHouseNumber.setText(String.valueOf(item.getNumberOfHouse()));
+        h3ZipCode.setText("PSČ");
+        paragraphZipCode.setText(String.valueOf(item.getZipCode()));
+
+        layoutRowButtons.addClassName(LumoUtility.Gap.MEDIUM);
+        buttonCarHistory.setText("Historie vozidel");
+        buttonCarHistory.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        buttonClose.setText("Zavřít");
+        buttonClose.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        verticalLayoutMain.add(h1FirstName);
+
+        verticalLayoutMain.add(setRowInDialog(layoutRowFirstName, h3FirstName, paragraphFirstName));
+        verticalLayoutMain.add(setRowInDialog(layoutRowLastName, h3LastName, paragraphLastName));
+        verticalLayoutMain.add(setRowInDialog(layoutRowEmail, h3Email, paragraphEmail));
+        verticalLayoutMain.add(setRowInDialog(layoutRowBirthDate, h3BirthDate, paragraphBirthDate));
+        verticalLayoutMain.add(setRowInDialog(layoutRowCity, h3City, paragraphCity));
+        verticalLayoutMain.add(setRowInDialog(layoutRowStreet, h3Street, paragraphStreet));
+        verticalLayoutMain.add(setRowInDialog(layoutRowHouseNumber, h3HouseNumber, paragraphHouseNumber));
+        verticalLayoutMain.add(setRowInDialog(layoutRowZipCode, h3ZipCode, paragraphZipCode));
+
+        verticalLayoutMain.add(layoutRowButtons);
+        layoutRowButtons.add(buttonCarHistory);
+        layoutRowButtons.add(buttonClose);
+        buttonCarHistory.addClickListener(event -> {
+            dialog.close();
+            openAllCarsDialog(item.getId());
+            grid.deselectAll();
+        });
+        buttonClose.addClickListener(event -> {
+            grid.deselectAll();
+            dialog.close();
+        });
+        dialog.add(verticalLayoutMain);
+        dialog.open();
+    }
+
+    private HorizontalLayout setRowInDialog(HorizontalLayout horizontalLayout, H3 h3, Paragraph paragraph) {
+        horizontalLayout.setAlignSelf(FlexComponent.Alignment.BASELINE, h3);
+        horizontalLayout.setAlignSelf(FlexComponent.Alignment.BASELINE, paragraph);
+        horizontalLayout.add(h3);
+        horizontalLayout.add(paragraph);
+        horizontalLayout.addClassName(LumoUtility.Gap.MEDIUM);
+        paragraph.getStyle().set("font-size", "var(--lumo-font-size-m)");
+        return horizontalLayout;
+    }
+
+    public OwnerListDetail(OwnerService ownerService, SecurityService securityService) {
         this.ownerService = ownerService;
+        this.securityService = securityService;
         getContent().addClassNames("master-detail-view");
 
         HorizontalLayout horizontalLayoutMain = new HorizontalLayout();
 
         createGridLayout(horizontalLayoutMain);
-        createEditorLayout(horizontalLayoutMain);
+        binder = new BeanValidationBinder<>(OwnerOutDto.class);
+        if (!this.securityService.isKrajOfficer()) {
+            createEditorLayout(horizontalLayoutMain);
+            configureBinder();
+            BeanValidationBinder<OwnerOutDto> finalBinder = binder;
+            save.addClickListener(e -> {
+                try {
+                    boolean isValid = !FieldValidator.validateEmptyField(firstName)
+                            & !FieldValidator.validateEmptyField(lastName)
+                            & !FieldValidator.validateEmptyField(email)
+                            & !FieldValidator.validateEmptyField(birthDate)
+                            & !FieldValidator.validateEmptyField(city)
+                            & !FieldValidator.validateEmptyField(street)
+                            & !FieldValidator.validateEmptyField(numberOfHouse)
+                            & !FieldValidator.validateEmptyField(zipCode);
+                    if (!isValid) {
+                        Notification.show("Vyplňte všechna pole.", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                        return;
+                    }
+                    if (this.ownerOutDto == null) {
+                        ownerService.addOwner(setOwnerInDto());
+                        Notification.show("Stanice přidána.");
+                    } else {
+                        ownerService.editOwner(ownerOutDto.getId(), setOwnerInDto());
+                        Notification.show("Stanice aktualizována.");
+                    }
+                    setOwnerOutDto();
+                    finalBinder.writeBean(this.ownerOutDto);
+                    clearForm();
+                    refreshGrid();
+                    UI.getCurrent().navigate(OwnerListDetail.class);
+                } catch (ObjectOptimisticLockingFailureException exception) {
+                    Notification n = Notification.show(
+                            "Error updating the data. Somebody else has updated the record while you were making changes.");
+                    n.setPosition(Notification.Position.MIDDLE);
+                    n.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                } catch (ValidationException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        }
 
         getContent().add(horizontalLayoutMain);
         configureGrid();
 
 
-        binder = new BeanValidationBinder<>(OwnerOutDto.class);
-        configureBinder();
-        BeanValidationBinder<OwnerOutDto> finalBinder = binder;
-        save.addClickListener(e -> {
-            try {
-                boolean isValid = !FieldValidator.validateEmptyField(firstName)
-                        & !FieldValidator.validateEmptyField(lastName)
-                        & !FieldValidator.validateEmptyField(email)
-                        & !FieldValidator.validateEmptyField(birthDate)
-                        & !FieldValidator.validateEmptyField(city)
-                        & !FieldValidator.validateEmptyField(street)
-                        & !FieldValidator.validateEmptyField(numberOfHouse)
-                        & !FieldValidator.validateEmptyField(zipCode);
-                if (!isValid) {
-                    Notification.show("Vyplňte všechna pole.", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
-                    return;
-                }
-                if (this.ownerOutDto == null) {
-                    ownerService.addOwner(setOwnerInDto());
-                    Notification.show("Stanice přidána.");
-                } else {
-                    ownerService.editOwner(ownerOutDto.getId(), setOwnerInDto());
-                    Notification.show("Stanice aktualizována.");
-                }
-                setOwnerOutDto();
-                finalBinder.writeBean(this.ownerOutDto);
-                clearForm();
-                refreshGrid();
-                UI.getCurrent().navigate(OwnerListDetail.class);
-            } catch (ObjectOptimisticLockingFailureException exception) {
-                Notification n = Notification.show(
-                        "Error updating the data. Somebody else has updated the record while you were making changes.");
-                n.setPosition(Notification.Position.MIDDLE);
-                n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            } catch (ValidationException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
     }
 
 
@@ -171,23 +277,22 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
         Button buttonAllCars = new Button("Historie vlastnictví");
         buttonAllCars.setWidthFull();
         buttonAllCars.addClickListener(click -> {
-            openAllCarsDialog();
+            openAllCarsDialog(ownerOutDto.getId());
         });
         verticalLayoutForFields.add(buttonAllCars);
         splitLayout.add(verticalLayoutForFields);
-
     }
 
-    private void openAllCarsDialog() {
+    private void openAllCarsDialog(Long ownerID) {
         Dialog dialog = new Dialog();
         dialog.getElement().setAttribute("aria-label", "Historie vlastnictví");
         dialog.setWidth(500, Unit.PIXELS);
-        VerticalLayout dialogLayout = createDialogLayout(dialog);
+        VerticalLayout dialogLayout = createDialogLayout(dialog, ownerID);
         dialog.add(dialogLayout);
         dialog.open();
     }
 
-    private VerticalLayout createDialogLayout(Dialog dialog) {
+    private VerticalLayout createDialogLayout(Dialog dialog, Long ownerId) {
         H2 headline = new H2("Historie vlastnictví");
         headline.getStyle().set("margin", "var(--lumo-space-m) 0 0 0")
                 .set("font-size", "1.5em").set("font-weight", "bold");
@@ -196,12 +301,13 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
         gridCars.addColumn(CarDto::getType).setHeader("Model").setAutoWidth(true);
         gridCars.addColumn(CarDto::getStartOfSignUp).setHeader("Přihlášení").setAutoWidth(true);
         Grid.Column<CarDto> signOutColumn = gridCars.addColumn(CarDto::getEndOfSignUp).setHeader("Odhlášení").setAutoWidth(true);
-        gridCars.setItems(ownerService.getOwnerCars(ownerOutDto.getId()));
+        gridCars.setItems(ownerService.getOwnerCars(ownerId));
         GridSortOrder<CarDto> sort = new GridSortOrder<>(signOutColumn, SortDirection.DESCENDING);
         gridCars.sort(List.of(sort));
         gridCars.addItemClickListener(item -> {
             if (item.getClickCount() == 2) {
                 gridCars.getUI().ifPresent(ui -> ui.navigate(CarDetail.class, new RouteParameters("carID", item.getItem().getId().toString())));
+                dialog.close();
             }
         });
         Button cancelButton = new Button("Zavřít", e -> {
