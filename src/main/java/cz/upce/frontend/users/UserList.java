@@ -65,6 +65,11 @@ public class UserList extends Composite<VerticalLayout> {
             grid.setItems(userService.getUsersByRegion(securityService.getAuthenticatedUser().getBranchOffice()));
         }
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        grid.addItemClickListener(event -> {
+            if (event.getClickCount() == 2) {
+                grid.getUI().ifPresent(ui -> ui.navigate(String.format("users/edit/%d", event.getItem().getId())));
+            }
+        });
     }
 
 }

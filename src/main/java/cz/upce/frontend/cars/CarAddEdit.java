@@ -22,9 +22,11 @@ import cz.upce.nnpro_backend.dtos.CarOutDto;
 import cz.upce.nnpro_backend.services.CarService;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
 @Route(value = "cars/edit", layout = Menu.class)
 @PermitAll
+@RolesAllowed({"ROLE_Admin", "ROLE_Okres"})
 public class CarAddEdit extends VerticalLayout implements HasUrlParameter<Long> {
     CarOutDto car;
     TextField textFieldVIN = new TextField();

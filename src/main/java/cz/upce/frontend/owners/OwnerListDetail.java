@@ -97,6 +97,62 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
         }
     }
 
+    public OwnerListDetail(OwnerService ownerService, SecurityService securityService) {
+        this.ownerService = ownerService;
+        this.securityService = securityService;
+        getContent().addClassNames("master-detail-view");
+
+        HorizontalLayout horizontalLayoutMain = new HorizontalLayout();
+
+        createGridLayout(horizontalLayoutMain);
+        binder = new BeanValidationBinder<>(OwnerOutDto.class);
+        if (!this.securityService.isKrajOfficer()) {
+            createEditorLayout(horizontalLayoutMain);
+            configureBinder();
+            BeanValidationBinder<OwnerOutDto> finalBinder = binder;
+            save.addClickListener(e -> {
+                try {
+                    boolean isValid = !FieldValidator.validateEmptyField(firstName)
+                            & !FieldValidator.validateEmptyField(lastName)
+                            & !FieldValidator.validateEmptyField(email)
+                            & !FieldValidator.validateEmptyField(birthDate)
+                            & !FieldValidator.validateEmptyField(city)
+                            & !FieldValidator.validateEmptyField(street)
+                            & !FieldValidator.validateEmptyField(numberOfHouse)
+                            & !FieldValidator.validateEmptyField(zipCode);
+                    if (!isValid) {
+                        Notification.show("Vyplňte všechna pole.", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                        return;
+                    }
+                    if (this.ownerOutDto == null) {
+                        ownerService.addOwner(setOwnerInDto());
+                        Notification.show("Stanice přidána.");
+                    } else {
+                        ownerService.editOwner(ownerOutDto.getId(), setOwnerInDto());
+                        Notification.show("Stanice aktualizována.");
+                    }
+                    setOwnerOutDto();
+                    finalBinder.writeBean(this.ownerOutDto);
+                    clearForm();
+                    refreshGrid();
+                    UI.getCurrent().navigate(OwnerListDetail.class);
+                } catch (ObjectOptimisticLockingFailureException exception) {
+                    Notification n = Notification.show(
+                            "Error updating the data. Somebody else has updated the record while you were making changes.");
+                    n.setPosition(Notification.Position.MIDDLE);
+                    n.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                } catch (ValidationException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        }
+
+        getContent().add(horizontalLayoutMain);
+        configureGrid();
+
+
+    }
+
     private void openOwnerDialog(OwnerOutDto item) {
         Dialog dialog = new Dialog();
         VerticalLayout verticalLayoutMain = new VerticalLayout();
@@ -193,69 +249,12 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
         return horizontalLayout;
     }
 
-    public OwnerListDetail(OwnerService ownerService, SecurityService securityService) {
-        this.ownerService = ownerService;
-        this.securityService = securityService;
-        getContent().addClassNames("master-detail-view");
-
-        HorizontalLayout horizontalLayoutMain = new HorizontalLayout();
-
-        createGridLayout(horizontalLayoutMain);
-        binder = new BeanValidationBinder<>(OwnerOutDto.class);
-        if (!this.securityService.isKrajOfficer()) {
-            createEditorLayout(horizontalLayoutMain);
-            configureBinder();
-            BeanValidationBinder<OwnerOutDto> finalBinder = binder;
-            save.addClickListener(e -> {
-                try {
-                    boolean isValid = !FieldValidator.validateEmptyField(firstName)
-                            & !FieldValidator.validateEmptyField(lastName)
-                            & !FieldValidator.validateEmptyField(email)
-                            & !FieldValidator.validateEmptyField(birthDate)
-                            & !FieldValidator.validateEmptyField(city)
-                            & !FieldValidator.validateEmptyField(street)
-                            & !FieldValidator.validateEmptyField(numberOfHouse)
-                            & !FieldValidator.validateEmptyField(zipCode);
-                    if (!isValid) {
-                        Notification.show("Vyplňte všechna pole.", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
-                        return;
-                    }
-                    if (this.ownerOutDto == null) {
-                        ownerService.addOwner(setOwnerInDto());
-                        Notification.show("Stanice přidána.");
-                    } else {
-                        ownerService.editOwner(ownerOutDto.getId(), setOwnerInDto());
-                        Notification.show("Stanice aktualizována.");
-                    }
-                    setOwnerOutDto();
-                    finalBinder.writeBean(this.ownerOutDto);
-                    clearForm();
-                    refreshGrid();
-                    UI.getCurrent().navigate(OwnerListDetail.class);
-                } catch (ObjectOptimisticLockingFailureException exception) {
-                    Notification n = Notification.show(
-                            "Error updating the data. Somebody else has updated the record while you were making changes.");
-                    n.setPosition(Notification.Position.MIDDLE);
-                    n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-                } catch (ValidationException ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-        }
-
-        getContent().add(horizontalLayoutMain);
-        configureGrid();
-
-
-    }
-
 
     private void createEditorLayout(HorizontalLayout splitLayout) {
         VerticalLayout verticalLayoutForFields = new VerticalLayout();
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setWidthFull();
         buttonLayout.addClassNames(LumoUtility.Gap.MEDIUM);
-        buttonLayout.setClassName("button-layout");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttonLayout.add(save, cancel);

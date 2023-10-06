@@ -73,22 +73,43 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
 
         Optional<Long> userId = event.getRouteParameters().get(USER_ID).map(Long::parseLong);
         if (userId.isPresent()) {
-            if (securityService.isKrajOfficer() && securityService.getAuthenticatedUser().getId().equals(userId.get())) {
-                comboBoxRole.setEnabled(false);
-            } else if (securityService.isKrajOfficer() && !securityService.getAuthenticatedUser().getId().equals(userId.get())) {
-
-            } else if (securityService.isOkresOfficer() && securityService.getAuthenticatedUser().getId().equals(userId.get())) {
-                textFieldJobPosition.setEnabled(false);
-                comboBoxOffice.setEnabled(false);
-                comboBoxRole.setEnabled(false);
-            } else if (securityService.isOkresOfficer() && !securityService.getAuthenticatedUser().getId().equals(userId.get())) {
-                horizontalLayoutMain.removeAll();
-                Notification.show("Nemáte oprávnění", 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
-                return;
-            }
-
+//            if (securityService.isKrajOfficer() && securityService.getAuthenticatedUser().getId().equals(userId.get())) {
+//                comboBoxRole.setEnabled(false);
+//            } else
             Optional<UserOutDto> user = Optional.ofNullable(userService.getUser(userId.get()));
+
+
             if (user.isPresent()) {
+                if (!user.get().getId().equals(securityService.getAuthenticatedUser().getId())) {
+                    horizontalLayoutButtons.remove(buttonChangePassword);
+                } else if (!horizontalLayoutButtons.isAttached()) {
+                    horizontalLayoutButtons.add(buttonChangePassword);
+                }
+
+                if (!securityService.isAdmin() && user.get().getRole().getName().equals("ROLE_Admin")) {
+                    horizontalLayoutMain.removeAll();
+                    Notification.show("Nemáte oprávnění", 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    return;
+                } else if (securityService.isKrajOfficer()) {
+                    comboBoxRole.setItems(roleService.getOfficeRoles());
+                    comboBoxOffice.setItems(branchOfficeService.getOfficesByRegion(securityService.getAuthenticatedUser().getBranchOffice()));
+                    if (!user.get().getBranchOfficeDto().getRegion().equals(securityService.getAuthenticatedUser().getBranchOffice().getRegion())
+                            && !securityService.getAuthenticatedUser().getId().equals(userId.get())) {
+                        horizontalLayoutMain.removeAll();
+                        Notification.show("Nemáte oprávnění", 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                        return;
+                    }
+                } else if (securityService.isOkresOfficer() && securityService.getAuthenticatedUser().getId().equals(userId.get())) {
+                    textFieldJobPosition.setEnabled(false);
+                    comboBoxOffice.setEnabled(false);
+                    comboBoxRole.setEnabled(false);
+                } else if (securityService.isOkresOfficer() && !securityService.getAuthenticatedUser().getId().equals(userId.get())) {
+                    horizontalLayoutMain.removeAll();
+                    Notification.show("Nemáte oprávnění", 5000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    return;
+                }
+
+
                 verticalLayoutInMiddle.remove(passwordField);
                 fillFields(user.get());
             } else {
@@ -291,6 +312,7 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
 
     private void setComboBoxRoleData() {
         List<Role> allRoles = roleService.getAllRoles();
+
         comboBoxRole.setItems(allRoles);
         comboBoxRole.setItemLabelGenerator(Role::getDescription);
         if (userOutDto != null) {

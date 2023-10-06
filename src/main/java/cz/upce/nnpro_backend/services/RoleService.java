@@ -17,4 +17,8 @@ public class RoleService {
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
+
+    public List<Role> getOfficeRoles() {
+        return roleRepository.findRolesByNameIsNot("ROLE_Admin");
+    }
 }

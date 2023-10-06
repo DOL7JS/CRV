@@ -1,5 +1,7 @@
 package cz.upce.frontend.office;
 
+import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -20,6 +22,7 @@ import com.vaadin.flow.router.Route;
 
 import java.util.Optional;
 
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
 import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
@@ -32,7 +35,7 @@ import javax.annotation.security.PermitAll;
 
 @Route(value = "offices/:officeID?/:action?(edit)", layout = Menu.class)
 @PermitAll
-public class OfficeListDetail extends Div implements BeforeEnterObserver {
+public class OfficeListDetail extends Composite<VerticalLayout> implements BeforeEnterObserver {
 
     private final String OFFICE_ID = "officeID";
     private final String OFFICE_EDIT = "offices/%s/edit";
@@ -77,10 +80,11 @@ public class OfficeListDetail extends Div implements BeforeEnterObserver {
         this.branchOfficeService = branchOfficeService;
         this.securityService = securityService;
 
-        HorizontalLayout splitLayout = new HorizontalLayout();
-        createGridLayout(splitLayout);
-        createEditorLayout(splitLayout);
-        add(splitLayout);
+        HorizontalLayout horizontalLayoutMain = new HorizontalLayout();
+        horizontalLayoutMain.setClassName("horizontalMain");
+        createGridLayout(horizontalLayoutMain);
+        createEditorLayout(horizontalLayoutMain);
+        getContent().add(horizontalLayoutMain);
 
         configureGrid();
         configureBinder();
@@ -163,41 +167,32 @@ public class OfficeListDetail extends Div implements BeforeEnterObserver {
     }
 
     private void createEditorLayout(HorizontalLayout splitLayout) {
-        Div editorLayoutDiv = new Div();
-        editorLayoutDiv.setClassName("editor-layout");
-
-        Div editorDiv = new Div();
-        editorDiv.setClassName("editor");
-        editorLayoutDiv.add(editorDiv);
-
-        FormLayout formLayout = new FormLayout();
+        VerticalLayout verticalLayoutForFields = new VerticalLayout();
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.setWidthFull();
+        buttonLayout.addClassNames(LumoUtility.Gap.MEDIUM);
+        verticalLayoutForFields.getStyle().set("width", "500 px");
+        verticalLayoutForFields.setWidth("500 px");
         region = new TextField("Kraj");
         district = new TextField("Okres");
         city = new TextField("Město");
-        formLayout.add(region, district, city);
-        editorDiv.add(formLayout);
-        createButtonLayout(editorLayoutDiv);
-        splitLayout.add(editorLayoutDiv);
-    }
-
-    private void createButtonLayout(Div editorLayoutDiv) {
-        HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.setClassName("button-layout");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        verticalLayoutForFields.add(region, district, city);
+        verticalLayoutForFields.add(buttonLayout);
         buttonLayout.add(save, cancel);
-        editorLayoutDiv.add(buttonLayout);
+        splitLayout.add(verticalLayoutForFields);
     }
 
-    private void createGridLayout(HorizontalLayout splitLayout) {
-        Div wrapper = new Div();
-        wrapper.setClassName("grid-wrapper");
-        splitLayout.add(wrapper);
-        splitLayout.setFlexGrow(1.0, wrapper);
+    private void createGridLayout(HorizontalLayout horizontalLayout) {
+        getContent().setHeightFull();
+        getContent().setWidthFull();
+        horizontalLayout.setWidthFull();
+        getContent().setFlexGrow(1.0, horizontalLayout);
+        horizontalLayout.addClassName(LumoUtility.Gap.MEDIUM);
+        horizontalLayout.setFlexGrow(1.0, grid);
         grid.setHeightFull();
-        //wrapper.setHeightFull();
-        wrapper.add(grid);
-        //splitLayout.add(grid);
+        horizontalLayout.add(grid);
     }
 
     private void refreshGrid() {

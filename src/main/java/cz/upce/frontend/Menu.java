@@ -40,7 +40,7 @@ public class Menu extends AppLayout {
         Button avatar = new Button(securityService.getAuthenticatedUser().getUsername());
 
         avatar.addClickListener(event -> {
-            avatar.getUI().ifPresent(ui -> ui.navigate(String.format("users/edit/%d", securityService.getAuthenticatedUser().getId())));
+            avatar.getUI().ifPresent(ui -> ui.getPage().setLocation(String.format("users/edit/%d", securityService.getAuthenticatedUser().getId())));
         });
         Button buttonLogOut = new Button("Odhlásit");
         buttonLogOut.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
