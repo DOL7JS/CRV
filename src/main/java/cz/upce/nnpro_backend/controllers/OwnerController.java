@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/owner")
+@RequestMapping("/api/owner")
 @CrossOrigin
 @SecurityRequirement(name = "NNPRO_API")
 @Tag(name = "Owner controller")

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/branchOffice")
+@RequestMapping("/api/branchOffice")
 @CrossOrigin
 @SecurityRequirement(name = "NNPRO_API")
 @Tag(name = "Branch office controller")
@@ -41,6 +41,7 @@ public class BranchOfficeController {
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Branch office not found",
                     content = @Content),})
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Kraj')")
     @GetMapping("/getOffice/{officeId}")
     public ResponseEntity<?> getOffice(@PathVariable Long officeId) {
         return ResponseEntity.ok(branchOfficeService.getOffice(officeId));
@@ -53,6 +54,7 @@ public class BranchOfficeController {
                             schema = @Schema(implementation = BranchOffice.class))}),
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content)})
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Kraj')")
     @GetMapping("/getAllOffices")
     public ResponseEntity<?> getAllOffices() {
         return ResponseEntity.ok(branchOfficeService.getAllOffices());
@@ -65,6 +67,7 @@ public class BranchOfficeController {
                             schema = @Schema(implementation = BranchOffice.class))}),
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content)})
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Kraj')")
     @PostMapping("/addOffice")
     public ResponseEntity<?> addOffice(@RequestBody @Valid BranchOfficeInDto officeDto) {
         return ResponseEntity.ok(branchOfficeService.addOffice(officeDto));
@@ -79,7 +82,7 @@ public class BranchOfficeController {
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Branch office not found or user not found",
                     content = @Content),})
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Kraj')")
     @PostMapping("/addUserToOffice")
     public ResponseEntity<?> addUserToOffice(@RequestBody @Valid BranchOfficeUserDto branchOfficeUserDto) {
         return ResponseEntity.ok(branchOfficeService.addUserToOffice(branchOfficeUserDto));
@@ -94,7 +97,7 @@ public class BranchOfficeController {
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Branch office not found",
                     content = @Content),})
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Kraj')")
     @DeleteMapping("/removeOffice/{officeId}")
     public ResponseEntity<?> removeOffice(@PathVariable Long officeId) {
         return ResponseEntity.ok(branchOfficeService.removeOffice(officeId));
@@ -109,23 +112,12 @@ public class BranchOfficeController {
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Branch office not found",
                     content = @Content),})
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Kraj')")
     @PutMapping("/editOffice/{officeId}")
     public ResponseEntity<?> editOffice(@PathVariable Long officeId, @RequestBody @Valid BranchOfficeInDto officeDto) {
         return ResponseEntity.ok(branchOfficeService.editOffice(officeId, officeDto));
     }
 
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
-    @GetMapping("/exportData")
-    public ResponseEntity<?> exportDataToJson() throws JsonProcessingException {
-        return ResponseEntity.ok(branchOfficeService.exportData());
-    }
-
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
-    @PutMapping("/importData")
-    public void importDataToJson(@Valid @RequestBody CarsOwnersDto carsOwnersDto) {
-        branchOfficeService.importData(carsOwnersDto.getCars(), carsOwnersDto.getOwners());
-    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

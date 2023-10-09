@@ -44,7 +44,6 @@ import java.util.Optional;
 
 @Route(value = "users/edit/:userID?", layout = Menu.class)
 @PermitAll
-
 public class UserDetail extends Composite<VerticalLayout> implements BeforeEnterObserver {
     private final String USER_ID = "userID";
     private final UserService userService;

@@ -1,5 +1,7 @@
 package cz.upce.nnpro_backend.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.upce.nnpro_backend.dtos.*;
 import cz.upce.nnpro_backend.entities.*;
 import cz.upce.nnpro_backend.repositories.*;
@@ -176,5 +178,23 @@ public class CarService {
     public List<CarOutDto> getAllCars() {
         List<Car> cars = carRepository.findAll();
         return new ArrayList<>(cars.stream().map(ConversionService::convertToCarDetailOutDto).toList());
+    }
+
+    public String exportData() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
+        List<Car> cars = carRepository.findAll();
+        List<Owner> owners = ownerRepository.findAll();
+        String jsonCars = mapper.writeValueAsString(cars);
+        String jsonOwners = mapper.writeValueAsString(owners);
+
+        return "{ \"cars\": " + jsonCars + ",\"owners\":" + jsonOwners + "}";
+    }
+
+    public void importData(List<Car> cars, List<Owner> owners) {
+        cars.stream().filter(car -> !carRepository.existsByVin(car.getVin()) && !carRepository.existsBySPZ(car.getSPZ())).forEach(car -> car.setId(null));
+        owners.forEach(owner -> owner.setId(null));
+        carRepository.saveAll(cars);
+        ownerRepository.saveAll(owners);
     }
 }

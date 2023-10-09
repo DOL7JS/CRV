@@ -8,6 +8,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import cz.upce.frontend.Homepage;
 
 @Route("login")
 @PageTitle("Login")
@@ -15,17 +16,6 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
     private final LoginForm login = new LoginForm();
-
-    public LoginView() {
-        addClassName("login-view");
-        setSizeFull();
-        setAlignItems(Alignment.CENTER);
-        setJustifyContentMode(JustifyContentMode.CENTER);
-        login.setForgotPasswordButtonVisible(false);
-        login.setAction("login");
-
-        add(new H1("Vaadin CRM"), login);
-    }
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
@@ -37,4 +27,19 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
             login.setError(true);
         }
     }
+
+    public LoginView() {
+        addClassName("login-view");
+        setSizeFull();
+        setAlignItems(Alignment.CENTER);
+        setJustifyContentMode(JustifyContentMode.CENTER);
+        login.setForgotPasswordButtonVisible(false);
+        login.setAction("login");
+        login.addLoginListener(event -> {
+            login.getUI().ifPresent(ui -> ui.navigate("/"));
+        });
+        add(new H1("Vaadin CRM"), login);
+    }
+
+
 }

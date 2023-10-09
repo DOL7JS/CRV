@@ -45,6 +45,8 @@ dependencies {
     implementation 'com.vaadin:vaadin:23.2.2'
     implementation 'com.vaadin:vaadin-spring-boot-starter:23.2.2'
     testImplementation 'com.vaadin:vaadin-testbench:23.2.2'
+
+    implementation 'de.codecamp.vaadin:vaadin-security-spring-boot-starter:3.1.2'
 }
 
 tasks.named('test') {

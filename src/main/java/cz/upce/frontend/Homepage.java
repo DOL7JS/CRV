@@ -8,11 +8,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 import javax.annotation.security.PermitAll;
 
 @PageTitle("Domovská stránka")
-@Route(value = "",layout = Menu.class)
+@Route(value = "", layout = Menu.class)
 @PermitAll
 public class Homepage extends Composite<VerticalLayout> {
 

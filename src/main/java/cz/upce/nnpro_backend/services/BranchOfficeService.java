@@ -78,23 +78,7 @@ public class BranchOfficeService {
         return ConversionService.convertToUserDetailOutDto(save);
     }
 
-    public String exportData() throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        List<Car> cars = carRepository.findAll();
-        List<Owner> owners = ownerRepository.findAll();
-        String jsonCars = mapper.writeValueAsString(cars);
-        String jsonOwners = mapper.writeValueAsString(owners);
 
-        return "{ \"cars\": " + jsonCars + ",\"owners\":" + jsonOwners + "}";
-    }
-
-    public void importData(List<Car> cars, List<Owner> owners) {
-        cars.stream().filter(car -> !carRepository.existsByVin(car.getVin()) && !carRepository.existsBySPZ(car.getSPZ())).forEach(car -> car.setId(null));
-        owners.forEach(owner -> owner.setId(null));
-        carRepository.saveAll(cars);
-        ownerRepository.saveAll(owners);
-    }
 
     public List<BranchOfficeDto> getAllOffices() {
         return ConversionService.convertListToListOfficeDto(branchOfficeRepository.findAll());

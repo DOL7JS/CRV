@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.controllers;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import cz.upce.nnpro_backend.entities.Car;
 import cz.upce.nnpro_backend.entities.Owner;
 import cz.upce.nnpro_backend.dtos.*;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/car")
+@RequestMapping("/api/car")
 @CrossOrigin
 @SecurityRequirement(name = "NNPRO_API")
 @OpenAPIDefinition(info = @Info(title = "CRV API", description = """
@@ -229,6 +230,18 @@ public class CarController {
     @PutMapping("/editCar/{carId}")
     public ResponseEntity<?> editCar(@PathVariable Long carId, @RequestBody @Valid CarInDto editCar) {
         return ResponseEntity.ok(carService.editCar(carId, editCar));
+    }
+
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
+    @GetMapping("/exportData")
+    public ResponseEntity<?> exportDataToJson() throws JsonProcessingException {
+        return ResponseEntity.ok(carService.exportData());
+    }
+
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
+    @PutMapping("/importData")
+    public void importDataToJson(@Valid @RequestBody CarsOwnersDto carsOwnersDto) {
+        carService.importData(carsOwnersDto.getCars(), carsOwnersDto.getOwners());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
