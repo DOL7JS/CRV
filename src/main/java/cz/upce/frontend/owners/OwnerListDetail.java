@@ -43,7 +43,6 @@ import cz.upce.nnpro_backend.services.OwnerService;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.Optional;
 

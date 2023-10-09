@@ -8,7 +8,6 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import cz.upce.frontend.Homepage;
 
 @Route("login")
 @PageTitle("Login")

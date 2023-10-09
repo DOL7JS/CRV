@@ -39,7 +39,6 @@ import cz.upce.nnpro_backend.services.UserService;
 
 import javax.annotation.security.PermitAll;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Route(value = "users/edit/:userID?", layout = Menu.class)
