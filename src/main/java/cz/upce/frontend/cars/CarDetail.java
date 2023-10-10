@@ -24,6 +24,7 @@ import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
+import cz.upce.frontend.DoubleToIntegerConverter;
 import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
 import cz.upce.nnpro_backend.dtos.CarOutDto;
@@ -245,6 +246,7 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         if (carOutDto != null) {
             car = carOutDto;
             stripedGrid.setItems(car.getOwners());
+            h3SPZ.setText("-");
             Notification.show("Auto bylo odhlášeno", 2000, Notification.Position.MIDDLE);
         } else {
             Notification.show("Nelze odhlásit nepříhlášené auto", 2000, Notification.Position.MIDDLE);
@@ -285,6 +287,7 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         houseNumberField.setRequiredIndicatorVisible(true);
         zipCodeField.setRequiredIndicatorVisible(true);
         zipCodeField.setMax(5);
+        zipCodeField.setMin(5);
 
         Binder<OwnerDto> binder = new Binder<>(OwnerDto.class);
         binder.forField(firstNameField).withValidator(name -> name.length() > 1, "Name must have at least 2 characters").bind(OwnerDto::getFirstName, OwnerDto::setFirstName);
@@ -292,7 +295,7 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         binder.forField(emailField).withValidator(new EmailValidator("This doesn't look like a valid email address")).bind(OwnerDto::getEmail, OwnerDto::setEmail);
         binder.forField(cityField).withValidator(city -> city.length() > 1, "City must have at least 2 characters").bind(OwnerDto::getCity, OwnerDto::setCity);
         binder.forField(streetField).withValidator(street -> street.length() > 1, "Street must have at least 2 characters").bind(OwnerDto::getStreet, OwnerDto::setStreet);
-
+        binder.forField(zipCodeField).withValidator(zip -> zip.toString().length() == (5 + 2), "Zip code must have 5 numbers").withConverter(new DoubleToIntegerConverter()).bind(OwnerDto::getZipCode, OwnerDto::setZipCode);
         VerticalLayout fieldLayout = new VerticalLayout(firstNameField,
                 lastNameField, emailField, dateField, cityField, streetField, houseNumberField, zipCodeField);
         fieldLayout.setSpacing(false);
@@ -303,6 +306,7 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
             dialog.close();
         });
         Button saveButton = new Button("Uložit", e -> {
+            int a = zipCodeField.getValue().toString().length();
             boolean valid = !FieldValidator.validateEmptyField(firstNameField)
                     & !FieldValidator.validateEmptyField(lastNameField)
                     & !FieldValidator.validateEmptyField(cityField)

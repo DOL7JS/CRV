@@ -18,7 +18,6 @@ public class Car {
     private String manufacturer;
     @NotBlank(message = "Type is mandatory")
     private String type;
-    @NotBlank(message = "SPZ is mandatory.")
     @Length(min = 8, max = 8, message = "SPZ has to have 8 symbols XXX XXXX")
     private String SPZ;
     @NotBlank(message = "Color is mandatory.")
@@ -27,14 +26,6 @@ public class Car {
     private double enginePower;
     @NotNull(message = "Emission standard is mandatory.")
     private double emissionStandard;
-
-    public boolean isStolen() {
-        return isStolen;
-    }
-
-    public void setStolen(boolean stolen) {
-        isStolen = stolen;
-    }
 
     @NotNull(message = "Torque is mandatory.")
     private double torque;
@@ -45,13 +36,21 @@ public class Car {
     private LocalDate yearOfCreation;
     @NotBlank(message = "Vin is mandatory.")
     private String vin;
-    @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private Set<CarOwner> carOwners;
 
     @ManyToOne
     @JoinColumn(name = "branchOffice_id")
     @JsonIgnore
     private BranchOffice branchOffice;
+
+    public boolean isStolen() {
+        return isStolen;
+    }
+
+    public void setStolen(boolean stolen) {
+        isStolen = stolen;
+    }
 
     public String getVin() {
         return vin;

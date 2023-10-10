@@ -1,6 +1,7 @@
 package cz.upce.frontend.users;
 
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -117,6 +118,9 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
                 event.forwardTo(OfficeListDetail.class);
             }
         } else {
+            if (securityService.isKrajOfficer()) {
+                comboBoxOffice.setItems(branchOfficeService.getOfficesByRegion(securityService.getAuthenticatedUser().getBranchOffice()));
+            }
             binder.forField(passwordField).withValidator(password -> password.length() > 7, "Password must have at least 8 characters").bind(UserInDto::getPassword, UserInDto::setPassword);
             horizontalLayoutButtons.remove(buttonChangePassword);
 
@@ -152,6 +156,7 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
             } else {
                 editUser();
             }
+
         });
         getContent().setWidthFull();
         getContent().addClassName(Padding.LARGE);
@@ -231,7 +236,7 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
 
     private void openDialog() {
         Dialog dialog = new Dialog();
-        dialog.getElement().setAttribute("aria-label", "Přihlásit auto");
+        dialog.getElement().setAttribute("aria-label", "Změna hesla");
 
         VerticalLayout dialogLayout = new VerticalLayout();
         dialogLayout.add(new H2("Změna hesla"));
@@ -250,7 +255,8 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
                 newPasswordDto.setNewPassword(newPassword.getValue());
                 try {
                     userService.changePassword(userOutDto.getId(), newPasswordDto);
-                    Notification.show("Password changed", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    Notification.show("Heslo změněno", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    dialog.close();
                 } catch (IllegalArgumentException e) {
                     Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
                 }
@@ -279,8 +285,15 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
             userInDto.setJobPosition(textFieldJobPosition.getValue());
             userInDto.setRole(comboBoxRole.getValue().getId());
             userInDto.setOffice(comboBoxOffice.getValue().getId());
-            userService.editUser(userOutDto.getId(), userInDto);
+
+            try {
+                userService.editUser(userOutDto.getId(), userInDto);
+            } catch (IllegalArgumentException ex) {
+                Notification.show(ex.getMessage(), 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                return;
+            }
             Notification.show("Uživatel upraven", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            UI.getCurrent().navigate(UserList.class);
         } else {
             Notification.show("Nesprávně vyplněna pole.", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
 
@@ -301,8 +314,14 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
             userInDto.setRole(comboBoxRole.getValue().getId());
             userInDto.setOffice(comboBoxOffice.getValue().getId());
             userInDto.setPassword(passwordField.getValue());
-            userService.addUser(userInDto);
+            try {
+                userService.addUser(userInDto);
+            } catch (IllegalArgumentException ex) {
+                Notification.show(ex.getMessage(), 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                return;
+            }
             Notification.show("Uživatel přidán", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            UI.getCurrent().navigate(UserList.class);
         } else {
             Notification.show("Nesprávně vyplněna pole.", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
         }

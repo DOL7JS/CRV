@@ -61,7 +61,8 @@ public class UserService {
         }
         Optional<Role> role = roleRepository.findById(userInDto.getRole() == null ? 0 : userInDto.getRole());
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
-        User editedUser = ConversionService.convertToUser(userInDto, user, role);
+        Optional<BranchOffice> branchOffice = branchOfficeRepository.findById(userInDto.getOffice());
+        User editedUser = ConversionService.convertToUser(userInDto, user, role, branchOffice);
         return userRepository.save(editedUser);
     }
 

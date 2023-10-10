@@ -1,6 +1,7 @@
 package cz.upce.nnpro_backend.dtos;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 public class BranchOfficeDto {
     private Long id;
@@ -37,6 +38,19 @@ public class BranchOfficeDto {
 
     public String getDistrict() {
         return district;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BranchOfficeDto that = (BranchOfficeDto) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public void setDistrict(String district) {

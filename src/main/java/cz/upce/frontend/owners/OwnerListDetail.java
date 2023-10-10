@@ -38,7 +38,9 @@ import cz.upce.frontend.cars.CarDetail;
 import cz.upce.nnpro_backend.dtos.CarDto;
 import cz.upce.nnpro_backend.dtos.OwnerInDto;
 import cz.upce.nnpro_backend.dtos.OwnerOutDto;
+import cz.upce.nnpro_backend.entities.Owner;
 import cz.upce.nnpro_backend.security.SecurityService;
+import cz.upce.nnpro_backend.services.ConversionService;
 import cz.upce.nnpro_backend.services.OwnerService;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
@@ -124,17 +126,20 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
                         return;
                     }
                     if (this.ownerOutDto == null) {
-                        ownerService.addOwner(setOwnerInDto());
-                        Notification.show("Stanice přidána.");
+                        Owner owner = ownerService.addOwner(setOwnerInDto());
+                        this.ownerOutDto = ConversionService.convertToOwnerDetailOutDto(owner);
+                        finalBinder.writeBean(this.ownerOutDto);
+                        clearForm();
+                        refreshGrid();
+                        Notification.show("Vlastník přidán.", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                     } else {
-                        ownerService.editOwner(ownerOutDto.getId(), setOwnerInDto());
-                        Notification.show("Stanice aktualizována.");
+                        Owner owner = ownerService.editOwner(ownerOutDto.getId(), setOwnerInDto());
+                        this.ownerOutDto = ConversionService.convertToOwnerDetailOutDto(owner);
+                        grid.getDataCommunicator().getDataProvider().refreshItem(ownerOutDto);
+                        Notification.show("Vlastník aktualizován.", 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                     }
-                    setOwnerOutDto();
-                    finalBinder.writeBean(this.ownerOutDto);
-                    clearForm();
-                    refreshGrid();
-                    UI.getCurrent().navigate(OwnerListDetail.class);
+
+                    //UI.getCurrent().getPage().reload();
                 } catch (ObjectOptimisticLockingFailureException exception) {
                     Notification n = Notification.show(
                             "Error updating the data. Somebody else has updated the record while you were making changes.");
@@ -333,8 +338,8 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
     }
 
     private void refreshGrid() {
-        grid.select(null);
-        grid.getDataProvider().refreshAll();
+        //grid.select(null);
+        //grid.getDataProvider().refreshAll();
         grid.setItems(ownerService.getAllOwners());
 
     }

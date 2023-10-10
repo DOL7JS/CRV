@@ -37,7 +37,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         login.addLoginListener(event -> {
             login.getUI().ifPresent(ui -> ui.navigate("/"));
         });
-        add(new H1("Vaadin CRM"), login);
+        add(new H1("Centrální registr vozidel"), login);
     }
 
 

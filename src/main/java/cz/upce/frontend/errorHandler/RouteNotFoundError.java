@@ -14,8 +14,7 @@ public class RouteNotFoundError extends Component implements HasErrorParameter<N
 
     @Override
     public int setErrorParameter(BeforeEnterEvent event, ErrorParameter<NotFoundException> parameter) {
-        getElement().setText("Could not navigate to '" + event.getLocation().getPath() + "'");
-        event.forwardTo("/ui/error");
+        event.rerouteTo(ErrorView.class);
         return HttpServletResponse.SC_NOT_FOUND;
     }
 }

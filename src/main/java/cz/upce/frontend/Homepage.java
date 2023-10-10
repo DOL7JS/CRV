@@ -26,7 +26,7 @@ public class Homepage extends Composite<VerticalLayout> {
         layoutRow.setWidthFull();
         getContent().setFlexGrow(1.0, layoutColumn2);
         layoutColumn2.setWidthFull();
-        h1.setText("Vítejte na stránkách CRV Suchdol");
+        h1.setText("Vítejte na stránkách CRV");
         layoutColumn2.setFlexGrow(1.0, h1);
         layoutColumn2.setAlignSelf(FlexComponent.Alignment.CENTER, h1);
         getContent().add(layoutRow);

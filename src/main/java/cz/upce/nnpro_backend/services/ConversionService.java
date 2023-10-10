@@ -52,10 +52,10 @@ public class ConversionService {
         return branchOfficeDto;
     }
 
-    public static Car convertToCar(CarInDto carInDto, String spz) {
+    public static Car convertToCar(CarInDto carInDto) {
         Car newCar = new Car();
         newCar.setVin(carInDto.getVin());
-        newCar.setSPZ(spz);
+        newCar.setSPZ(null);
         newCar.setColor(carInDto.getColor());
         newCar.setEnginePower(carInDto.getEnginePower());
         newCar.setInDeposit(carInDto.isInDeposit());
@@ -160,11 +160,12 @@ public class ConversionService {
         return user;
     }
 
-    public static User convertToUser(UserInDto userInDto, User user, Optional<Role> role) {
+    public static User convertToUser(UserInDto userInDto, User user, Optional<Role> role, Optional<BranchOffice> office) {
         user.setUsername(userInDto.getUsername());
         user.setEmail(userInDto.getEmail());
         user.setJobPosition(userInDto.getJobPosition());
         role.ifPresent(user::setRole);
+        office.ifPresent(user::setBranchOffice);
         return user;
     }
 
@@ -180,26 +181,29 @@ public class ConversionService {
         ownerOutDto.setZipCode(owner.getZipCode());
         ownerOutDto.setNumberOfHouse(owner.getNumberOfHouse());
         List<CarDto> carDtos = new ArrayList<>();
-        for (CarOwner carOwner : owner.getCarOwners().stream().toList()) {
-            CarDto carDto = new CarDto();
-            carDto.setId(carOwner.getCar().getId());
-            carDto.setColor(carOwner.getCar().getColor());
-            carDto.setEmissionStandard(carOwner.getCar().getEmissionStandard());
-            carDto.setEnginePower(carOwner.getCar().getEnginePower());
-            carDto.setManufacturer(carOwner.getCar().getManufacturer());
-            carDto.setType(carOwner.getCar().getType());
-            carDto.setSPZ(carOwner.getCar().getSPZ());
-            carDto.setInDeposit(carOwner.getCar().isInDeposit());
-            carDto.setVin(carOwner.getCar().getVin());
-            carDto.setTorque(carOwner.getCar().getTorque());
-            carDto.setYearOfCreation(carOwner.getCar().getYearOfCreation());
+        if (owner.getCarOwners() != null) {
+            for (CarOwner carOwner : owner.getCarOwners().stream().toList()) {
+                CarDto carDto = new CarDto();
+                carDto.setId(carOwner.getCar().getId());
+                carDto.setColor(carOwner.getCar().getColor());
+                carDto.setEmissionStandard(carOwner.getCar().getEmissionStandard());
+                carDto.setEnginePower(carOwner.getCar().getEnginePower());
+                carDto.setManufacturer(carOwner.getCar().getManufacturer());
+                carDto.setType(carOwner.getCar().getType());
+                carDto.setSPZ(carOwner.getCar().getSPZ());
+                carDto.setInDeposit(carOwner.getCar().isInDeposit());
+                carDto.setVin(carOwner.getCar().getVin());
+                carDto.setTorque(carOwner.getCar().getTorque());
+                carDto.setYearOfCreation(carOwner.getCar().getYearOfCreation());
 
-            carDto.setStartOfSignUp(carOwner.getStartOfSignUp());
-            carDto.setEndOfSignUp(carOwner.getEndOfSignUp());
+                carDto.setStartOfSignUp(carOwner.getStartOfSignUp());
+                carDto.setEndOfSignUp(carOwner.getEndOfSignUp());
 
-            carDtos.add(carDto);
+                carDtos.add(carDto);
 
+            }
         }
+
         ownerOutDto.setCars(carDtos);
         return ownerOutDto;
     }

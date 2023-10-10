@@ -21,6 +21,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
 import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
+import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.security.SecurityService;
 import cz.upce.nnpro_backend.services.BranchOfficeService;
 import cz.upce.nnpro_backend.services.ConversionService;
@@ -53,7 +54,6 @@ public class OfficeListDetail extends Composite<VerticalLayout> implements Befor
 
     private final BranchOfficeService branchOfficeService;
     private final SecurityService securityService;
-
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -104,17 +104,20 @@ public class OfficeListDetail extends Composite<VerticalLayout> implements Befor
                 if (this.branchOfficeDto == null) {
                     this.branchOfficeDto = new BranchOfficeDto();
                     setBranchOfficeDto();
-                    branchOfficeService.addOffice(ConversionService.convertToBranchOfficeInDto(branchOfficeDto));
-                    Notification.show("Stanice přidána.");
+                    BranchOffice branchOffice = branchOfficeService.addOffice(ConversionService.convertToBranchOfficeInDto(branchOfficeDto));
+                    this.branchOfficeDto = ConversionService.convertToOfficeDto(branchOffice);
+                    finalBinder.writeBean(this.branchOfficeDto);
+                    clearForm();
+                    refreshGrid();
+                    Notification.show("Stanice přidána.", 3000, Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 } else {
                     setBranchOfficeDto();
-                    branchOfficeService.editOffice(branchOfficeDto.getId(), ConversionService.convertToBranchOfficeInDto(branchOfficeDto));
-                    Notification.show("Stanice aktualizována.");
+                    BranchOffice branchOffice = branchOfficeService.editOffice(this.branchOfficeDto.getId(), ConversionService.convertToBranchOfficeInDto(this.branchOfficeDto));
+                    grid.getDataProvider().refreshItem(this.branchOfficeDto);
+                    this.branchOfficeDto = ConversionService.convertToOfficeDto(branchOffice);
+                    Notification.show("Stanice aktualizována.", 3000, Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 }
-                finalBinder.writeBean(this.branchOfficeDto);
-                clearForm();
-                refreshGrid();
-                UI.getCurrent().navigate(OfficeListDetail.class);
+
             } catch (ObjectOptimisticLockingFailureException exception) {
                 Notification n = Notification.show(
                         "Error updating the data. Somebody else has updated the record while you were making changes.");
@@ -122,6 +125,11 @@ public class OfficeListDetail extends Composite<VerticalLayout> implements Befor
                 n.addThemeVariants(NotificationVariant.LUMO_ERROR);
             } catch (ValidationException ex) {
                 throw new RuntimeException(ex);
+            } catch (IllegalArgumentException ex) {
+                Notification n = Notification.show(
+                        ex.getMessage());
+                n.setPosition(Position.MIDDLE);
+                n.addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
         });
     }
@@ -194,8 +202,11 @@ public class OfficeListDetail extends Composite<VerticalLayout> implements Befor
     private void refreshGrid() {
         grid.select(null);
         grid.getDataProvider().refreshAll();
-        grid.setItems(branchOfficeService.getAllOffices());
-
+        if (securityService.isAdmin()) {
+            grid.setItems(branchOfficeService.getAllOffices());
+        } else if (securityService.isKrajOfficer()) {
+            grid.setItems(branchOfficeService.getOfficesByRegion(securityService.getAuthenticatedUser().getBranchOffice()));
+        }
     }
 
     private void clearForm() {

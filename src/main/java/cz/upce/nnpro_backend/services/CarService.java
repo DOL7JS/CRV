@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.upce.nnpro_backend.dtos.*;
 import cz.upce.nnpro_backend.entities.*;
 import cz.upce.nnpro_backend.repositories.*;
+import cz.upce.nnpro_backend.security.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 public class CarService {
@@ -21,23 +23,24 @@ public class CarService {
     private final CarOwnerRepository carOwnerRepository;
     private final SPZService spzService;
     private final SPZRepository spzRepository;
+    private final SecurityService securityService;
 
-    public CarService(CarRepository carRepository, OwnerRepository ownerRepository, BranchOfficeRepository branchOfficeRepository, CarOwnerRepository carOwnerRepository, SPZService spzService, SPZRepository spzRepository) {
+    public CarService(CarRepository carRepository, OwnerRepository ownerRepository, BranchOfficeRepository branchOfficeRepository, CarOwnerRepository carOwnerRepository, SPZService spzService, SPZRepository spzRepository, SecurityService securityService) {
         this.carRepository = carRepository;
         this.ownerRepository = ownerRepository;
         this.branchOfficeRepository = branchOfficeRepository;
         this.carOwnerRepository = carOwnerRepository;
         this.spzService = spzService;
         this.spzRepository = spzRepository;
+        this.securityService = securityService;
     }
 
-    public Car addCar(CarInDto carInDto) throws Exception {
+    public Car addCar(CarInDto carInDto) {
         if (carRepository.existsByVin(carInDto.getVin())) {
             throw new IllegalArgumentException("The car's vin already exists.");
         }
-        Car car = ConversionService.convertToCar(carInDto, spzService.generateSPZ().getSPZ());
+        Car car = ConversionService.convertToCar(carInDto);
         return carRepository.save(car);
-
     }
 
     public Car changeOwner(Long carId, Long idOwner) throws Exception {
@@ -50,8 +53,10 @@ public class CarService {
         Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
         if (car.getSPZ() == null) {
             car.setSPZ(spzService.generateSPZ().getSPZ());
-            car = carRepository.save(car);
         }
+        car.setBranchOffice(securityService.getAuthenticatedUser().getBranchOffice());
+        car = carRepository.save(car);
+
         CarOwner carOwnerNew = new CarOwner();
         carOwnerNew.setCar(car);
         carOwnerNew.setOwner(owner);
@@ -66,6 +71,8 @@ public class CarService {
         carOwnerOld.setEndOfSignUp(LocalDate.now());
         carOwnerRepository.save(carOwnerOld);
         carRepository.setSPZNullByCar(carOwnerOld.getCar());
+        carOwnerOld.getCar().setBranchOffice(null);
+        carRepository.save(carOwnerOld.getCar());
         spzRepository.save(new SPZ(carOwnerOld.getCar().getSPZ()));
     }
 
@@ -74,9 +81,13 @@ public class CarService {
         if (carOwnerOld != null) {
             carOwnerOld.setEndOfSignUp(LocalDate.now());
             carOwnerRepository.save(carOwnerOld);
-            carRepository.setSPZNullByCar(carOwnerOld.getCar());
             spzRepository.save(new SPZ(carOwnerOld.getCar().getSPZ()));
-            return ConversionService.convertToCarDetailOutDto(carOwnerOld.getCar());
+
+            Car car = carOwnerOld.getCar();
+            car.setBranchOffice(null);
+            car = carRepository.save(car);
+            carRepository.setSPZNullByCar(car);
+            return ConversionService.convertToCarDetailOutDto(car);
         }
         return null;
     }
@@ -115,9 +126,11 @@ public class CarService {
             carOwnerRepository.save(byCarIdAndEndOfSignUpIsNull);
         }
         Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
-        if (car.getSPZ() == null) {
+        if (car.getSPZ() == null || Objects.equals(car.getSPZ(), "")) {
             car.setSPZ(spzService.generateSPZ().getSPZ());
         }
+        car.setBranchOffice(securityService.getAuthenticatedUser().getBranchOffice());
+
         car = carRepository.save(car);
         Owner owner = ConversionService.convertToOwner(ownerInDto);
         owner = ownerRepository.save(owner);
@@ -125,8 +138,9 @@ public class CarService {
         carOwner.setCar(car);
         carOwner.setOwner(owner);
         carOwner.setStartOfSignUp(LocalDate.now());
-        carOwnerRepository.save(carOwner);
-        return car;
+        CarOwner save = carOwnerRepository.save(carOwner);
+        save.getCar().getCarOwners().add(carOwner);
+        return save.getCar();
     }
 
     public Owner signInExistingCar(CarOwnerDto carOwnerDto) throws Exception {
@@ -139,6 +153,7 @@ public class CarService {
         if (car.getSPZ() == null) {
             car.setSPZ(spzService.generateSPZ().getSPZ());
         }
+        car.setBranchOffice(securityService.getAuthenticatedUser().getBranchOffice());
         carOwner.setCar(car);
         carOwner.setOwner(owner);
         carOwner.setStartOfSignUp(LocalDate.now());

@@ -13,8 +13,6 @@ public class CarInDto {
     String manufacturer;
     @NotBlank(message = "Type is mandatory.")
     String type;
-
-
     @NotNull(message = "Year of creation is mandatory.")
     LocalDate yearOfCreation;
     boolean isInDeposit = false;
