@@ -18,7 +18,7 @@ Sample users:
 | username 	| password 	| role 	|
 |---	|---	|---	|
 | admin 	| 12345678 	| ROLE_Admin 	|
-| krajKO 	| 12345678 	| ROLE_Kraj 	|
+| krajKolin 	| 12345678 	| ROLE_Kraj 	|
 | okresKO 	| 12345678 	| ROLE_Okres 	|
 
 ## Users rights
