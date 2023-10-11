@@ -27,6 +27,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
+import cz.upce.frontend.errorHandler.ErrorView;
 import cz.upce.frontend.office.OfficeListDetail;
 import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
 import cz.upce.nnpro_backend.dtos.NewPasswordDto;
@@ -40,6 +41,7 @@ import cz.upce.nnpro_backend.services.UserService;
 
 import javax.annotation.security.PermitAll;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Route(value = "users/edit/:userID?", layout = Menu.class)
@@ -68,14 +70,15 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-
-
         Optional<Long> userId = event.getRouteParameters().get(USER_ID).map(Long::parseLong);
         if (userId.isPresent()) {
-//            if (securityService.isKrajOfficer() && securityService.getAuthenticatedUser().getId().equals(userId.get())) {
-//                comboBoxRole.setEnabled(false);
-//            } else
-            Optional<UserOutDto> user = Optional.ofNullable(userService.getUser(userId.get()));
+            Optional<UserOutDto> user;
+            try {
+                user = Optional.ofNullable(userService.getUser(userId.get()));
+            } catch (NoSuchElementException ex) {
+                event.forwardTo(ErrorView.class);
+                return;
+            }
 
 
             if (user.isPresent()) {
@@ -120,6 +123,7 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
         } else {
             if (securityService.isKrajOfficer()) {
                 comboBoxOffice.setItems(branchOfficeService.getOfficesByRegion(securityService.getAuthenticatedUser().getBranchOffice()));
+                comboBoxRole.setItems(roleService.getOfficeRoles());
             }
             binder.forField(passwordField).withValidator(password -> password.length() > 7, "Password must have at least 8 characters").bind(UserInDto::getPassword, UserInDto::setPassword);
             horizontalLayoutButtons.remove(buttonChangePassword);

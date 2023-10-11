@@ -17,12 +17,14 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
+import cz.upce.frontend.errorHandler.ErrorView;
 import cz.upce.nnpro_backend.dtos.CarInDto;
 import cz.upce.nnpro_backend.dtos.CarOutDto;
 import cz.upce.nnpro_backend.services.CarService;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import java.util.NoSuchElementException;
 
 @Route(value = "cars/edit", layout = Menu.class)
 @PermitAll
@@ -46,7 +48,12 @@ public class CarAddEdit extends VerticalLayout implements HasUrlParameter<Long> 
     @Override
     public void setParameter(BeforeEvent event, @OptionalParameter Long parameter) {
         if (parameter != null) {
-            car = carService.getCar(parameter);
+            try {
+                car = carService.getCar(parameter);
+            } catch (NoSuchElementException ex) {
+                event.forwardTo(ErrorView.class);
+                return;
+            }
             SetCarDetail(car);
         } else {
             checkboxIsInDeposit.setEnabled(false);

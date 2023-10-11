@@ -20,6 +20,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
+import cz.upce.frontend.errorHandler.ErrorView;
 import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
 import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.security.SecurityService;
@@ -28,10 +29,12 @@ import cz.upce.nnpro_backend.services.ConversionService;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Route(value = "offices/:officeID?/:action?(edit)", layout = Menu.class)
-@PermitAll
+@RolesAllowed({"ROLE_Admin", "ROLE_Kraj"})
 public class OfficeListDetail extends Composite<VerticalLayout> implements BeforeEnterObserver {
 
     private final String OFFICE_ID = "officeID";
@@ -59,8 +62,20 @@ public class OfficeListDetail extends Composite<VerticalLayout> implements Befor
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> samplePersonId = event.getRouteParameters().get(OFFICE_ID).map(Long::parseLong);
         if (samplePersonId.isPresent()) {
-            Optional<BranchOfficeDto> office = Optional.ofNullable(branchOfficeService.getOffice(samplePersonId.get()));
+            Optional<BranchOfficeDto> office = null;
+            try {
+                office = Optional.ofNullable(branchOfficeService.getOffice(samplePersonId.get()));
+            } catch (NoSuchElementException ex) {
+                event.forwardTo(ErrorView.class);
+                return;
+            }
             if (office.isPresent()) {
+                if (securityService.isKrajOfficer() &&
+                        !securityService.getAuthenticatedUser().getBranchOffice().getRegion().equals(office.get().getRegion())) {
+                    event.forwardTo(ErrorView.class);
+                    return;
+                }
+
                 populateForm(office.get());
             } else {
                 Notification.show(

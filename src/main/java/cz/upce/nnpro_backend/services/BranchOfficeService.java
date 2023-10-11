@@ -67,7 +67,6 @@ public class BranchOfficeService {
 
     public BranchOfficeDto getOffice(Long officeId) {
         return ConversionService.convertToOfficeDto(branchOfficeRepository.findById(officeId).orElseThrow(() -> new NoSuchElementException("Branch office not found!")));
-        //return branchOfficeRepository.findById(officeId).orElseThrow(() -> new NoSuchElementException("Branch office not found!"));
     }
 
     public UserOutDto addUserToOffice(BranchOfficeUserDto branchOfficeUserDto) {

@@ -27,6 +27,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import cz.upce.frontend.DoubleToIntegerConverter;
 import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
+import cz.upce.frontend.errorHandler.ErrorView;
 import cz.upce.nnpro_backend.dtos.CarOutDto;
 import cz.upce.nnpro_backend.dtos.OwnerDto;
 import cz.upce.nnpro_backend.dtos.OwnerInDto;
@@ -38,6 +39,8 @@ import cz.upce.nnpro_backend.services.OwnerService;
 
 import javax.annotation.security.PermitAll;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static cz.upce.frontend.FieldValidator.validateEmptyField;
 
@@ -66,10 +69,14 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        String id = event.getRouteParameters().get("carID").orElse("-1");
-        if (!id.equals("-1")) {
-
-            car = carService.getCar(Long.valueOf(id));
+        Optional<Long> id = event.getRouteParameters().get("carID").map(Long::parseLong);
+        if (id.isPresent()) {
+            try {
+                car = carService.getCar(id.get());
+            } catch (NoSuchElementException ex) {
+                event.forwardTo(ErrorView.class);
+                return;
+            }
             SetCarDetail(car);
             SetCarOwners(car);
         }
