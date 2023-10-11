@@ -1,18 +1,13 @@
 package cz.upce.nnpro_backend.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
-import cz.upce.nnpro_backend.entities.BranchOffice;
-import cz.upce.nnpro_backend.entities.Car;
-import cz.upce.nnpro_backend.entities.Owner;
-import cz.upce.nnpro_backend.entities.User;
-import cz.upce.nnpro_backend.dtos.BranchOfficeUserDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeInDto;
+import cz.upce.nnpro_backend.dtos.BranchOfficeUserDto;
 import cz.upce.nnpro_backend.dtos.UserOutDto;
+import cz.upce.nnpro_backend.entities.BranchOffice;
+import cz.upce.nnpro_backend.entities.User;
 import cz.upce.nnpro_backend.repositories.BranchOfficeRepository;
 import cz.upce.nnpro_backend.repositories.CarRepository;
-import cz.upce.nnpro_backend.repositories.OwnerRepository;
 import cz.upce.nnpro_backend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +19,11 @@ public class BranchOfficeService {
     private final BranchOfficeRepository branchOfficeRepository;
     private final UserRepository userRepository;
     private final CarRepository carRepository;
-    private final OwnerRepository ownerRepository;
 
-    public BranchOfficeService(BranchOfficeRepository branchOfficeRepository, UserRepository userRepository, CarRepository carRepository, OwnerRepository ownerRepository) {
+    public BranchOfficeService(BranchOfficeRepository branchOfficeRepository, UserRepository userRepository, CarRepository carRepository) {
         this.branchOfficeRepository = branchOfficeRepository;
         this.userRepository = userRepository;
         this.carRepository = carRepository;
-        this.ownerRepository = ownerRepository;
     }
 
     public BranchOffice addOffice(BranchOfficeInDto branchOfficeDto) {
@@ -61,8 +54,7 @@ public class BranchOfficeService {
         branchOffice.setRegion(officeDto.getRegion());
         branchOffice.setDistrict(officeDto.getDistrict());
         branchOffice.setCity(officeDto.getCity());
-        BranchOffice save = branchOfficeRepository.save(branchOffice);
-        return save;
+        return branchOfficeRepository.save(branchOffice);
     }
 
     public BranchOfficeDto getOffice(Long officeId) {

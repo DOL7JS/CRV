@@ -28,7 +28,6 @@ import cz.upce.nnpro_backend.services.BranchOfficeService;
 import cz.upce.nnpro_backend.services.ConversionService;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -62,7 +61,7 @@ public class OfficeListDetail extends Composite<VerticalLayout> implements Befor
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> samplePersonId = event.getRouteParameters().get(OFFICE_ID).map(Long::parseLong);
         if (samplePersonId.isPresent()) {
-            Optional<BranchOfficeDto> office = null;
+            Optional<BranchOfficeDto> office;
             try {
                 office = Optional.ofNullable(branchOfficeService.getOffice(samplePersonId.get()));
             } catch (NoSuchElementException ex) {

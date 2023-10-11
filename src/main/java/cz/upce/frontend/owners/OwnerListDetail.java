@@ -36,7 +36,6 @@ import cz.upce.frontend.FieldValidator;
 import cz.upce.frontend.Menu;
 import cz.upce.frontend.cars.CarDetail;
 import cz.upce.frontend.errorHandler.ErrorView;
-import cz.upce.frontend.office.OfficeListDetail;
 import cz.upce.nnpro_backend.dtos.CarDto;
 import cz.upce.nnpro_backend.dtos.OwnerInDto;
 import cz.upce.nnpro_backend.dtos.OwnerOutDto;
@@ -83,7 +82,7 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> ownerId = event.getRouteParameters().get(OWNER_ID).map(Long::parseLong);
         if (ownerId.isPresent()) {
-            Optional<OwnerOutDto> owner = null;
+            Optional<OwnerOutDto> owner;
             try {
                 owner = Optional.ofNullable(ownerService.getOwner(ownerId.get()));
             } catch (NoSuchElementException ex) {
@@ -282,9 +281,7 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
         verticalLayoutForFields.add(buttonLayout);
         Button buttonAllCars = new Button("Historie vlastnictví");
         buttonAllCars.setWidthFull();
-        buttonAllCars.addClickListener(click -> {
-            openAllCarsDialog(ownerOutDto.getId());
-        });
+        buttonAllCars.addClickListener(click -> openAllCarsDialog(ownerOutDto.getId()));
         verticalLayoutForFields.add(buttonAllCars);
         splitLayout.add(verticalLayoutForFields);
     }
@@ -316,9 +313,7 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
                 dialog.close();
             }
         });
-        Button cancelButton = new Button("Zavřít", e -> {
-            dialog.close();
-        });
+        Button cancelButton = new Button("Zavřít", e -> dialog.close());
         HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton);
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
@@ -408,13 +403,4 @@ public class OwnerListDetail extends Composite<VerticalLayout> implements Before
         return ownerInDto;
     }
 
-    private void setOwnerOutDto() {
-        ownerOutDto.setFirstName(firstName.getValue());
-        ownerOutDto.setLastName(lastName.getValue());
-        ownerOutDto.setBirthDate(birthDate.getValue());
-        ownerOutDto.setEmail(email.getValue());
-        ownerOutDto.setCity(city.getValue());
-        ownerOutDto.setStreet(street.getValue());
-        ownerOutDto.setNumberOfHouse(numberOfHouse.getValue().intValue());
-    }
 }

@@ -22,7 +22,10 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.validator.EmailValidator;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import cz.upce.frontend.DoubleToIntegerConverter;
 import cz.upce.frontend.FieldValidator;
@@ -41,8 +44,6 @@ import javax.annotation.security.PermitAll;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import static cz.upce.frontend.FieldValidator.validateEmptyField;
 
 @Route(value = "cars/:carID", layout = Menu.class)
 @PermitAll
@@ -146,13 +147,8 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         HorizontalLayout layoutRow3 = new HorizontalLayout();
         Button buttonSignIn = new Button();
         Button buttonSignOut = new Button();
-        buttonSignOut.addClickListener(event -> {
-            signOutCar();
-
-        });
-        buttonSignIn.addClickListener(event -> {
-            openSignInDialog();
-        });
+        buttonSignOut.addClickListener(event -> signOutCar());
+        buttonSignIn.addClickListener(event -> openSignInDialog());
         setHeightFull();
         setWidthFull();
         setFlexGrow(1.0, mainHorizontalLayout);
@@ -170,10 +166,8 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         detailCarLayout.addClassName(Gap.MEDIUM);
         h1CarDetail.setText("Detail auta");
         buttonEditCar.setText("Upravit");
-        buttonEditCar.addClickListener(event -> {
-            buttonEditCar.getUI().ifPresent(ui -> ui.navigate(RouteConfiguration.forSessionScope()
-                    .getUrl(CarAddEdit.class, car.getId())));
-        });
+        buttonEditCar.addClickListener(event -> buttonEditCar.getUI().ifPresent(ui -> ui.navigate(RouteConfiguration.forSessionScope()
+                .getUrl(CarAddEdit.class, car.getId()))));
         buttonEditCar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         h2SPZ.setText("SPZ");
         h2VIN.setText("VIN");
@@ -309,11 +303,8 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         fieldLayout.setPadding(false);
         fieldLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
 
-        Button cancelButton = new Button("Zrušit", e -> {
-            dialog.close();
-        });
+        Button cancelButton = new Button("Zrušit", e -> dialog.close());
         Button saveButton = new Button("Uložit", e -> {
-            int a = zipCodeField.getValue().toString().length();
             boolean valid = !FieldValidator.validateEmptyField(firstNameField)
                     & !FieldValidator.validateEmptyField(lastNameField)
                     & !FieldValidator.validateEmptyField(cityField)
@@ -375,9 +366,7 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         ComboBox<OwnerOutDto> ownerComboBox = new ComboBox<>("Vlastník");
         ownerComboBox.setItems(ownerService.getAllOwners());
         ownerComboBox.setItemLabelGenerator(item -> item.getFirstName() + " " + item.getLastName() + ", " + item.getBirthDate().toString());
-        Button cancelButton = new Button("Zrušit", e -> {
-            dialogOwner.close();
-        });
+        Button cancelButton = new Button("Zrušit", e -> dialogOwner.close());
         Button saveButton = new Button("Uložit", e -> {
             if (!ownerComboBox.isEmpty()) {
                 try {

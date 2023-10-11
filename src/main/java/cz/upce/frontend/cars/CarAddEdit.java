@@ -176,7 +176,7 @@ public class CarAddEdit extends VerticalLayout implements HasUrlParameter<Long> 
         checkboxIsInDeposit.setValue(car.isInDeposit());
     }
 
-    private void SaveCar() throws Exception {
+    private void SaveCar() {
         boolean valid = !FieldValidator.validateEmptyField(textFieldVIN) & !FieldValidator.validateEmptyField(textFieldManufacturer) &
                 !FieldValidator.validateEmptyField(textFieldModel) & !FieldValidator.validateEmptyField(textFieldTorque) &
                 !FieldValidator.validateEmptyField(numberFieldEmissionStandard) & !FieldValidator.validateEmptyField(numberFieldEnginePower) &
