@@ -1,7 +1,7 @@
 # CRV
 CRV system is system for registring and unregistring vehicles. In this system user can do:
 - User management - create, edit user
-- Car management - create, edit car, add owner to car
+- Car management - create, edit car, add owner to car, sign in, sign out car
 - Branch office management - create, edit office, add user to office
 - Owner management - create, edit owner
 
