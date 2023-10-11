@@ -12,6 +12,17 @@ This system is developed with:
 - [Vaadin](https://vaadin.com/)
 
 ## Get started
+1. Download repository
+2. Start Docker desktop and docker-compose.yml
+3. Insert data to database from 'init_data' in this order:
+   -  branch_office.sql
+   - owner.sql
+   - role.sql
+   - user.sql
+   - car.sql
+   - car_owner.sql
+   
+5. Start file  NnproBackendApplication.java
 ## Sample data
 In this reposity is folder 'init_data' which contains sample data for this system. In this data are users, which can be used to log in this system. Every user has same password 12345678.
 Sample users:
@@ -23,11 +34,50 @@ Sample users:
 
 ## Users rights
 ### ROLE_Admin
+  - OwnersListDetail
+    - see all owners, can see detail, can add or edit, can see cars of owners
+  - OfficeListDetail
+    - see all offices, can add or edit any office
+  - UserList
+    - see all users
+  - UserDetail
+    - can add or edit any user
+  - CarsList
+      - see all cars
+  - CarDetail
+      - see all details, can sign in/sign out car
+  - CarAddEdit
+      - car add/edit car
 ### ROLE_Kraj
+  - OwnersListDetail
+    - see all owners, can see detail, can't add or edit, can see cars of owners
+  - OfficeListDetail
+    - see offices in same region, can add or edit to/in own region
+  - UserList
+    - see users in same region
+  - UserDetail
+    - can add or edit to/in own region
+    - can chance role to Kraj or Okres
+  - CarsList
+     - see all cars
+  - CarDetail
+     - see all details, no interaction
+  - CarAddEdit
+     - no access
 ### ROLE_Okres
+  - CarsList
+      - see all cars, can add car
+  - CarDetail
+      - see all details, can sign in/sign out car
+  - CarAddEdit
+      - car add/edit car
+  - OwnersListDetail
+      - see all owners, can see detail, can add or edit, can see cars of owner
+  - UserDetail
+      - can edit own profile
 
 ## Authentication
-
-## API documentation
+System is using Vaadin-related Spring security to authentication users. This system also contains REST API, which is using [JWT authentication](https://jwt.io/). 
+## REST API documentation
 Swagger documentation: http://localhost:8080/swagger-ui/index.html
 
