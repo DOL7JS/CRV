@@ -14,15 +14,10 @@ This system is developed with:
 ## Get started
 1. Download repository
 2. Start Docker desktop and docker-compose.yml
-3. Insert data to database from 'init_data' in this order:
-   -  branch_office.sql
-   - owner.sql
-   - role.sql
-   - user.sql
-   - car.sql
-   - car_owner.sql
-   
-5. Start file  NnproBackendApplication.java
+   - Thanks to volumes it will insert sample data, if you don't want to insert sample data, delete row in docker-compose.yml
+     ```
+     ./init_data/init_db.sql:/docker-entrypoint-initdb.d/setup.sql 
+3. Start file  NnproBackendApplication.java
 ## Sample data
 In this reposity is folder 'init_data' which contains sample data for this system. In this data are users, which can be used to log in this system. Every user has same password 12345678.
 Sample users:
