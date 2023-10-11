@@ -12,8 +12,13 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: password
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+      LANG: C.UTF-8
+    volumes:
+      - ./init_data/init_db.sql:/docker-entrypoint-initdb.d/setup.sql
 
- # adminer:
+      # adminer:
   #  image: adminer
    # restart: always
     #ports:
