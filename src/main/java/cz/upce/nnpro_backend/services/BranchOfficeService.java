@@ -61,21 +61,15 @@ public class BranchOfficeService {
         return ConversionService.convertToOfficeDto(branchOfficeRepository.findById(officeId).orElseThrow(() -> new NoSuchElementException("Branch office not found!")));
     }
 
-    public UserOutDto addUserToOffice(BranchOfficeUserDto branchOfficeUserDto) {
-
-        User user = userRepository.findById(branchOfficeUserDto.getUserId()).orElseThrow(() -> new NoSuchElementException("User not found!"));
-        user.setBranchOffice(branchOfficeRepository.findById(branchOfficeUserDto.getBranchOfficeId()).orElseThrow(() -> new NoSuchElementException("Branch office not found!")));
-        User save = userRepository.save(user);
-        return ConversionService.convertToUserDetailOutDto(save);
-    }
-
-
-
     public List<BranchOfficeDto> getAllOffices() {
         return ConversionService.convertListToListOfficeDto(branchOfficeRepository.findAll());
     }
 
     public List<BranchOfficeDto> getOfficesByRegion(BranchOffice branchOffice) {
         return ConversionService.convertListToListOfficeDto(branchOfficeRepository.findByRegion(branchOffice.getRegion()));
+    }
+
+    public List<BranchOfficeDto> getOfficesByRegion(String region) {
+        return ConversionService.convertListToListOfficeDto(branchOfficeRepository.findByRegion(region));
     }
 }

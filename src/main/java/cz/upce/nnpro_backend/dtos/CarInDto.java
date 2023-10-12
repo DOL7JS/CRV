@@ -1,11 +1,14 @@
 package cz.upce.nnpro_backend.dtos;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class CarInDto {
     @NotBlank(message = "Vin is mandatory.")
+    @Length(min = 17, max = 17)
     String vin;
     @NotBlank(message = "Color is mandatory.")
     String color;

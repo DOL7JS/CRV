@@ -69,35 +69,6 @@ public class CarController {
     }
 
 
-    @Operation(summary = "Get car info by vin", description = "It's prepared for STK app")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Car returned",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CarOutDto.class))}),
-            @ApiResponse(responseCode = "401", description = "unauthorized",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Car not found",
-                    content = @Content),})
-    @GetMapping("/getCarByVin/{vin}")//pripraveno pro STK
-    public ResponseEntity<?> getCarByVin(@PathVariable String vin) {
-        return ResponseEntity.ok(carService.getCarByVin(vin));
-    }
-
-    @Operation(summary = "Get car info by spz", description = "It's prepared for STK app")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Car returned",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CarOutDto.class))}),
-            @ApiResponse(responseCode = "401", description = "unauthorized",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Car not found",
-                    content = @Content),})
-    @GetMapping("/getCarBySpz/{spz}")//pripraveno pro STK
-    public ResponseEntity<?> getCarBySPZ(@PathVariable String spz) {
-        return ResponseEntity.ok(carService.getCarBySPZ(spz));
-    }
-
-
     @Operation(summary = "Add car to app", description = "It will add car without owner or branch office")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Car returned",
@@ -113,21 +84,6 @@ public class CarController {
         return ResponseEntity.ok(carService.addCar(carInDto));
     }
 
-    @Operation(summary = "Sign in the car", description = "It will add car and assign it to owner by his id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Owner returned",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Owner.class))}),
-            @ApiResponse(responseCode = "401", description = "unauthorized",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Owner not found",
-                    content = @Content),})
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
-    @PostMapping("/signInCar/{ownerId}")
-    public ResponseEntity<?> signInCar(@RequestBody @Valid CarInDto carInDto, @PathVariable Long ownerId) throws Exception {
-        return ResponseEntity.ok(carService.signInCar(carInDto, ownerId));
-    }
-
     @Operation(summary = "Sign in the car", description = "It will assign car to owner by their ids")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Owner returned",
@@ -140,82 +96,23 @@ public class CarController {
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PostMapping("/signInCar/")
     public ResponseEntity<?> signInExistingCar(@RequestBody @Valid CarOwnerDto createCarDto) throws Exception {
-        return ResponseEntity.ok(carService.signInExistingCar(createCarDto));
-    }
-
-    @Operation(summary = "Change owner of car")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Owner returned",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Owner.class))}),
-            @ApiResponse(responseCode = "401", description = "unauthorized",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Owner or car not found",
-                    content = @Content),})
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
-    @PutMapping("/changeOwner")
-    public ResponseEntity<?> changeOwner(@RequestBody @Valid CarOwnerDto carOwnerDto) throws Exception {
-        return ResponseEntity.ok(carService.changeOwner(carOwnerDto.getCarId(), carOwnerDto.getOwnerId()));
+        return ResponseEntity.ok(carService.changeOwner(createCarDto.getCarId(), createCarDto.getOwnerId()));
     }
 
     @Operation(summary = "Sign out car", description = "It will delete CONNECTION between car and his owner, car and owner will be still in app")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Owner returned",
-                    content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CarOutDto.class))}),
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Owner or car not found",
                     content = @Content),})
     @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
-    @PutMapping("/signOutCar")
-    public void signOutCar(@RequestBody @Valid CarOwnerDto carOwnerDto) {
-        carService.signOutCar(carOwnerDto);
+    @PutMapping("/signOutCar/{carId}")
+    public CarOutDto signOutCar(@PathVariable Long carId) {
+        return carService.signOutCar(carId);
     }
 
-    @Operation(summary = "Put car in deposit")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Car returned",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Car.class))}),
-            @ApiResponse(responseCode = "401", description = "unauthorized",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Car not found",
-                    content = @Content),})
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
-    @PutMapping("/putToDeposit/{carId}")
-    public ResponseEntity<?> putCarToDeposit(@PathVariable Long carId) {
-        return ResponseEntity.ok(carService.putCarInDeposit(carId));
-    }
-
-    @Operation(summary = "Add car to office")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Car returned",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Car.class))}),
-            @ApiResponse(responseCode = "401", description = "unauthorized",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Car or branch office not found",
-                    content = @Content),})
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
-    @PutMapping({"/addCarToOffice", "editCarInOffice"})
-    public ResponseEntity<?> addCarToOffice(@RequestBody @Valid CarBranchOfficeDto officeDto) {
-        return ResponseEntity.ok(carService.addCarToOffice(officeDto));
-    }
-
-    @Operation(summary = "Remove car from office")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Car returned",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Car.class))}),
-            @ApiResponse(responseCode = "401", description = "unauthorized",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Car not found",
-                    content = @Content),})
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
-    @PutMapping("/removeCarFromOffice/{carId}")
-    public ResponseEntity<?> removeCarFromOffice(@PathVariable Long carId) {
-        return ResponseEntity.ok(carService.removeCarFromOffice(carId));
-    }
 
     @Operation(summary = "Edit car")
     @ApiResponses(value = {
@@ -230,18 +127,6 @@ public class CarController {
     @PutMapping("/editCar/{carId}")
     public ResponseEntity<?> editCar(@PathVariable Long carId, @RequestBody @Valid CarInDto editCar) {
         return ResponseEntity.ok(carService.editCar(carId, editCar));
-    }
-
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
-    @GetMapping("/exportData")
-    public ResponseEntity<?> exportDataToJson() throws JsonProcessingException {
-        return ResponseEntity.ok(carService.exportData());
-    }
-
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
-    @PutMapping("/importData")
-    public void importDataToJson(@Valid @RequestBody CarsOwnersDto carsOwnersDto) {
-        carService.importData(carsOwnersDto.getCars(), carsOwnersDto.getOwners());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

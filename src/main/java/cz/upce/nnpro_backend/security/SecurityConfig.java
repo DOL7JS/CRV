@@ -2,14 +2,17 @@ package cz.upce.nnpro_backend.security;
 
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import cz.upce.frontend.login.LoginView;
+import cz.upce.nnpro_backend.config.JwtAuthenticationEntryPoint;
 import cz.upce.nnpro_backend.config.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,14 +23,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableWebSecurity
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends VaadinWebSecurity {
     private final UserDetailsService jwtUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Value("${appType:VAADIN}")
+    private String type;
 
-
-    public SecurityConfig(UserDetailsService jwtUserDetailsService, JwtRequestFilter jwtRequestFilter) {
+    public SecurityConfig(UserDetailsService jwtUserDetailsService, JwtRequestFilter jwtRequestFilter, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.jwtUserDetailsService = jwtUserDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     }
 
     @Bean
@@ -35,38 +42,29 @@ public class SecurityConfig extends VaadinWebSecurity {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    //Vaadin auth
-    //          http.authorizeRequests().antMatchers(HttpMethod.GET, "/images/*.png").permitAll();
-    //          super.configure(http);
-    //          setLoginView(http, LoginView.class);
-
-    //JWT REST api auth
-    //      http.csrf().disable().authorizeRequests()
-    //                .antMatchers("/user/login").permitAll()
-    //                .antMatchers("/swagger-ui/**").permitAll()
-    //                .antMatchers("/v3/api-docs/**").permitAll()
-    //                .anyRequest().authenticated().and()
-    //                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-    //                .and().sessionManagement()
-    //                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    //      http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //api configuration
-        http.
-                authorizeRequests().antMatchers("/api/user/login").anonymous().and()
-                .authorizeRequests().antMatchers("/swagger-ui/**").anonymous().and()
-                .authorizeRequests().antMatchers("/v3/api-docs/**").anonymous().and()
-                .authorizeRequests().antMatchers("/api/**").authenticated().and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and()
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        setConfiguration(type, http);
+    }
 
-        //Vaadin configuration
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/images/*.png").permitAll();
-        super.configure(http);
-        setLoginView(http, LoginView.class);//<-- Remove when you want only use jwt authentication
-
-        http.cors().and().csrf().ignoringAntMatchers("/api/user/login", "/api/**");
+    private void setConfiguration(String type, HttpSecurity http) throws Exception {
+        if (type.equals("JWT")) {
+            /// jwt authentication for rest api
+            http.csrf().disable().authorizeRequests()
+                    .antMatchers("/api/user/login").permitAll()
+                    .antMatchers("/swagger-ui/**").permitAll()
+                    .antMatchers("/v3/api-docs/**").permitAll()
+                    .anyRequest().authenticated().and()
+                    .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                    .and().sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        } else if (type.equals("VAADIN")) {
+            // authentication for Vaadin app
+            http.authorizeRequests().antMatchers(HttpMethod.GET, "/images/*.png").permitAll();
+            super.configure(http);
+            setLoginView(http, LoginView.class);
+        }
     }
 
 

@@ -1,6 +1,6 @@
 --CREATE TABLES
 
-CREATE TABLE `branch_office` (
+CREATE TABLE IF NOT EXISTS `branch_office` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `city` varchar(255) DEFAULT NULL,
   `district` varchar(255) DEFAULT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE `role` (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE `owner` (
+CREATE TABLE IF NOT EXISTS `owner` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `birth_date` date NOT NULL,
   `city` varchar(255) DEFAULT NULL,
@@ -29,13 +29,13 @@ CREATE TABLE `owner` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `spz` (
+CREATE TABLE IF NOT EXISTS `spz` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `spz` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `car` (
+CREATE TABLE IF NOT EXISTS `car` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `spz` varchar(8) DEFAULT NULL,
   `color` varchar(255) DEFAULT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE `car` (
   CONSTRAINT `FK3oywalq8qxky4ras7do24ba9p` FOREIGN KEY (`branch_office_id`) REFERENCES `branch_office` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `car_owner` (
+CREATE TABLE IF NOT EXISTS `car_owner` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `end_of_sign_up` date DEFAULT NULL,
   `start_of_sign_up` date NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE `car_owner` (
   CONSTRAINT `FKg4oheym6xvth3owqj7qucf7li` FOREIGN KEY (`owner_id`) REFERENCES `owner` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `user` (
+CREATE TABLE IF NOT EXISTS  `user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `email` varchar(255) DEFAULT NULL,
   `job_position` varchar(255) DEFAULT NULL,
@@ -243,4 +243,3 @@ INSERT INTO `spz` (`id`,`spz`) VALUES (15,'7A8 2616');
 INSERT INTO `spz` (`id`,`spz`) VALUES (17,'9B2 9066');
 INSERT INTO `spz` (`id`,`spz`) VALUES (22,'0U3 9030');
 INSERT INTO `spz` (`id`,`spz`) VALUES (24,'0U3 9029');
-

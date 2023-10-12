@@ -60,6 +60,19 @@ public class BranchOfficeController {
         return ResponseEntity.ok(branchOfficeService.getAllOffices());
     }
 
+    @Operation(summary = "Get branch offices by region ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Branch offices returned",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BranchOffice.class))}),
+            @ApiResponse(responseCode = "401", description = "unauthorized",
+                    content = @Content)})
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Kraj')")
+    @GetMapping("/getOfficeByRegion/{region}")
+    public ResponseEntity<?> getOfficesByRegion(@PathVariable String region) {
+        return ResponseEntity.ok(branchOfficeService.getOfficesByRegion(region));
+    }
+
     @Operation(summary = "Add branch office")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Branch office added",
@@ -71,21 +84,6 @@ public class BranchOfficeController {
     @PostMapping("/addOffice")
     public ResponseEntity<?> addOffice(@RequestBody @Valid BranchOfficeInDto officeDto) {
         return ResponseEntity.ok(branchOfficeService.addOffice(officeDto));
-    }
-
-    @Operation(summary = "Add user to branch office")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User added to branch office",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserOutDto.class))}),
-            @ApiResponse(responseCode = "401", description = "unauthorized",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Branch office not found or user not found",
-                    content = @Content),})
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Kraj')")
-    @PostMapping("/addUserToOffice")
-    public ResponseEntity<?> addUserToOffice(@RequestBody @Valid BranchOfficeUserDto branchOfficeUserDto) {
-        return ResponseEntity.ok(branchOfficeService.addUserToOffice(branchOfficeUserDto));
     }
 
     @Operation(summary = "Remove branch office")

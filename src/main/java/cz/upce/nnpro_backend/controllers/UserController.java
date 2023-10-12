@@ -78,6 +78,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "unauthorized",
                     content = @Content)})
     @SecurityRequirement(name = "NNPRO_API")
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Kraj')")
     @GetMapping("/getAllUsers")
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
@@ -95,7 +96,6 @@ public class UserController {
     @SecurityRequirement(name = "NNPRO_API")
     @GetMapping("/getAllRoles")
     public ResponseEntity<?> getAllRoles() {
-        System.out.println("GET_ALL_ROLES");
         return ResponseEntity.ok(userService.getAllRoles());
     }
 
@@ -110,7 +110,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
     @SecurityRequirement(name = "NNPRO_API")
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Kraj')")
     @PostMapping("/addUser")
     public ResponseEntity<?> addUser(@RequestBody @Valid UserInDto userInDto) {
         return ResponseEntity.ok(userService.addUser(userInDto));
@@ -127,7 +127,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
     @SecurityRequirement(name = "NNPRO_API")
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
+    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Kraj')")
     @DeleteMapping("/removeUser/{userId}")
     public ResponseEntity<?> removeOwner(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.removeUser(userId));
@@ -143,7 +143,6 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
     @SecurityRequirement(name = "NNPRO_API")
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/editUser/{userId}")
     public ResponseEntity<?> editUser(@PathVariable Long userId, @RequestBody @Valid UserInDto userInDto) {
         return ResponseEntity.ok(userService.editUser(userId, userInDto));
@@ -159,7 +158,6 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "User not found",
                     content = @Content),})
     @SecurityRequirement(name = "NNPRO_API")
-    @PreAuthorize("hasRole('ROLE_Admin') || hasRole('ROLE_Okres')")
     @PutMapping("/changeUserPassword/{userId}")
     public ResponseEntity<?> changeUserPassword(@PathVariable Long userId, @RequestBody @Valid NewPasswordDto newPasswordDto) {
         return ResponseEntity.ok(userService.changePassword(userId, newPasswordDto));
