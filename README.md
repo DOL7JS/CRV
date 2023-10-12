@@ -72,7 +72,7 @@ Sample users:
       - can edit own profile
 
 ## Authentication
-System is using Vaadin-related Spring security to authentication users. This system also contains REST API, which is using [JWT authentication](https://jwt.io/). 
+System is using Vaadin-related Spring security to authentication users. This system also contains REST API, which is using [JWT authentication](https://jwt.io/). unfortunately, it can't work both at the same time. This system can work with Vaadin authentication OR as REST API with JWT authentication. It have to be set in application.properties with property 'appType' which have to be VAADIN or JWT. 
 ## REST API documentation
 Swagger documentation: http://localhost:8080/swagger-ui/index.html
 
