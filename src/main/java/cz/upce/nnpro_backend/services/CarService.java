@@ -19,16 +19,14 @@ public class CarService {
 
     private final CarRepository carRepository;
     private final OwnerRepository ownerRepository;
-    private final BranchOfficeRepository branchOfficeRepository;
     private final CarOwnerRepository carOwnerRepository;
     private final SPZService spzService;
     private final SPZRepository spzRepository;
     private final SecurityService securityService;
 
-    public CarService(CarRepository carRepository, OwnerRepository ownerRepository, BranchOfficeRepository branchOfficeRepository, CarOwnerRepository carOwnerRepository, SPZService spzService, SPZRepository spzRepository, SecurityService securityService) {
+    public CarService(CarRepository carRepository, OwnerRepository ownerRepository, CarOwnerRepository carOwnerRepository, SPZService spzService, SPZRepository spzRepository, SecurityService securityService) {
         this.carRepository = carRepository;
         this.ownerRepository = ownerRepository;
-        this.branchOfficeRepository = branchOfficeRepository;
         this.carOwnerRepository = carOwnerRepository;
         this.spzService = spzService;
         this.spzRepository = spzRepository;

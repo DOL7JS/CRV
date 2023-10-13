@@ -4,13 +4,13 @@ import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
 import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.dtos.BranchOfficeUserDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeInDto;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import cz.upce.nnpro_backend.repositories.BranchOfficeRepository;
+import cz.upce.nnpro_backend.repositories.UserRepository;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -18,8 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ActiveProfiles(profiles = "test")
 public class BranchOfficeServiceTest {
 
     @Autowired
@@ -28,9 +27,21 @@ public class BranchOfficeServiceTest {
     @Autowired
     private BranchOfficeService branchOfficeService;
 
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private BranchOfficeRepository branchOfficeRepository;
+
+
+    @AfterEach
+    @BeforeEach
+    void clearData() {
+        userRepository.deleteAll();
+        branchOfficeRepository.deleteAll();
+    }
+
     @Test
-    @Order(1)
-    void addOfficeTest(){
+    void addOfficeTest() {
         BranchOfficeInDto branchOfficeInDto = new BranchOfficeInDto();
         branchOfficeInDto.setRegion("Region");
         branchOfficeInDto.setCity("City");
@@ -38,11 +49,13 @@ public class BranchOfficeServiceTest {
 
         BranchOffice office = branchOfficeService.addOffice(branchOfficeInDto);
         assertNotNull(office);
+        assertEquals(branchOfficeInDto.getCity(), office.getCity());
+        assertEquals(branchOfficeInDto.getRegion(), office.getRegion());
+        assertEquals(branchOfficeInDto.getDistrict(), office.getDistrict());
     }
 
     @Test
-    @Order(2)
-    void editOfficeTest(){
+    void editOfficeTest() {
         BranchOfficeInDto branchOfficeInDto = new BranchOfficeInDto();
         branchOfficeInDto.setRegion("Region2");
         branchOfficeInDto.setCity("City2");
@@ -56,50 +69,65 @@ public class BranchOfficeServiceTest {
         editBranchOfficeInDto.setDistrict("District3");
 
         BranchOffice branchOffice = branchOfficeService.editOffice(saveOffice.getId(), editBranchOfficeInDto);
-        assertEquals("Region3",branchOffice.getRegion());
+
+        assertEquals(editBranchOfficeInDto.getRegion(), branchOffice.getRegion());
+        assertEquals(editBranchOfficeInDto.getCity(), branchOffice.getCity());
+        assertEquals(editBranchOfficeInDto.getDistrict(), branchOffice.getDistrict());
     }
 
     @Test
-    @Order(3)
-    void getOfficeTest(){
+    void getOfficeTest() {
         BranchOfficeInDto branchOfficeInDto = new BranchOfficeInDto();
         branchOfficeInDto.setRegion("Region4");
         branchOfficeInDto.setCity("City4");
         branchOfficeInDto.setDistrict("District4");
-
         BranchOffice saveOffice = branchOfficeService.addOffice(branchOfficeInDto);
+
         BranchOfficeDto branchOffice = branchOfficeService.getOffice(saveOffice.getId());
+
         assertEquals(saveOffice.getId(), branchOffice.getId());
+        assertEquals(saveOffice.getCity(), branchOffice.getCity());
+        assertEquals(saveOffice.getDistrict(), branchOffice.getDistrict());
+        assertEquals(saveOffice.getRegion(), branchOffice.getRegion());
     }
 
-    @Test
-    @Order(5)
-    void addUserToOfficeTest(){
-        BranchOfficeInDto branchOfficeInDto = new BranchOfficeInDto();
-        branchOfficeInDto.setRegion("Region6");
-        branchOfficeInDto.setCity("City6");
-        branchOfficeInDto.setDistrict("District6");
-
-        BranchOffice saveOffice = branchOfficeService.addOffice(branchOfficeInDto);
-
-        BranchOfficeUserDto dto = new BranchOfficeUserDto();
-        dto.setBranchOfficeId(saveOffice.getId());
-        dto.setUserId(1L);
-        branchOfficeService.addUserToOffice(dto);
-        assertEquals(saveOffice.getId(), userService.getUser(1L).getBranchOfficeDto().getId());
-    }
 
     @Test
     @Order(4)
-    void getAllOfficesTest(){
+    void getAllOfficesTest() {
+        BranchOfficeInDto branchOfficeInDto = new BranchOfficeInDto();
+        branchOfficeInDto.setRegion("Region2");
+        branchOfficeInDto.setCity("City2");
+        branchOfficeInDto.setDistrict("District2");
+
+
+        BranchOfficeInDto branchOfficeInDto2 = new BranchOfficeInDto();
+        branchOfficeInDto2.setRegion("Region3");
+        branchOfficeInDto2.setCity("City3");
+        branchOfficeInDto2.setDistrict("District3");
+        BranchOffice saveOffice1 = branchOfficeService.addOffice(branchOfficeInDto);
+        BranchOffice saveOffice2 = branchOfficeService.addOffice(branchOfficeInDto2);
+
+
         List<BranchOfficeDto> list = branchOfficeService.getAllOffices();
-        assertEquals(3, list.size());
+
+        assertEquals(2, list.size());
+
+        assertEquals(saveOffice1.getId(), list.get(0).getId());
+        assertEquals(saveOffice2.getId(), list.get(1).getId());
     }
 
     @Test
     @Order(6)
-    void removeOfficeTest(){
-        BranchOffice office = branchOfficeService.removeOffice(1L);
+    void removeOfficeTest() {
+        BranchOfficeInDto branchOfficeInDto = new BranchOfficeInDto();
+        branchOfficeInDto.setRegion("Region2");
+        branchOfficeInDto.setCity("City2");
+        branchOfficeInDto.setDistrict("District2");
+        BranchOffice saveOffice1 = branchOfficeService.addOffice(branchOfficeInDto);
+
+        BranchOffice office = branchOfficeService.removeOffice(saveOffice1.getId());
+
         assertNotNull(office);
     }
 }

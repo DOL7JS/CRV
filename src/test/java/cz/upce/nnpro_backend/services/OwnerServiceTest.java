@@ -1,22 +1,23 @@
 package cz.upce.nnpro_backend.services;
 
+import cz.upce.nnpro_backend.dtos.OwnerOutDto;
 import cz.upce.nnpro_backend.entities.Owner;
 import cz.upce.nnpro_backend.dtos.OwnerInDto;
 import cz.upce.nnpro_backend.repositories.OwnerRepository;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ActiveProfiles(profiles = "test")
 public class OwnerServiceTest {
 
     @Autowired
@@ -25,27 +26,14 @@ public class OwnerServiceTest {
     @Autowired
     private OwnerRepository ownerRepository;
 
-    @Test
-    @Order(2)
-    void addOwnerTest(){
-        OwnerInDto ownerInDto = new OwnerInDto();
-        ownerInDto.setNumberOfHouse(1);
-        ownerInDto.setStreet("Street");
-        ownerInDto.setZipCode(12345);
-        ownerInDto.setCity("City");
-        ownerInDto.setBirthDate(LocalDate.now());
-        ownerInDto.setFirstName("FirstName");
-        ownerInDto.setLastName("LastName");
-
-        Owner saveOwner = ownerService.addOwner(ownerInDto);
-        Owner getOwner = ownerRepository.getReferenceById(saveOwner.getId());
-
-        assertEquals(saveOwner.getId(), getOwner.getId());
+    @AfterEach
+    @BeforeEach
+    void clearData() {
+        ownerRepository.deleteAll();
     }
 
     @Test
-    @Order(3)
-    void editOwnerTest(){
+    void addOwnerTest() {
         OwnerInDto ownerInDto = new OwnerInDto();
         ownerInDto.setNumberOfHouse(1);
         ownerInDto.setStreet("Street");
@@ -54,6 +42,32 @@ public class OwnerServiceTest {
         ownerInDto.setBirthDate(LocalDate.now());
         ownerInDto.setFirstName("FirstName");
         ownerInDto.setLastName("LastName");
+        ownerInDto.setEmail("email@email.com");
+
+        Owner saveOwner = ownerService.addOwner(ownerInDto);
+        Optional<Owner> getOwner = ownerRepository.findById(saveOwner.getId());
+
+        assertNotNull(getOwner);
+        assertEquals(saveOwner.getId(), getOwner.get().getId());
+        assertEquals(saveOwner.getEmail(), getOwner.get().getEmail());
+        assertEquals(saveOwner.getCity(), getOwner.get().getCity());
+        assertEquals(saveOwner.getFirstName(), getOwner.get().getFirstName());
+        assertEquals(saveOwner.getLastName(), getOwner.get().getLastName());
+
+    }
+
+    @Test
+    void editOwnerTest() {
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setNumberOfHouse(1);
+        ownerInDto.setStreet("Street");
+        ownerInDto.setZipCode(12345);
+        ownerInDto.setCity("City");
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setFirstName("FirstName");
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setEmail("email@email.com");
+
         Owner saveOwner = ownerService.addOwner(ownerInDto);
 
         OwnerInDto ownerInDto2 = new OwnerInDto();
@@ -64,6 +78,7 @@ public class OwnerServiceTest {
         ownerInDto2.setBirthDate(LocalDate.now());
         ownerInDto2.setFirstName("FirstName_Change");
         ownerInDto2.setLastName("LastName");
+        ownerInDto2.setEmail("email@email.com");
 
         Owner editOwner = ownerService.editOwner(saveOwner.getId(), ownerInDto2);
 
@@ -72,9 +87,7 @@ public class OwnerServiceTest {
     }
 
     @Test
-    @Order(4)
-    //failed to lazily initialize a collection of role: cz.upce.nnpro_backend.Entities.Owner.carOwners, could not initialize proxy - no Session
-    void getOwnerTest(){
+    void getOwnerTest() {
         OwnerInDto ownerInDto = new OwnerInDto();
         ownerInDto.setNumberOfHouse(1);
         ownerInDto.setStreet("Street");
@@ -83,25 +96,64 @@ public class OwnerServiceTest {
         ownerInDto.setBirthDate(LocalDate.now());
         ownerInDto.setFirstName("FirstName");
         ownerInDto.setLastName("LastName");
-        ownerService.addOwner(ownerInDto);
+        ownerInDto.setEmail("email@email.com");
+        Owner owner = ownerService.addOwner(ownerInDto);
 
-        //OwnerDetailOutDto dto = ownerService.getOwner(1L);
-        //assertNotNull(dto);
+        OwnerOutDto dto = ownerService.getOwner(owner.getId());
+
+        assertNotNull(dto);
+        assertEquals(owner.getId(), dto.getId());
     }
 
     @Test
-    @Order(1)
-    void getAllOwnersTest(){
-        //List<OwnerDetailOutDto> owners = ownerService.getAllOwners();
-        //assertEquals(0, owners.size());
+    void getAllOwnersTest() {
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setNumberOfHouse(1);
+        ownerInDto.setStreet("Street");
+        ownerInDto.setZipCode(12345);
+        ownerInDto.setCity("City");
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setFirstName("FirstName");
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setEmail("email@email.com");
+
+        OwnerInDto ownerInDto2 = new OwnerInDto();
+        ownerInDto2.setNumberOfHouse(1);
+        ownerInDto2.setStreet("Street");
+        ownerInDto2.setZipCode(12345);
+        ownerInDto2.setCity("City");
+        ownerInDto2.setBirthDate(LocalDate.now());
+        ownerInDto2.setFirstName("FirstName_Change");
+        ownerInDto2.setLastName("LastName");
+        ownerInDto2.setEmail("email@email.com");
+        Owner saveOwner = ownerService.addOwner(ownerInDto);
+        Owner saveOwner2 = ownerService.addOwner(ownerInDto2);
+
+        List<OwnerOutDto> owners = ownerService.getAllOwners();
+
+        assertEquals(2, owners.size());
+        assertEquals(saveOwner.getId(), owners.get(0).getId());
+        assertEquals(saveOwner2.getId(), owners.get(1).getId());
+
     }
 
     @Test
-    @Order(5)
-    void removeOwnerTest(){
-        Long id = 1L;
-        Owner owner = ownerService.removeOwner(id);
-        assertEquals(id, owner.getId() );
+    void removeOwnerTest() {
+        OwnerInDto ownerInDto = new OwnerInDto();
+        ownerInDto.setNumberOfHouse(1);
+        ownerInDto.setStreet("Street");
+        ownerInDto.setZipCode(12345);
+        ownerInDto.setCity("City");
+        ownerInDto.setBirthDate(LocalDate.now());
+        ownerInDto.setFirstName("FirstName_Change");
+        ownerInDto.setLastName("LastName");
+        ownerInDto.setEmail("email@email.com");
+        Owner saveOwner = ownerService.addOwner(ownerInDto);
+
+        Owner owner = ownerService.removeOwner(saveOwner.getId());
+        
+        assertEquals(saveOwner.getId(), owner.getId());
+
     }
 
 }

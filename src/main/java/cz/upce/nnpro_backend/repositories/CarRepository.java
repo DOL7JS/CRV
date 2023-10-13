@@ -21,7 +21,8 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
     boolean existsByVinAndIdIsNot(String vin, Long id);
 
-    Car findFirstByOrderBySPZAsc();
+    Car findFirstBySPZNotNullOrderBySPZAsc();
+
 
     @Transactional
     @Modifying
@@ -36,4 +37,6 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     Optional<Car> findByVin(String vin);
 
     Optional<Car> findBySPZ(String spz);
+
+
 }

@@ -6,6 +6,8 @@ import java.util.Set;
 
 @Entity
 public class BranchOffice {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -22,6 +24,15 @@ public class BranchOffice {
 
     @OneToMany(mappedBy = "branchOffice", cascade = CascadeType.REMOVE)
     private Set<Car> cars;
+
+    public BranchOffice() {
+    }
+
+    public BranchOffice(String district, String region, String city) {
+        this.district = district;
+        this.region = region;
+        this.city = city;
+    }
 
     public String getCity() {
         return city;

@@ -22,7 +22,7 @@ public class SPZService {
             spz = spzRepository.findTopByOrderBySPZAsc();
             spzRepository.delete(spz);
         } else {
-            Car car = carRepository.findFirstByOrderBySPZAsc();
+            Car car = carRepository.findFirstBySPZNotNullOrderBySPZAsc();
             if (car == null) {
                 spz = new SPZ("1E1 1111");
             } else {

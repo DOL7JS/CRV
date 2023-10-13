@@ -13,4 +13,5 @@ public interface BranchOfficeRepository extends JpaRepository<BranchOffice, Long
     boolean existsByRegionAndDistrictAndCityAndIdIsNot(String region, String district, String city, Long id);
 
     List<BranchOffice> findByRegion(String region);
+
 }

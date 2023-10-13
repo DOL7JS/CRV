@@ -31,6 +31,16 @@ public class User {
         this.branchOffice = branchOffice;
     }
 
+    public User() {
+    }
+
+    public User(Long id, String username, String email, String password, String jobPosition) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.jobPosition = jobPosition;
+    }
 
     public Role getRole() {
         return role;
