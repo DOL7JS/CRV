@@ -1,35 +1,25 @@
 package cz.upce.nnpro_backend.services;
 
-import cz.upce.nnpro_backend.config.WebSecurityConfig;
+import cz.upce.nnpro_backend.dtos.NewPasswordDto;
+import cz.upce.nnpro_backend.dtos.UserInDto;
+import cz.upce.nnpro_backend.dtos.UserOutDto;
 import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.entities.Role;
 import cz.upce.nnpro_backend.entities.User;
-import cz.upce.nnpro_backend.dtos.NewPasswordDto;
-import cz.upce.nnpro_backend.dtos.UserOutDto;
-import cz.upce.nnpro_backend.dtos.UserInDto;
 import cz.upce.nnpro_backend.repositories.BranchOfficeRepository;
 import cz.upce.nnpro_backend.repositories.RoleRepository;
 import cz.upce.nnpro_backend.repositories.UserRepository;
-import cz.upce.nnpro_backend.security.SecurityConfig;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles(profiles = "test")

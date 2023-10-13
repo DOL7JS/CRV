@@ -1,27 +1,30 @@
 package cz.upce.nnpro_backend.services;
 
+import cz.upce.nnpro_backend.dtos.CarInDto;
+import cz.upce.nnpro_backend.dtos.CarOutDto;
+import cz.upce.nnpro_backend.dtos.OwnerInDto;
 import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.entities.Car;
 import cz.upce.nnpro_backend.entities.Owner;
-import cz.upce.nnpro_backend.dtos.*;
 import cz.upce.nnpro_backend.repositories.BranchOfficeRepository;
 import cz.upce.nnpro_backend.repositories.CarRepository;
 import cz.upce.nnpro_backend.security.SecurityService;
 import cz.upce.nnpro_backend.security.UserDetailDto;
-import org.junit.jupiter.api.*;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.stubbing.Answer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;

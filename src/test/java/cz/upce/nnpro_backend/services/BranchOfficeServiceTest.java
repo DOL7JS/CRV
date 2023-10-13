@@ -1,14 +1,15 @@
 package cz.upce.nnpro_backend.services;
 
 import cz.upce.nnpro_backend.dtos.BranchOfficeDto;
-import cz.upce.nnpro_backend.entities.BranchOffice;
-import cz.upce.nnpro_backend.dtos.BranchOfficeUserDto;
 import cz.upce.nnpro_backend.dtos.BranchOfficeInDto;
+import cz.upce.nnpro_backend.entities.BranchOffice;
 import cz.upce.nnpro_backend.repositories.BranchOfficeRepository;
 import cz.upce.nnpro_backend.repositories.UserRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
