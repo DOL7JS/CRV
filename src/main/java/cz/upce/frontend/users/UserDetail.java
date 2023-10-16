@@ -34,6 +34,7 @@ import cz.upce.nnpro_backend.dtos.NewPasswordDto;
 import cz.upce.nnpro_backend.dtos.UserInDto;
 import cz.upce.nnpro_backend.dtos.UserOutDto;
 import cz.upce.nnpro_backend.entities.Role;
+import cz.upce.nnpro_backend.entities.User;
 import cz.upce.nnpro_backend.security.SecurityService;
 import cz.upce.nnpro_backend.services.BranchOfficeService;
 import cz.upce.nnpro_backend.services.RoleService;
@@ -230,8 +231,8 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
 
     private void fillFields(UserOutDto userOutDto) {
         textFieldUsername.setValue(userOutDto.getUsername());
-        emailField.setValue(userOutDto.getEmail());
-        textFieldJobPosition.setValue(userOutDto.getJobPosition());
+        emailField.setValue(userOutDto.getEmail() == null ? "" : userOutDto.getEmail());
+        textFieldJobPosition.setValue(userOutDto.getJobPosition() == null ? "" : userOutDto.getJobPosition());
         comboBoxOffice.setValue(userOutDto.getBranchOfficeDto());
         comboBoxRole.setValue(userOutDto.getRole());
         this.userOutDto = userOutDto;
@@ -291,7 +292,10 @@ public class UserDetail extends Composite<VerticalLayout> implements BeforeEnter
             userInDto.setOffice(comboBoxOffice.getValue().getId());
 
             try {
-                userService.editUser(userOutDto.getId(), userInDto);
+                User user = userService.editUser(userOutDto.getId(), userInDto);
+                if (user.getId().equals(securityService.getAuthenticatedUser().getId())) {
+                    securityService.getAuthenticatedUser().setBranchOffice(user.getBranchOffice());
+                }
             } catch (IllegalArgumentException ex) {
                 Notification.show(ex.getMessage(), 3000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
                 return;

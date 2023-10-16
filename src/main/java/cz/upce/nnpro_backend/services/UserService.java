@@ -10,6 +10,7 @@ import cz.upce.nnpro_backend.repositories.BranchOfficeRepository;
 import cz.upce.nnpro_backend.repositories.RoleRepository;
 import cz.upce.nnpro_backend.repositories.UserRepository;
 import cz.upce.nnpro_backend.security.SecurityConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -104,6 +105,11 @@ public class UserService {
 
     }
 
+    @Value("${initAdmin:false}")
+    private boolean initAdmin;
+    @Value("${initAdminPassword:}")
+    private String initAdminPassword;
+
     @PostConstruct
     public void init() {
         if (roleRepository.count() != 3) {
@@ -112,7 +118,8 @@ public class UserService {
             roleRepository.save(new Role("ROLE_Okres", "Okresní pracovník CRV"));
             roleRepository.save(new Role("ROLE_Admin", "Administrátor"));
         }
-        if (!userRepository.existsByRoleName("ROLE_Admin")) {
+        if (initAdmin && initAdminPassword.length() >= 8) {
+            UserInDto userInDto = new UserInDto();
             User userAdmin = new User();
             String username = "Admin";
             String usernameNew = username;
@@ -120,12 +127,12 @@ public class UserService {
             while (userRepository.existsByUsername(usernameNew)) {
                 usernameNew = username + i++;
             }
-            userAdmin.setUsername(usernameNew);
-            userAdmin.setPassword("$2a$10$MQuBpeE5CbgERbKN7ecd1ea/Y3XwpfWVOqKFErLjbhT382.Rgviy.");
             Role role_admin = roleRepository.findByName("ROLE_Admin");
-            userAdmin.setRole(role_admin);
-            userRepository.save(userAdmin);
 
+            userInDto.setUsername(usernameNew);
+            userInDto.setPassword(initAdminPassword);
+            userInDto.setRole(role_admin.getId());
+            addUser(userInDto);
         }
     }
 

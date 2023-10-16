@@ -42,7 +42,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:4.8.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
-
+    implementation "com.vaadin:vaadin-core:23.2.2"
     implementation 'com.vaadin:vaadin:23.2.2'
     implementation 'com.vaadin:vaadin-spring-boot-starter:23.2.2'
     testImplementation 'com.vaadin:vaadin-testbench:23.2.2'

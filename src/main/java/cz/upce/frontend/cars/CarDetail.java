@@ -13,6 +13,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -305,6 +306,10 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
 
         Button cancelButton = new Button("Zrušit", e -> dialog.close());
         Button saveButton = new Button("Uložit", e -> {
+            if (securityService.getAuthenticatedUser().getBranchOffice() == null) {
+                Notification.show("Upravte svůj profil a vyplňte potřebná pole.", 4000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                return;
+            }
             boolean valid = !FieldValidator.validateEmptyField(firstNameField)
                     & !FieldValidator.validateEmptyField(lastNameField)
                     & !FieldValidator.validateEmptyField(cityField)
@@ -368,6 +373,11 @@ public class CarDetail extends VerticalLayout implements BeforeEnterObserver {
         ownerComboBox.setItemLabelGenerator(item -> item.getFirstName() + " " + item.getLastName() + ", " + item.getBirthDate().toString());
         Button cancelButton = new Button("Zrušit", e -> dialogOwner.close());
         Button saveButton = new Button("Uložit", e -> {
+            if (securityService.getAuthenticatedUser().getBranchOffice() == null) {
+                Notification.show("Upravte svůj profil a vyplňte potřebná pole.", 4000, Notification.Position.MIDDLE).addThemeVariants(NotificationVariant.LUMO_ERROR);
+                return;
+            }
+
             if (!ownerComboBox.isEmpty()) {
                 try {
                     car = ConversionService.convertToCarDetailOutDto(carService.changeOwner(car.getId(), ownerComboBox.getValue().getId()));

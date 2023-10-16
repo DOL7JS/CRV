@@ -49,7 +49,7 @@ public class CarService {
             carOwnerRepository.save(carOwnerOld);
         }
         Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("Car not found!"));
-        if (car.getSPZ() == null) {
+        if (car.getSPZ() == null || Objects.equals(car.getSPZ(), "")) {
             car.setSPZ(spzService.generateSPZ().getSPZ());
         }
         car.setBranchOffice(securityService.getAuthenticatedUser().getBranchOffice());
