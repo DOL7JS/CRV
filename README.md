@@ -18,7 +18,9 @@ This system is developed with:
      ```
      ./init_data/init_db.sql:/docker-entrypoint-initdb.d/setup.sql
 3. Set value of 'appType' in application.properties. That will set that the system will be used with Vaadin and Vaadin authentication or as REST API with JWT authentication. Value have to be VAADIN or JWT.
-4. Start file  NnproBackendApplication.java
+4. Set environment variables db_url, db_username, db_password and jwt_secret
+5. Set environment variable initAdmin = true and initAdminPassword, if you want to generate admin account with specific password (is useful when first starting app)
+6. Start file  NnproBackendApplication.java
 ## Sample data
 In this reposity is folder 'init_data' which contains sample data for this system. In this data are users, which can be used to log in this system. Every user has same password 12345678.
 Sample users:
