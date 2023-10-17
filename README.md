@@ -78,4 +78,10 @@ Sample users:
 System is using Vaadin-related Spring security to authentication users. This system also contains REST API, which is using [JWT authentication](https://jwt.io/). unfortunately, it can't work both at the same time. This system can work with Vaadin authentication OR as REST API with JWT authentication. It have to be set in application.properties with property 'appType' which have to be VAADIN or JWT. 
 ## REST API documentation
 Swagger documentation: http://localhost:8080/swagger-ui/index.html
-
+## Application preview
+### Login
+<video src="https://github.com/DOL7JS/NNPRO_CRV_backend/assets/53859920/6ea6e8b2-79ec-4cc7-9ed7-9eb731f7aade"></video>
+### Views
+| Cars view  | Owners view |
+| ------------- | ------------- |
+| <video src="https://github.com/DOL7JS/NNPRO_CRV_backend/assets/53859920/caafd388-1c48-4e12-8d68-41d24339527d"></video>  | <video src="https://github.com/DOL7JS/NNPRO_CRV_backend/assets/53859920/731582b3-b355-406a-856f-4fccf63c4a96"></video>|
