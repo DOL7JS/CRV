@@ -5,6 +5,8 @@ CRV system is system for registring and unregistring vehicles. In this system us
 - Branch office management - create, edit office, add user to office
 - Owner management - create, edit owner
 
+The project works with its own database in docker, it's not connected to real system of registring vehicles.
+
 This system is developed with:
 - [Java](https://www.oracle.com/java/technologies/javase-downloads.html)
 - [Spring Boot](https://spring.io/projects/spring-boot)
